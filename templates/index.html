@@ -1,8 +1,12 @@
 
-Foorumit:
-<hr>
-{% for forum in forums %}
-{{ forum.name }} - {{ forum.subtitle }}
-<hr>
+<h1> {{ headings[0][0] }} </h1>
+<h2>{{ headings[1][0] }} </h2>
+{% for heading, subforums in subforum_order.items() %}
+<h3>{{ heading[1] }} </h3>
+{% for subforum in subforums %}
+<a href="/subforum/{{subforum[1]}}">{{subforum[0]}}</a> <br>
 {% endfor %}
-<a href="/new">Luo uusi foorumi</a>
+{% endfor %}
+<a href="/settings">Settings</a><br>
+<a href="/new_subforum">New subforum</a>
+
