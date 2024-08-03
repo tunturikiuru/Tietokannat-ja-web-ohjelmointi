@@ -1,0 +1,37 @@
+<a href="/settings">Perustiedot</a> <a href="/settings/areas">Alueet</a> <a href="/settings/subforums">Subfoorumit</a>
+<h2>Uusi väliotsikko</h2>
+<form action="/settings/area_name/send" method="POST">
+    <input type="text" name="heading"> </p>
+    <input type="submit" value="Lähetä">
+</form>
+
+<h2>Vaihda väliotsikon nimeä</h2>
+<form action="/settings/area_rename/send" method="POST">
+    <select name="old_heading">
+        {% for heading in headings %}
+        <option value="{{ heading.heading_id }}"> {{ heading.heading_name }}</option> 
+        {% endfor %}
+    </select>
+    <p> Uusi nimi:
+    <input type="text" name="new_heading"> </p>
+    <input type="submit" value="Lähetä">
+</form>
+
+<h2>Väliotsikoiden järjestys</h2>
+<form action="/settings/area_order/send" method="POST">
+    <p>(Anna kaikille otsikoille arvo)</p>
+    {% for heading in headings %}
+    <p>
+    <input type="text" name="heading_order" value="{{ loop.index }}"> {{ heading[0] }}
+    <input type="hidden" name="heading_id" value="{{ heading[1] }}"></p>
+    {% endfor %}
+    <input type="submit" value="Lähetä">
+</form>
+
+<h2>Poista väliotsikoita </h2>
+<p> Alueen poistamnen sulauttaa subforumit toiseen alueeseen</p>
+<form action="/settings/delete_area/send" method="POST">
+    
+
+    <input type="submit" name="delete_area" value="Lähetä">
+</form>

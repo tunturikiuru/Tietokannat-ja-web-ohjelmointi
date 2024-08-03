@@ -1,25 +1,15 @@
+<a href="/settings">Perustiedot</a> 
+<a href="/settings/areas">Alueet</a> 
+<a href="/settings/subforums">Subfoorumit</a>
+<h2>Foorumin otsikko ja alaotsikko</h2>
 <form action="/settings/send" method="POST">
-    Forumin nimi: <input type="text" name="title"> <br>
-    Forumin alaotsikko: <input type="text" name="subtitle"> <br>
-    <p>Alueiden otsikot</p>
-    <p>Yksityinen alue (jätä tyhjäksi, jos ei tarvita):
-    <input type="text" name="private"></p>
-    <p>1:
-    <input type="text" name="heading"></p>
-    <p>2:
-    <input type="text" name="heading"></p>
-    <p>3:
-    <input type="text" name="heading"></p>
-    <p>4:
-    <input type="text" name="heading"></p>
-    <p>5:
-    <input type="text" name="heading"></p>
-    <p>6:
-    <input type="text" name="heading"></p>
-    <p>7:
-    <input type="text" name="heading"></p>
-    <p>8:
-    <input type="text" name="heading"></p>
+    Forumin nimi: <input type="text" name="title" value="{{ titles[0][0] }}" > <br>
+    Forumin alaotsikko: <input type="text" name="subtitle" value="{{ titles[1][0] }}"> <br>
     <input type="submit" value="Lähetä">
-    </form>
+</form>
+
+<h2> Poista alaotsikko</h2>
+
+<a href="/">Etusivu</a>
+
     

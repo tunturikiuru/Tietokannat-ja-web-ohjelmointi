@@ -1,0 +1,50 @@
+<a href="/settings">Perustiedot</a> 
+<a href="/settings/areas">Alueet</a> 
+<a href="/settings/subforums">Subfoorumit</a>
+
+<h2>Uusi subforum</h2>
+<form action="/new_subforum/send" method="POST">    
+    <p>Subforumin nimi: 
+    <input type="text" name="new_subforum"> </p>
+    <p>Alue: 
+    <select name="area">
+        {% for heading in headings %}
+        <option value="{{ heading.heading_id }}"> {{ heading.heading_name }}
+        {% endfor %}
+    </select></p>
+    <input type="submit" value="Lähetä">
+</form>
+
+<h2>Vaihda subforumin nimeä</h2>
+!! TODO:  JA ALUETTA !!
+{% if subforums_dict %}
+<form action="/settings/subforum_rename/send" method="POST">
+    <select name="old_name">
+        {% for subforum in subforums_list %}
+        <option value="{{ subforum.subforum_id }}"> {{ subforum.subforum_name }}</option> 
+        {% endfor %}
+    </select>
+    <input type="text" name="new_name"> </p>
+    <input type="submit" value="Lähetä">
+</form>
+{% else %}
+<p>ei vielä subfoorumeita</p>
+{% endif %}
+
+<h2>Subforumien järjestys</h2>
+{% if subforums_dict %}
+<form action="/settings/subforum_order/send" method="POST">    
+    {% for heading, subforums in subforums_dict.items() %}
+    <h3> {{ heading[0] }} </h3>
+    {% for subforum in subforums %}
+    <p><input type="text" name="subforum_order" value="{{ loop.index }}"> {{ subforum[0]}} 
+    <input type="hidden" name="subforum_id" value="{{ subforum[1] }}"></p>
+    {% endfor %}
+    <input type="submit" value="Lähetä">
+    {% endfor %}
+</form>
+{% else %}
+<p>ei vielä subfoorumeita</p>
+{% endif %}
+
+
