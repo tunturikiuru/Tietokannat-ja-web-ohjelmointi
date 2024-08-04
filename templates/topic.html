@@ -1,0 +1,10 @@
+<a href="/">Etusivu</a> / <a href="/subforum/{{ subforum[1] }}">{{ subforum[0] }}</a> / <a href="/topic/{{ topic[1] }}"> {{ topic[0] }} </a><br>
+<h3>{{ topic[0] }}</h3><br>
+<a href="/topic/{{ topic[1] }}/new_message/"> Uusi viesti</a> <hr>
+{% for message in messages %}
+Kirjoittaja XXX, {{message[1].strftime("%Y-%m-%d %H:%M:%S")}}<br>
+{{ message[0] }} <br>
+<a href="/topic/{{ topic[1] }}/new_message/"> Vastaa viestiin</a><br>
+<hr>
+{% endfor %}
+<a href="/topic/{{ topic[1] }}/new_message/"> Uusi viesti</a>
