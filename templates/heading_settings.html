@@ -1,13 +1,19 @@
-<a href="/settings">Perustiedot</a> <a href="/settings/areas">Alueet</a> <a href="/settings/subforums">Subfoorumit</a>
+<a href="/">Etusivu</a>
+<br>
+<a href="/settings">Perustiedot</a> 
+<a href="/settings/headings">Väliotsikot</a> 
+<a href="/settings/subforums">Subfoorumit</a>
+<br>
 <h2>Uusi väliotsikko</h2>
-<form action="/settings/area_name/send" method="POST">
+<form action="/settings/heading_name/send" method="POST">
     <input type="text" name="heading"> </p>
     <input type="submit" value="Lähetä">
 </form>
 
 <h2>Vaihda väliotsikon nimeä</h2>
-<form action="/settings/area_rename/send" method="POST">
-    <select name="old_heading">
+{% if headings %}
+<form action="/settings/heading_rename/send" method="POST">
+    <select name="heading_id">
         {% for heading in headings %}
         <option value="{{ heading.heading_id }}"> {{ heading.heading_name }}</option> 
         {% endfor %}
@@ -16,9 +22,13 @@
     <input type="text" name="new_heading"> </p>
     <input type="submit" value="Lähetä">
 </form>
+{% else %}
+<p>ei vielä väliotsikoita</p>
+{% endif %}
 
 <h2>Väliotsikoiden järjestys</h2>
-<form action="/settings/area_order/send" method="POST">
+{% if headings %}
+<form action="/settings/heading_order/send" method="POST">
     <p>(Anna kaikille otsikoille arvo)</p>
     {% for heading in headings %}
     <p>
@@ -27,11 +37,22 @@
     {% endfor %}
     <input type="submit" value="Lähetä">
 </form>
+{% else %}
+<p>ei vielä väliotsikoita</p>
+{% endif %}
 
 <h2>Poista väliotsikoita </h2>
+{% if headings %}
 <p> Alueen poistamnen sulauttaa subforumit toiseen alueeseen</p>
-<form action="/settings/delete_area/send" method="POST">
+<form action="/settings/delete_heading/send" method="POST">
     
 KESKEN
-    <input type="submit" name="delete_area" value="Lähetä">
+    <input type="submit" name="delete_heading" value="Lähetä">
 </form>
+{% else %}
+<p>ei vielä väliotsikoita</p>
+{% endif %}
+
+<br>
+<a href="/">Etusivu</a>
+<br>
