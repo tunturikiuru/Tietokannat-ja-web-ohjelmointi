@@ -1,9 +1,12 @@
+{% extends "layout.html" %}
+{% block content %}
+
 {% if message %}
 <p>{{message}}</p>
 {% endif %}
 
 <p>
-Rekisteröidy:
+<h3>Rekisteröidy:</h3>
 <form action="/register" method="POST">
     Käyttäjätunnus: <input type="text" name="username"><br>
     Salasana: <input type="password" name="password1"><br>
@@ -14,3 +17,4 @@ Rekisteröidy:
 <p>Tai kirjaudu sisään <a href="/login">täältä</a>.</p>
 
 <a href="/">Etusivu</a>
+{% endblock %}

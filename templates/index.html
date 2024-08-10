@@ -1,16 +1,13 @@
-{% if session.username %}
-{{ session.username }} <a href="/logout">Kirjaudu ulos</a>
-{% else %}
-<a href="/login">Kirjaudu sisään</a> tai <a href="/register">rekisteröidy</a>
-{% endif %}
-<h1> {{ titles[0][0] }} </h1>
-<h2>{{ titles[1][0] }} </h2>
-<a href="/">Etusivu</a>
+{% extends "layout.html" %}
+{% block content %}
 {% for heading, subforums in subforum_order.items() %}
-    <h3>{{ heading[0] }} </h3>
-    {% for subforum in subforums %}
-        <a href="/subforum/{{subforum[1]}}">{{subforum[0]}}</a> <br>
-    {% endfor %}
+    <div>
+        <h3>{{ heading[0] }} </h3>
+        {% for subforum in subforums %}
+            <a href="/subforum/{{subforum[1]}}">{{subforum[0]}}</a> <br>
+        {% endfor %}
+    </div>
 {% endfor %}
 <br>
 <a href="/settings">Asetukset</a><br>
+{% endblock %}

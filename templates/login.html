@@ -1,8 +1,11 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="error_message">
 {% if message %}
 <p>{{message}}</p>
 {% endif %}
-<p>
-Kirjaudu sisään:
+</div>
+<h3>Kirjaudu sisään:<h3></h3>
 <form action="/login" method="POST">
     Tunnus: <input type="text" name="username"><br>
     Salasana: <input type="password" name="password"> <br>
@@ -12,3 +15,4 @@ Kirjaudu sisään:
 <p>Tai rekisteröidy <a href="/register">täällä</a>.</p>
 
 <a href="/">Etusivu</a>
+{% endblock %}

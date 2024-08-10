@@ -3,28 +3,33 @@ from flask import redirect, render_template, request, url_for, session
 #from werkzeug.security import generate_password_hash
 from os import getenv
 
+forum_name = []
 app = Flask(__name__)
 app.secret_key = getenv("SECRET_KEY")
 
 import database_functions as dbf
 import users
 
+@app.before_request
+def before_request():
+    global forum_name
+    if not forum_name:
+        forum_name = dbf.fetch_title()
 
 @app.route("/")
 def index():
-    titles = dbf.fetch_title()
     subforum_order = dbf.subforum_dict()
-    return render_template("index.html", titles=titles, subforum_order=subforum_order) 
+    return render_template("index.html", forum_name=forum_name, subforum_order=subforum_order) 
 
 @app.route("/subforum/<int:subforum_id>")
 def subforum(subforum_id):
     subforum = dbf.fetch_subforum_by_id(subforum_id)
     topics = dbf.fetch_topics(subforum_id)
-    return render_template("subforum.html", subforum=subforum, topics=topics)
+    return render_template("subforum.html", subforum=subforum, topics=topics, forum_name=forum_name)
 
 @app.route("/subforum/<int:id>/new_topic")
 def create_new_topic(id):
-    return render_template("new_topic.html", id=id)
+    return render_template("new_topic.html", id=id, forum_name=forum_name)
 
 @app.route("/subforum/<int:id>/new_topic/send", methods=["POST"])
 def send_new_topic(id):
@@ -38,12 +43,12 @@ def topic(topic_id):
     subforum = dbf.fetch_subforum_by_topic(topic_id)
     topic = dbf.fetch_topic(topic_id)
     messages = dbf.fetch_messages(topic_id)
-    return render_template("topic.html", messages=messages, subforum=subforum, topic=topic)
+    return render_template("topic.html", messages=messages, subforum=subforum, topic=topic, forum_name=forum_name)
 
 @app.route("/topic/<int:topic_id>/new_message/")
 def create_new_message(topic_id):
     topic = dbf.fetch_topic(topic_id)
-    return render_template("new_message.html", topic=topic)
+    return render_template("new_message.html", topic=topic, forum_name=forum_name)
 
 @app.route("/new_message/send", methods=["POST"])
 def send_new_message():
@@ -57,14 +62,14 @@ def send_new_message():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
-        return render_template("register.html")
+        return render_template("register.html", forum_name=forum_name)
     if request.method == "POST":
         username = request.form["username"]
         password1 = request.form["password1"]
         password2 = request.form["password2"]
         error_message = users.register_user(username, password1, password2)
         if error_message:
-            return render_template("register.html", message=error_message)
+            return render_template("register.html", message=error_message, forum_name=forum_name)
         else:
             return redirect("/")
 
@@ -72,13 +77,13 @@ def register():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template("login.html")
+        return render_template("login.html", forum_name=forum_name)
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]        
         if users.login(username, password):
             return redirect("/")
-    return render_template("login.html", message="Väärä käyttäjätunnus tai salasana")
+    return render_template("login.html", message="Väärä käyttäjätunnus tai salasana", forum_name=forum_name)
     
 
 @app.route("/logout")
@@ -92,19 +97,19 @@ def logout():
 @app.route("/settings")
 def settings():
     titles = dbf.fetch_title()
-    return render_template("settings.html", titles=titles)
+    return render_template("settings.html", titles=titles, forum_name=forum_name)
 
 @app.route("/settings/headings")
 def heading_settings():
     headings = dbf.fetch_headings()
-    return render_template("heading_settings.html", headings=headings)
+    return render_template("heading_settings.html", headings=headings, forum_name=forum_name)
 
 @app.route("/settings/subforums")
 def subforums():
     headings = dbf.fetch_headings()
     subforums_list = dbf.subforum_list()
     subforums_dict = dbf.subforum_dict()
-    return render_template("subforum_settings.html", headings=headings, subforums_list=subforums_list, subforums_dict=subforums_dict)
+    return render_template("subforum_settings.html", headings=headings, subforums_list=subforums_list, subforums_dict=subforums_dict, forum_name=forum_name)
 
 ## Settings send
 @app.route("/settings/send", methods=["POST"])
