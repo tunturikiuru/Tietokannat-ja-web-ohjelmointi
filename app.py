@@ -1,10 +1,13 @@
 from flask import Flask
-from flask import redirect, render_template, request, url_for
-#from os import getenv
+from flask import redirect, render_template, request, url_for, session
+#from werkzeug.security import generate_password_hash
+from os import getenv
 
 app = Flask(__name__)
+app.secret_key = getenv("SECRET_KEY")
 
 import database_functions as dbf
+import users
 
 
 @app.route("/")
@@ -48,6 +51,41 @@ def send_new_message():
     topic_id = request.form["topic_id"]
     dbf.new_message(topic_id, message)
     return redirect(url_for("topic", topic_id=topic_id))
+
+
+#USERS
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "GET":
+        return render_template("register.html")
+    if request.method == "POST":
+        username = request.form["username"]
+        password1 = request.form["password1"]
+        password2 = request.form["password2"]
+        error_message = users.register_user(username, password1, password2)
+        if error_message:
+            return render_template("register.html", message=error_message)
+        else:
+            return redirect("/")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "GET":
+        return render_template("login.html")
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]        
+        if users.login(username, password):
+            return redirect("/")
+    return render_template("login.html", message="Väärä käyttäjätunnus tai salasana")
+    
+
+@app.route("/logout")
+def logout():
+    users.logout()
+    return redirect("/")
+
 
 
 # SETTINGS

@@ -1,6 +1,30 @@
 from db import db
 from sqlalchemy.sql import text
 
+
+# USERS
+def register_user(username, password):
+    try:
+        sql = "INSERT INTO users (username, password) VALUES (:username, :password)"
+        db.session.execute(text(sql), {"username":username, "password":password})
+        db.session.commit()
+        return True
+    except:
+        return False
+
+def check_username(username):
+    sql = "SELECT 1 FROM users WHERE username=:username"
+    result = db.session.execute(text(sql), {"username":username})
+    return result.fetchone()
+
+def fetch_password(username):
+    sql = "SELECT password FROM users WHERE username=:username"
+    result = db.session.execute(text(sql), {"username":username})
+    hash_value = result.fetchone()
+    return hash_value[0]
+
+
+
 # NEW
 
 def new_title(title):
@@ -127,7 +151,7 @@ def update_order_index(order_index: list, ids: list, category: str):
     for item in order:
         db.session.execute(text(sql), {"i":item[0], "id":item[1]})
     db.session.commit() 
-    
+
 def update_heading(heading_name, heading_id):
     sql = "UPDATE headings SET heading_name = :heading_name WHERE heading_id = :heading_id"
     db.session.execute(text(sql), {"heading_name":heading_name, "heading_id":heading_id})

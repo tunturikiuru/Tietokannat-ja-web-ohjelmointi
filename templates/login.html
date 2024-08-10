@@ -1,0 +1,14 @@
+{% if message %}
+<p>{{message}}</p>
+{% endif %}
+<p>
+Kirjaudu sisään:
+<form action="/login" method="POST">
+    Tunnus: <input type="text" name="username"><br>
+    Salasana: <input type="password" name="password"> <br>
+    <input type="submit" value="Kirjaudu">
+</form>
+</p>
+<p>Tai rekisteröidy <a href="/register">täällä</a>.</p>
+
+<a href="/">Etusivu</a>
