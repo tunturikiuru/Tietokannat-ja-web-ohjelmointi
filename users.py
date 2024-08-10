@@ -5,9 +5,7 @@ from flask import session
 
 #LOGIN VIRHEILMOITUS
 def login(username, password):
-    print(password)
     hash_value = dbf.fetch_password(username)
-    print(hash_value)
     if not hash_value:
         return False
     if check_password_hash(hash_value, password):
