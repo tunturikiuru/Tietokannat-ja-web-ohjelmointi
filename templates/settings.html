@@ -1,18 +1,27 @@
-<a href="/">Etusivu</a>
-<br>
+{% extends "layout.html" %}
+
+{% block path %} 
+ / Asetukset / <a href="/settings">Perustiedot</a>
+{% endblock %}
+
+{% block content %}
+<nav>
 <a href="/settings">Perustiedot</a> 
 <a href="/settings/headings">Väliotsikot</a> 
 <a href="/settings/subforums">Subfoorumit</a>
+</nav>
 <br>
-<h2>Foorumin otsikko ja alaotsikko</h2>
+<h3>Foorumin Perusasetukset</h3>
+<p>
+Tällä sivulla voit muuttaa foorumin nimeä ja alaotsikkoa. (Alaotsikon voi poistaa ....)
+</p>
+<h4>Foorumin otsikko ja alaotsikko</h4>
 <form action="/settings/send" method="POST">
-    Forumin nimi: <input type="text" name="title" value="{{ titles[0][0] }}" > <br>
-    Forumin alaotsikko: <input type="text" name="subtitle" value="{{ titles[1][0] }}"> <br>
+    Forumin nimi: <input type="text" name="title" value="{{ forum_name[0][0] }}" > <br>
+    Forumin alaotsikko: <input type="text" name="subtitle" value="{{ forum_name[1][0] }}"> <br>
     <input type="submit" value="Lähetä">
 </form>
+{% endblock %}
 
-<h2> Poista alaotsikko</h2>
-
-<a href="/">Etusivu</a>
 
     

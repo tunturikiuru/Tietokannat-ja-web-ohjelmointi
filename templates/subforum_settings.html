@@ -19,7 +19,7 @@
 
 <h2>Vaihda subforumin nimeä</h2>
 !! TODO:  JA ALUETTA !!
-{% if subforums_dict %}
+{% if headings_and_subforums %}
 <form action="/settings/subforum_rename/send" method="POST">
     <select name="old_name">
         {% for subforum in subforums_list %}
@@ -34,9 +34,9 @@
 {% endif %}
 
 <h2>Subforumien järjestys</h2>
-{% if subforums_dict %}
+{% if headings_and_subforums %}
 <form action="/settings/subforum_order/send" method="POST">    
-    {% for heading, subforums in subforums_dict.items() %}
+    {% for heading, headings_and_subforums.items() %}
     <h3> {{ heading[0] }} </h3>
     {% for subforum in subforums %}
     <p><input type="text" name="subforum_order" value="{{ loop.index }}"> {{ subforum[0]}} 

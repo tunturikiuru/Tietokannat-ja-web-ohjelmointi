@@ -1,6 +1,7 @@
 body {
     margin: auto;
     max-width: 1170px;
+    height: 200px;
     font-family: 'Helvetica', 'Arial', sans-serif;
     margin-top: 25px;
 }
@@ -8,13 +9,23 @@ h1 {
     font-size: 2.5em;
     margin: 0;
 }
-h2{
+h2 {
     font-size: 1em;
     margin: 0px;
+}
+h3 {
+    font-size: 2em;
 }
 .banner {
     background-color: rgb(75, 242, 83);
     padding: 50px 50px 75px;
+}
+.content {
+    margin: 15px 30px 15px;
+}
+.error_message {
+    color: red;
+    size: 1.5em;
 }
 .login {
     margin: 5px 0px 10px;
@@ -25,6 +36,3 @@ h2{
     margin: 15px 30px 15px;
 }
 
-.content {
-    margin: 15px 30px 15px;
-}

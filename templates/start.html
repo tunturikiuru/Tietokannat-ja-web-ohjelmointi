@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Uusi foorumi</title>
+        <link rel="stylesheet" href="/static/css/styles.css">
+    </head>
+    <body>
+        <div class="banner">
+            <h1>Tähän tulee nimi</h1>
+            <h2>Ja tähän alaotsikko</h2>
+        </div>
+        <div class="content">
+            {% if error_message %}
+            <p class="error_message">{{error_message}}</p>
+            {% endif %}
+        
+            <h3>Foorumin luonti</h3>
+            <p> Tähdellä merkityt kentät ovat pakollisia.</p>
+            <form action="/" method="POST">
+                <h4> Foorumin tiedot:</h4>
+                Forumin nimi: * <input type="text" name="title"> <br>
+                Forumin alaotsikko: <input type="text" name="subtitle"> <br>
+                <h4> Pääkäyttäjän tiedot:</h4>
+                Käyttäjätunnus: * <input type="text" name="username"><br>
+                Salasana: * <input type="password" name="password1"><br>
+                Salasana uudelleen: * <input type="password" name="password2"><br>
+                <input type="submit" value="Luo foorumi">
+            </form>
+        </div>
+    </body>
+</html>

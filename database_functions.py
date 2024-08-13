@@ -2,7 +2,32 @@ from db import db
 from sqlalchemy.sql import text
 
 
+def forum_setup(username, hash_value, title, subtitle):
+    try:
+        sql = "INSERT INTO users (username, password, admin) VALUES (:username, :password, TRUE)"
+        sql2 = "INSERT INTO headings (heading_name, order_index) VALUES (:title, 1)"
+        db.session.execute(text(sql), {"username":username, "password":hash_value})
+        db.session.execute(text(sql2), {"title":title})
+        if subtitle:
+            sql3 =  "INSERT INTO headings (heading_name, order_index) VALUES (:subtitle, 2)"
+            db.session.execute(text(sql3), {"subtitle":subtitle})
+        db.session.commit()
+        return True
+    except:
+        return False
+
+
 # USERS
+
+"""def first_user(username, password):
+    try:
+        sql = "INSERT INTO users (username, password, admin) VALUES (:username, :password, TRUE)"
+        db.session.execute(text(sql), {"username":username, "password":password})
+        db.session.commit()
+        return True
+    except:
+        return False"""
+
 def register_user(username, password):
     try:
         sql = "INSERT INTO users (username, password) VALUES (:username, :password)"
@@ -22,6 +47,14 @@ def fetch_password(username):
     result = db.session.execute(text(sql), {"username":username})
     hash_value = result.fetchone()
     return hash_value[0]
+
+"""def create_admin(username):
+    try:
+        sql = "UPDATE users SET admin = TRUE WHERE username=:username"
+        db.session.execute(text(sql), {"username":username})
+        return True
+    except:
+        return False"""
 
 
 
@@ -73,7 +106,7 @@ def fetch_title():
     result = db.session.execute(text(sql))
     titles = result.fetchall()
     while len(titles) <2:
-        titles.append(("", ""))
+        titles.append("")
     return titles
 
 def fetch_headings():
@@ -100,8 +133,8 @@ def subforum_list():
     subforums = result.fetchall()
     return subforums
 
-def subforum_dict():
-    sql = "SELECT h.heading_name h_name, h.heading_id h_id, s.subforum_name s_name, s.subforum_id s_id FROM subforums s LEFT JOIN headings h ON h.heading_id = s. heading_id ORDER BY h.order_index, s.order_index"
+def headings_and_subforums():
+    sql = "SELECT h.heading_name h_name, h.heading_id h_id, s.subforum_name s_name, s.subforum_id s_id FROM headings h LEFT JOIN subforums s ON h.heading_id = s.heading_id WHERE h.order_index > 2 ORDER BY h.order_index, s.order_index"
     result = db.session.execute(text(sql))
     subforums = result.fetchall()
     subforum_order = {}

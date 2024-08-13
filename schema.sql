@@ -19,15 +19,15 @@ CREATE TABLE topics (
     updated TIMESTAMP,
     pinned BOOLEAN DEFAULT FALSE);
 
+CREATE TABLE users(
+    user_id SERIAL PRIMARY KEY,
+    username TEXT UNIQUE,
+    password TEXT,
+    admin BOOLEAN DEFAULT FALSE);
+
 CREATE TABLE messages (
 	message_id SERIAL PRIMARY KEY,
 	topic_id INTEGER REFERENCES topics(topic_id),
 	message TEXT,
 	sender TEXT REFERENCES users(username),
 	time TIMESTAMP);
-
-CREATE TABLE users(
-    user_id SERIAL PRIMARY KEY,
-    username TEXT UNIQUE,
-    password TEXT,
-    admin BOOLEAN DEFAULT FALSE);
