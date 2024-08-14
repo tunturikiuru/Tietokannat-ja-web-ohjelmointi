@@ -8,7 +8,7 @@ def forum_setup(username, password1, password2, title, subtitle=None):
     if not error_message:
         hash_value = hash_password(password1)
         if dbf.forum_setup(username, hash_value, title, subtitle):
-            session["username"] = username
+            create_session(username)
         else:
             error_message = "Tapahtui virhe, yritä uudelleen"
     return error_message
@@ -18,19 +18,19 @@ def login(username, password):
     if not hash_value:
         return False
     if check_password_hash(hash_value, password):
-        session["username"] = username
+        create_session(username)
         return True
     return False
 
 def logout():
-    del session["username"]
+    session.clear()
 
 def register_user(username, password1, password2):
     error_message = before_register(username, password1, password2)
     if not error_message:
         hash_value = hash_password(password1)
         if dbf.register_user(username, hash_value):
-            session["username"] = username
+            create_session(username)
         else:
             error_message = "Tapahtui virhe, yritä uudelleen"
     return error_message
@@ -47,6 +47,17 @@ def before_register(username, password1, password2):
 def hash_password(password):
     return generate_password_hash(password)
 
+"""def is_user():
+    pass"""
+
+def is_admin():
+    return session.get("role") == "admin"
+
+def create_session(username):
+    session["username"] = username
+    if dbf.is_admin(username):
+        session["role"] = 'admin'
+    else:
+        session["role"] = 'user'
+
     
-#def create_admin(username):
-   # return dbf.create_admin(username)

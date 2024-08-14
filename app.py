@@ -9,6 +9,7 @@ app.secret_key = getenv("SECRET_KEY")
 import database_functions as dbf
 import users
 
+# Asetukset näkyviin vain admin-käyttäjille, settings-sivujen oikeuksien tarkistus
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -84,6 +85,7 @@ def send_new_message():
 #USERS
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    forum_name = dbf.fetch_title()
     if request.method == "GET":
         return render_template("register.html", forum_name=forum_name)
     if request.method == "POST":
@@ -92,7 +94,6 @@ def register():
         password2 = request.form["password2"]
         error_message = users.register_user(username, password1, password2)
         if error_message:
-            forum_name = dbf.fetch_title()
             return render_template("register.html", message=error_message, forum_name=forum_name)
         else:
             return redirect("/")
@@ -121,22 +122,28 @@ def logout():
 @app.route("/settings")
 def settings():
     forum_name = dbf.fetch_title()
-    titles = dbf.fetch_title()
-    return render_template("settings.html", titles=titles, forum_name=forum_name)
+    if users.is_admin():
+        titles = dbf.fetch_title()
+        return render_template("settings.html", titles=titles, forum_name=forum_name)
+    return render_template("error.html", forum_name=forum_name, error="Ei oikeutta nähdä sivua.")
 
 @app.route("/settings/headings")
 def heading_settings():
     forum_name = dbf.fetch_title()
-    headings = dbf.fetch_headings()
-    return render_template("heading_settings.html", headings=headings, forum_name=forum_name)
+    if users.is_admin():        
+        headings = dbf.fetch_headings()
+        return render_template("heading_settings.html", headings=headings, forum_name=forum_name)
+    return render_template("error.html", forum_name=forum_name, error="Ei oikeutta nähdä sivua.")
 
 @app.route("/settings/subforums")
 def subforums():
     forum_name = dbf.fetch_title()
-    headings = dbf.fetch_headings()
-    subforums_list = dbf.subforum_list()
-    headings_and_subforums = dbf.headings_and_subforums()
-    return render_template("subforum_settings.html", headings=headings, subforums_list=subforums_list, headings_and_subforums=headings_and_subforums, forum_name=forum_name)
+    if users.is_admin():
+        headings = dbf.fetch_headings()
+        subforums_list = dbf.subforum_list()
+        headings_and_subforums = dbf.headings_and_subforums()
+        return render_template("subforum_settings.html", headings=headings, subforums_list=subforums_list, headings_and_subforums=headings_and_subforums, forum_name=forum_name)
+    return render_template("error.html", forum_name=forum_name, error="Ei oikeutta nähdä sivua.")
 
 ## Settings send
 @app.route("/settings/send", methods=["POST"])
@@ -178,7 +185,7 @@ def send_heading_order():
 def send_delete_heading():
     pass
 
-@app.route("/new_subforum/send", methods=["POST"])
+@app.route("/settings/new_subforum/send", methods=["POST"])
 def send_subforum():
     subforum = request.form["new_subforum"]
     heading = request.form["heading"]

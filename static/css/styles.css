@@ -27,12 +27,18 @@ h3 {
     color: red;
     size: 1.5em;
 }
-.login {
-    margin: 5px 0px 10px;
-    text-align: right;
+.header {
+    margin: 10px 0px 5px;
+    height: 1em;
 }
+.login {  
 
+    float: right;
+}
 .path {
     margin: 15px 30px 15px;
+}
+.settings {    
+    float: left;
 }
 

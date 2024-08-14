@@ -19,15 +19,6 @@ def forum_setup(username, hash_value, title, subtitle):
 
 # USERS
 
-"""def first_user(username, password):
-    try:
-        sql = "INSERT INTO users (username, password, admin) VALUES (:username, :password, TRUE)"
-        db.session.execute(text(sql), {"username":username, "password":password})
-        db.session.commit()
-        return True
-    except:
-        return False"""
-
 def register_user(username, password):
     try:
         sql = "INSERT INTO users (username, password) VALUES (:username, :password)"
@@ -48,14 +39,10 @@ def fetch_password(username):
     hash_value = result.fetchone()
     return hash_value[0]
 
-"""def create_admin(username):
-    try:
-        sql = "UPDATE users SET admin = TRUE WHERE username=:username"
-        db.session.execute(text(sql), {"username":username})
-        return True
-    except:
-        return False"""
-
+def is_admin(username):
+    sql = "SELECT 1 FROM users WHERE username=:username AND admin='True'"
+    result = db.session.execute(text(sql), {"username":username})
+    return result.fetchone()
 
 
 # NEW

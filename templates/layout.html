@@ -2,17 +2,26 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>{{ forum_name[0] }}</title>
+        <title>{{ forum_name[0][0] }}</title>
         <link rel="stylesheet" href="/static/css/styles.css">
     </head>
     
     <body>
-        <div class="login">
-            {% if session.username %}
-            Olet kirjautunut nimellä: {{ session.username }}, <a href="/logout">Kirjaudu ulos</a>
-            {% else %}
-            <a href="/login">Kirjaudu sisään</a> / <a href="/register">Rekisteröidy</a>
-            {% endif %}
+        <div class="header">
+            <span class="Settings">
+                {% if session.get("role") == "admin" %}
+                <a href="/settings">Foorumin asetukset</a>
+                {% else %}
+                   
+                {% endif %}
+            </span>
+            <span class="login">
+                {% if session.username %}
+                Olet kirjautunut nimellä: {{ session.username }}, <a href="/logout">Kirjaudu ulos</a>
+                {% else %}
+                <a href="/login">Kirjaudu sisään</a> / <a href="/register">Rekisteröidy</a>
+                {% endif %}
+            </span>
         </div>
         <div class="banner">
             <h1>{{ forum_name[0][0] }}</h1>

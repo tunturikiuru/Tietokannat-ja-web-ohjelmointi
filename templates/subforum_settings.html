@@ -5,7 +5,7 @@
 <a href="/settings/subforums">Subfoorumit</a>
 <br>
 <h2>Uusi subforum</h2>
-<form action="/new_subforum/send" method="POST">    
+<form action="/settings/new_subforum/send" method="POST">    
     <p>Subforumin nimi: 
     <input type="text" name="new_subforum"> </p>
     <p>Alue: 
@@ -36,7 +36,7 @@
 <h2>Subforumien järjestys</h2>
 {% if headings_and_subforums %}
 <form action="/settings/subforum_order/send" method="POST">    
-    {% for heading, headings_and_subforums.items() %}
+    {% for heading in headings_and_subforums.keys() %}
     <h3> {{ heading[0] }} </h3>
     {% for subforum in subforums %}
     <p><input type="text" name="subforum_order" value="{{ loop.index }}"> {{ subforum[0]}} 
