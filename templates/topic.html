@@ -1,15 +1,23 @@
 {% extends "layout.html" %}
 {% block path %}
  / <a href="/subforum/{{ subforum[1] }}">{{ subforum[0] }}</a> / <a href="/topic/{{ topic[1] }}"> {{ topic[0] }} </a><br>
- {% endblock %}
- {% block content %}
- <h3>{{ topic[0] }}</h3><br>
-<a href="/topic/{{ topic[1] }}/new_message/"> Uusi viesti</a> <hr>
+{% endblock %}
+
+{% block content %}
+<h3>{{ topic[0] }}</h3><br>
+{% if session.get('username')%}
+<a href="/topic/{{ topic[1] }}/new_message/"> <button>Uusi viesti</button></a> 
+<hr>
+{% endif %}
 {% for message in messages %}
 Kirjoittaja XXX, {{message[1].strftime("%Y-%m-%d %H:%M:%S")}}<br>
 {{ message[0] }} <br>
-<a href="/topic/{{ topic[1] }}/new_message/"> Vastaa viestiin</a><br>
+{% if session.get('username')%}
+<a href="/topic/{{ topic[1] }}/new_message/"><button>Vastaa viestiin</button></a><br>
+{% endif %}
 <hr>
 {% endfor %}
-<a href="/topic/{{ topic[1] }}/new_message/"> Uusi viesti</a>
+{% if session.get('username')%}
+<a href="/topic/{{ topic[1] }}/new_message/"> <button>Uusi viesti</button></a>
+{% endif %}
 {% endblock %}

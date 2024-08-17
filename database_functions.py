@@ -71,18 +71,18 @@ def new_subforum(subforum, heading_id):
     db.session.execute(text(sql), {"heading_id":heading_id, "subforum":subforum, "order_index":order_index})
     db.session.commit()    
 
-def new_topic(topic_id, message, subforum_id):
+def new_topic(topic_id, message, subforum_id, sender):
     sql = "INSERT INTO topics (subforum_id, topic_name, created, updated) VALUES (:subforum_id, :topic, NOW(), NOW()) RETURNING topic_id"
     result = db.session.execute(text(sql), {"subforum_id":subforum_id, "topic":topic_id})
     topic_id = result.fetchone()
-    sql = "INSERT INTO messages (topic_id, message, time) VALUES (:topic_id, :message, NOW())"
-    db.session.execute(text(sql), {"topic_id":topic_id[0], "message":message})
+    sql = "INSERT INTO messages (topic_id, message, sender, time) VALUES (:topic_id, :message, :sender, NOW())"
+    db.session.execute(text(sql), {"topic_id":topic_id[0], "message":message, "sender":sender})
     db.session.commit()
     return topic_id[0]
 
-def new_message(topic_id, message):
-    sql = "INSERT INTO messages (topic_id, message, time) VALUES (:topic_id, :message, NOW())"
-    db.session.execute(text(sql), {"topic_id":topic_id, "message":message})
+def new_message(topic_id, message, sender):
+    sql = "INSERT INTO messages (topic_id, message, sender, time) VALUES (:topic_id, :message, :sender, NOW())"
+    db.session.execute(text(sql), {"topic_id":topic_id, "message":message, "sender":sender})
     db.session.commit()
 
 
@@ -120,16 +120,19 @@ def subforum_list():
     subforums = result.fetchall()
     return subforums
 
-def headings_and_subforums():
-    sql = "SELECT h.heading_name h_name, h.heading_id h_id, s.subforum_name s_name, s.subforum_id s_id FROM headings h LEFT JOIN subforums s ON h.heading_id = s.heading_id WHERE h.order_index > 2 ORDER BY h.order_index, s.order_index"
+def headings_and_subforums2():
+    sql = "SELECT h.order_index, s.order_index, h.heading_name h_name, s.subforum_name s_name, s.subforum_id s_id, COUNT(t.topic_id) topic_count, COUNT(m.message_id) message_count\
+        FROM headings h LEFT JOIN subforums s ON h.heading_id=s.heading_id LEFT JOIN topics t ON s.subforum_id=t.subforum_id LEFT JOIN messages m ON t.topic_id=m.topic_id \
+        WHERE h.order_index > 2 GROUP BY h_name, h.order_index, s_name, s.order_index, s_id ORDER BY h.order_index, s.order_index"
     result = db.session.execute(text(sql))
-    subforums = result.fetchall()
-    subforum_order = {}
-    for subforum in subforums:
-        if (subforum.h_name, subforum.h_id) not in subforum_order:
-            subforum_order[(subforum.h_name, subforum.h_id)] = []
-        subforum_order[(subforum.h_name, subforum.h_id)].append((subforum.s_name, subforum.s_id))
-    return subforum_order
+    query_result = result.fetchall()
+    forum_structure = {}
+    for item in query_result:
+        if item.h_name not in forum_structure:
+            forum_structure[item.h_name] = []
+        if item.s_id:
+            forum_structure[item.h_name].append([item.s_id, item.s_name, item.topic_count, item.message_count])
+    return forum_structure
 
 def fetch_topic(topic_id):
     sql = "SELECT topic_name, topic_id FROM topics WHERE topic_id=:topic_id ORDER BY pinned, updated"

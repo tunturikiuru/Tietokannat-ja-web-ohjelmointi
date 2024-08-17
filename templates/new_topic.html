@@ -1,4 +1,10 @@
-<form action="/subforum/{{ id }}/new_topic/send" method="POST">
+{% extends "layout.html" %}
+{% block path %}
+/ <a href="/subforum/{{ subforum[1] }}"> {{ subforum[0] }}</a> / <a href="/subforum/{{ subforum[1] }}/new_topic"> Uusi keskustelu </a> 
+{% endblock %}
+{% block content %}
+{% if session.get('username')%}
+<form action="/subforum/{{ subforum[1] }}/new_topic/send" method="POST">
     Otsikko:<br>
     <input type="text" name="title"> <br>
     Viesti: <br>
@@ -6,3 +12,15 @@
     </textarea><br>
     <input type="submit" value="Lähetä">
 </form>
+{% else %}
+<p>
+    Kirjaudu sisään luodaksesi uuden keskustelun:
+    <form action="/subforum/{{ subforum[1] }}/new_topic/send" method="POST">
+        Tunnus: <input type="text" name="username"><br>
+        Salasana: <input type="password" name="password"> <br>
+        <input type="submit" value="Kirjaudu">
+    </form>
+</p>
+{% endif %}
+<p><a href="/subforum/{{ subforum[1] }}"> Takaisin subforumiin </a></p>
+{% endblock %}

@@ -9,7 +9,18 @@ app.secret_key = getenv("SECRET_KEY")
 import database_functions as dbf
 import users
 
-# Asetukset näkyviin vain admin-käyttäjille, settings-sivujen oikeuksien tarkistus
+# TODO
+# poista kirjautumis- ja rekisteräitumismahdollisuus ennen foorumin luontia
+# käyttäjien sivut
+# käyttäjien hallinta
+# moderaattorit
+# haku !!!
+# alkuasetusten parantelu ja poistot !!!
+# ettei foorumin nimeä tarvitse hake joka kerta tietokannasta
+# käy läpi tietokantafunktiot
+# viestien tiedot näkyviin ym
+#tarkista input
+#login-funktio
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -18,14 +29,13 @@ def index():
         if forum_name[0] == "":
             return render_template("start.html")
         else:
-            subforum_order = dbf.headings_and_subforums()
+            subforum_order = dbf.headings_and_subforums2()
             return render_template("index.html", forum_name=forum_name, subforum_order=subforum_order)
     if request.method == "POST":
         error_message = forum_setup(request)
         if error_message:
             return render_template("start.html", error_message=error_message)
         else:
-            #forum_name = dbf.fetch_title
             return redirect("/settings") # OK
 
 def forum_setup(request):
@@ -50,14 +60,22 @@ def subforum(subforum_id):
 @app.route("/subforum/<int:id>/new_topic")
 def create_new_topic(id):
     forum_name = dbf.fetch_title()
-    return render_template("new_topic.html", id=id, forum_name=forum_name)
+    subforum = dbf.fetch_subforum_by_id(id)
+    return render_template("new_topic.html", subforum=subforum, forum_name=forum_name)
 
 @app.route("/subforum/<int:id>/new_topic/send", methods=["POST"])
 def send_new_topic(id):
-    title = request.form["title"]
-    message = request.form["content"]
-    id = dbf.new_topic(title, message, id)
-    return redirect(url_for("topic", topic_id=id))
+    username = users.get_username()
+    if username:
+        title = request.form["title"]
+        message = request.form["content"]
+        id = dbf.new_topic(title, message, id, username)
+        return redirect(url_for("topic", topic_id=id))
+    else:
+        username = request.form["username"]
+        password = request.form["password"]
+        users.login(username, password)
+        return redirect(url_for("create_new_message", topic_id=id))
 
 @app.route("/topic/<int:topic_id>")
 def topic(topic_id):
@@ -75,11 +93,19 @@ def create_new_message(topic_id):
 
 @app.route("/new_message/send", methods=["POST"])
 def send_new_message():
-    forum_name = dbf.fetch_title()
-    message = request.form["message"]
-    topic_id = request.form["topic_id"]
-    dbf.new_message(topic_id, message)
-    return redirect(url_for("topic", topic_id=topic_id))
+    username = users.get_username()
+    if username:
+        message = request.form["message"]
+        topic_id = request.form["topic_id"]
+        dbf.new_message(topic_id, message, username)
+        return redirect(url_for("topic", topic_id=topic_id))
+    else:
+        username = request.form["username"]
+        password = request.form["password"]
+        topic_id = request.form["topic_id"]
+        users.login(username, password)
+        return redirect(url_for("create_new_message", topic_id=topic_id))
+    
 
 
 #USERS
@@ -141,7 +167,7 @@ def subforums():
     if users.is_admin():
         headings = dbf.fetch_headings()
         subforums_list = dbf.subforum_list()
-        headings_and_subforums = dbf.headings_and_subforums()
+        headings_and_subforums = dbf.headings_and_subforums2()
         return render_template("subforum_settings.html", headings=headings, subforums_list=subforums_list, headings_and_subforums=headings_and_subforums, forum_name=forum_name)
     return render_template("error.html", forum_name=forum_name, error="Ei oikeutta nähdä sivua.")
 

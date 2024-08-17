@@ -1,5 +1,8 @@
-Uusi viesti keskusteluun {{ topic[0] }}<br>
+{% extends "layout.html" %}
 
+{% block content %}
+{% if session.get('username')%}
+<h5>Uusi viesti keskusteluun {{ topic[0] }}</h5>
 Viesti:
 <form action="/new_message/send" method="POST">
     <textarea name="message", rows="15", cols="100"></textarea>
@@ -7,3 +10,16 @@ Viesti:
     <br>
     <input type="submit" value="Lähetä">
 </form>
+{% else %}
+<p>
+    Kirjaudu sisään lähettääksesi viestejä:
+    <form action="/new_message/send" method="POST">
+        Tunnus: <input type="text" name="username"><br>
+        Salasana: <input type="password" name="password"> <br>
+        <input type="hidden" name="topic_id" value="{{ topic[1] }}">
+        <input type="submit" value="Kirjaudu">
+    </form>
+</p>
+{% endif %}
+<p><a href="/topic/{{ topic[1] }}"> Takaisin keskusteluun </a></p>
+{% endblock %}

@@ -5,16 +5,21 @@
 {% endblock %}
 
 {% block content %}
+{% if session.get('username') %}
 <h3>{{ subforum[0] }}</h3> <br>
-<a href="/subforum/{{ subforum[1] }}/new_topic">Uusi keskustelu</a>
+<a href="/subforum/{{ subforum[1] }}/new_topic"><button>Uusi keskustelu</button></a>
+{% endif %}
 <hr>
 {% if topics %}
-    {% for topic in topics %}
-    <a href="/topic/{{ topic[1] }}">{{ topic[0]}}</a>
-    <hr>
-    {% endfor %}
+{% for topic in topics %}
+<a href="/topic/{{ topic[1] }}">{{ topic[0]}}</a>
+<hr>
+{% endfor %}
 {% else %}
-    "Ei vielä keskusteluja"
+Ei vielä keskusteluja
+<hr>
 {% endif %}
-<a href="/subforum/{{ subforum[1] }}/new_topic">Uusi keskustelu</a>
+{% if session.get('username') %}
+<a href="/subforum/{{ subforum[1] }}/new_topic"><button>Uusi keskustelu</button></a>
+{% endif %}
 {% endblock %}

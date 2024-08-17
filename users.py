@@ -47,17 +47,20 @@ def before_register(username, password1, password2):
 def hash_password(password):
     return generate_password_hash(password)
 
-"""def is_user():
-    pass"""
-
-def is_admin():
-    return session.get("role") == "admin"
-
 def create_session(username):
     session["username"] = username
     if dbf.is_admin(username):
         session["role"] = 'admin'
     else:
         session["role"] = 'user'
+
+'''def is_user():
+    return session.get("role") == "user"'''
+
+def is_admin():
+    return session.get("role") == "admin"
+
+def get_username():
+    return session.get('username')
 
     
