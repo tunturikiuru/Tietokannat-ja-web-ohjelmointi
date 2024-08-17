@@ -4,7 +4,7 @@
 {% if session.get('username')%}
 <h5>Uusi viesti keskusteluun {{ topic[0] }}</h5>
 Viesti:
-<form action="/new_message/send" method="POST">
+<form action="/topic/{{ topic[1] }}/new_message/send" method="POST">
     <textarea name="message", rows="15", cols="100"></textarea>
     <input type="hidden" name="topic_id" value="{{ topic[1] }}">
     <br>
@@ -13,7 +13,7 @@ Viesti:
 {% else %}
 <p>
     Kirjaudu sisään lähettääksesi viestejä:
-    <form action="/new_message/send" method="POST">
+    <form action="/topic/{{topic[1]}}/new_message/send" method="POST">
         Tunnus: <input type="text" name="username"><br>
         Salasana: <input type="password" name="password"> <br>
         <input type="hidden" name="topic_id" value="{{ topic[1] }}">

@@ -20,7 +20,6 @@ import users
 # käy läpi tietokantafunktiot
 # viestien tiedot näkyviin ym
 #tarkista input
-#login-funktio
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -36,7 +35,7 @@ def index():
         if error_message:
             return render_template("start.html", error_message=error_message)
         else:
-            return redirect("/settings") # OK
+            return redirect("/settings")
 
 def forum_setup(request):
     title = request.form["title"]
@@ -63,19 +62,17 @@ def create_new_topic(id):
     subforum = dbf.fetch_subforum_by_id(id)
     return render_template("new_topic.html", subforum=subforum, forum_name=forum_name)
 
-@app.route("/subforum/<int:id>/new_topic/send", methods=["POST"])
-def send_new_topic(id):
+@app.route("/subforum/<int:subforum_id>/new_topic/send", methods=["POST"])
+def send_new_topic(subforum_id):
     username = users.get_username()
     if username:
         title = request.form["title"]
         message = request.form["content"]
-        id = dbf.new_topic(title, message, id, username)
-        return redirect(url_for("topic", topic_id=id))
+        topic_id = dbf.new_topic(title, message, subforum_id, username)
+        return redirect(url_for("topic", topic_id=topic_id))
     else:
-        username = request.form["username"]
-        password = request.form["password"]
-        users.login(username, password)
-        return redirect(url_for("create_new_message", topic_id=id))
+        users.login(request)
+        return redirect(url_for("create_new_topic", id=subforum_id))
 
 @app.route("/topic/<int:topic_id>")
 def topic(topic_id):
@@ -91,22 +88,17 @@ def create_new_message(topic_id):
     topic = dbf.fetch_topic(topic_id)
     return render_template("new_message.html", topic=topic, forum_name=forum_name)
 
-@app.route("/new_message/send", methods=["POST"])
-def send_new_message():
+@app.route("/topic/<int:topic_id>/new_message/send", methods=["POST"])
+def send_new_message(topic_id):
     username = users.get_username()
     if username:
         message = request.form["message"]
-        topic_id = request.form["topic_id"]
         dbf.new_message(topic_id, message, username)
         return redirect(url_for("topic", topic_id=topic_id))
     else:
-        username = request.form["username"]
-        password = request.form["password"]
-        topic_id = request.form["topic_id"]
-        users.login(username, password)
+        users.login(request)
         return redirect(url_for("create_new_message", topic_id=topic_id))
     
-
 
 #USERS
 @app.route("/register", methods=["GET", "POST"])
@@ -115,15 +107,11 @@ def register():
     if request.method == "GET":
         return render_template("register.html", forum_name=forum_name)
     if request.method == "POST":
-        username = request.form["username"]
-        password1 = request.form["password1"]
-        password2 = request.form["password2"]
-        error_message = users.register_user(username, password1, password2)
+        error_message = users.register_user(request)
         if error_message:
             return render_template("register.html", message=error_message, forum_name=forum_name)
         else:
             return redirect("/")
-
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -131,13 +119,10 @@ def login():
     if request.method == "GET":
         return render_template("login.html", forum_name=forum_name)
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]        
-        if users.login(username, password):
+        if users.login(request):
             return redirect("/")
     return render_template("login.html", message="Väärä käyttäjätunnus tai salasana", forum_name=forum_name)
     
-
 @app.route("/logout")
 def logout():
     users.logout()
@@ -170,6 +155,7 @@ def subforums():
         headings_and_subforums = dbf.headings_and_subforums2()
         return render_template("subforum_settings.html", headings=headings, subforums_list=subforums_list, headings_and_subforums=headings_and_subforums, forum_name=forum_name)
     return render_template("error.html", forum_name=forum_name, error="Ei oikeutta nähdä sivua.")
+
 
 ## Settings send
 @app.route("/settings/send", methods=["POST"])

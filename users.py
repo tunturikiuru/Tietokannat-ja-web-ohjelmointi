@@ -3,6 +3,7 @@ import database_functions as dbf
 from flask import session
 
 
+# FIRST ADMIN
 def forum_setup(username, password1, password2, title, subtitle=None):
     error_message = before_register(username, password1, password2)
     if not error_message:
@@ -13,7 +14,11 @@ def forum_setup(username, password1, password2, title, subtitle=None):
             error_message = "Tapahtui virhe, yritä uudelleen"
     return error_message
 
-def login(username, password):
+
+# LOGIN, REGISTER
+def login(request):
+    username = request.form["username"]
+    password = request.form["password"]
     hash_value = dbf.fetch_password(username)
     if not hash_value:
         return False
@@ -22,10 +27,10 @@ def login(username, password):
         return True
     return False
 
-def logout():
-    session.clear()
-
-def register_user(username, password1, password2):
+def register_user(request):
+    username = request.form["username"]
+    password1 = request.form["password1"]
+    password2 = request.form["password2"]
     error_message = before_register(username, password1, password2)
     if not error_message:
         hash_value = hash_password(password1)
@@ -47,6 +52,8 @@ def before_register(username, password1, password2):
 def hash_password(password):
     return generate_password_hash(password)
 
+
+# SESSION
 def create_session(username):
     session["username"] = username
     if dbf.is_admin(username):
@@ -54,13 +61,15 @@ def create_session(username):
     else:
         session["role"] = 'user'
 
-'''def is_user():
-    return session.get("role") == "user"'''
+def logout():
+    session.clear()
 
 def is_admin():
     return session.get("role") == "admin"
 
 def get_username():
     return session.get('username')
+
+
 
     
