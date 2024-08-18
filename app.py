@@ -18,6 +18,7 @@ import users
 # alkuasetusten parantelu ja poistot !!!
 # ettei foorumin nimeä tarvitse hake joka kerta tietokannasta
 # käy läpi tietokantafunktiot
+# viestit - lainaus, sivut pitkiin ketjuihin
 # viestien tiedot näkyviin ym
 #tarkista input
 

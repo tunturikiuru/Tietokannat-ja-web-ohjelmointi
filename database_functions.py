@@ -140,14 +140,14 @@ def fetch_topic(topic_id):
     topic = result.fetchone()
     return topic
 
-# TODO VOIKO TRY-EXCEPT poistaa?
 def fetch_topics(id):
-    try:
-        sql = "SELECT topic_name, topic_id FROM topics WHERE subforum_id=:id ORDER BY pinned, updated"
-        result = db.session.execute(text(sql), {"id":id})
-        topics = result.fetchall()
-    except:
-        topics = []
+    sql = "SELECT a.t_name t_name, a.t_id t_id, a.pinned pinned, a.m_count m_count, b.time min_time, b.sender min_sender, c.time max_time, c.sender max_sender \
+        FROM (SELECT t.topic_name t_name, t.topic_id t_id, t.pinned pinned, COUNT(m.message_id) m_count, MIN(m.message_id) min_message, MAX(m.message_id) max_message\
+        FROM topics t LEFT JOIN messages m ON t.topic_id=m.topic_id WHERE subforum_id=:id \
+        GROUP BY t_name, t_id ORDER BY pinned, max_message DESC) a \
+        LEFT JOIN messages b ON a.min_message=b.message_id LEFT JOIN messages c ON a.max_message=c.message_id ORDER BY max_time DESC"
+    result = db.session.execute(text(sql), {"id":id})
+    topics = result.fetchall()
     return topics
 
 def fetch_messages(topic_id):

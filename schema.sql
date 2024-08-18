@@ -15,8 +15,6 @@ CREATE TABLE topics (
     topic_id SERIAL PRIMARY KEY, 
     subforum_id INTEGER REFERENCES subforums(subforum_id), 
     topic_name TEXT NOT NULL,
-    created TIMESTAMP, 
-    updated TIMESTAMP,
     pinned BOOLEAN DEFAULT FALSE);
 
 CREATE TABLE users(
