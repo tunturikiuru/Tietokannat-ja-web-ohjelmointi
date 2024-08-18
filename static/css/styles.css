@@ -5,6 +5,9 @@ body {
     font-family: 'Helvetica', 'Arial', sans-serif;
     margin-top: 25px;
 }
+button {
+    margin: 5px 0px
+}
 h1 {
     font-size: 2.5em;
     margin: 0;
@@ -14,14 +17,19 @@ h2 {
     margin: 0px;
 }
 h3 {
-    font-size: 2em;
+    font-size: 1.5em;
 }
 .banner {
-    background-color: rgb(75, 242, 83);
+    background-color: #ecd29c; 
     padding: 50px 50px 75px;
 }
 .content {
-    margin: 15px 30px 15px;
+    border-left: 3px solid #f9e1b1;
+    border-right: 3px solid #f9e1b1;
+    border-bottom: 3px solid #f9e1b1;
+    padding: 15px 30px 20px;
+    margin-bottom: 50px;
+    /*margin: 15px 30px 50px;*/
 }
 .error_message {
     color: red;
@@ -35,10 +43,55 @@ h3 {
 
     float: right;
 }
+.message {
+    display: flex;
+    border:2px solid #cbcbcb;
+    margin-top: 5px;
+    border-radius: 5px;
+}
+.messages {
+
+}
+.message-header {
+    font-size: 0.8em;
+    color: #cbcbcb;
+    height: 24px;
+}
+.message-header button {
+        float: right;
+    }
+.message-left {
+    background-color: #ededed;
+    width: 170px;
+    padding-top: 25px;
+    text-align: center;
+    border-right: 2px solid #cbcbcb;
+    flex-shrink: 0;
+}
+.message-right {
+    flex-grow: 1;
+    padding: 8px 10px;
+}
+.message-right hr {
+    color: #cbcbcb;
+    border-style: none none dotted;
+}
+.message-right p {
+    white-space: pre-line;
+}
+.message-time {
+    padding-top: 5px;
+}
 .path {
-    margin: 15px 30px 15px;
+    border-left: 3px solid #f9e1b1;
+    border-right: 3px solid #f9e1b1;
+    padding: 15px 30px 15px;
+    /*margin: 15px 30px 15px;*/
 }
 .settings {    
     float: left;
+}
+#bottom_button {
+    margin-top: 17px;
 }
 

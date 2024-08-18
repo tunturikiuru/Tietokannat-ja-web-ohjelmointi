@@ -151,7 +151,7 @@ def fetch_topics(id):
     return topics
 
 def fetch_messages(topic_id):
-    sql = "SELECT message, time FROM messages WHERE topic_id=:topic_id ORDER BY time"
+    sql = "SELECT message, sender, time FROM messages WHERE topic_id=:topic_id ORDER BY time"
     result = db.session.execute(text(sql), {"topic_id":topic_id})
     messages = result.fetchall()
     return messages
