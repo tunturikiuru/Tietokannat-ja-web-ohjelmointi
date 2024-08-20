@@ -9,18 +9,6 @@ app.secret_key = getenv("SECRET_KEY")
 import database_functions as dbf
 import users
 
-# TODO
-# poista kirjautumis- ja rekisteräitumismahdollisuus ennen foorumin luontia
-# käyttäjien sivut
-# käyttäjien hallinta
-# moderaattorit
-# haku !!!
-# alkuasetusten parantelu ja poistot !!!
-# ettei foorumin nimeä tarvitse hake joka kerta tietokannasta
-# käy läpi tietokantafunktiot
-# viestit - lainaus, sivut pitkiin ketjuihin
-# viestien tiedot näkyviin ym
-#tarkista input
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -54,7 +42,7 @@ def forum_setup(request):
 def subforum(subforum_id):
     forum_name = dbf.fetch_title()
     subforum = dbf.fetch_subforum_by_id(subforum_id)
-    topics = dbf.fetch_topics(subforum_id)
+    topics = dbf.topic_page(subforum_id)
     return render_template("subforum.html", subforum=subforum, topics=topics, forum_name=forum_name)
 
 @app.route("/subforum/<int:id>/new_topic")

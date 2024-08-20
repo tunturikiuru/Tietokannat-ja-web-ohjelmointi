@@ -140,8 +140,8 @@ def fetch_topic(topic_id):
     topic = result.fetchone()
     return topic
 
-def fetch_topics(id):
-    sql = "SELECT a.t_name t_name, a.t_id t_id, a.pinned pinned, a.m_count m_count, b.time min_time, b.sender min_sender, c.time max_time, c.sender max_sender \
+def topic_page(id):
+    sql = "SELECT a.t_name t_name, a.t_id t_id, a.pinned pinned, a.m_count-1 m_count, b.time min_time, b.sender min_sender, c.time max_time, c.sender max_sender \
         FROM (SELECT t.topic_name t_name, t.topic_id t_id, t.pinned pinned, COUNT(m.message_id) m_count, MIN(m.message_id) min_message, MAX(m.message_id) max_message\
         FROM topics t LEFT JOIN messages m ON t.topic_id=m.topic_id WHERE subforum_id=:id \
         GROUP BY t_name, t_id ORDER BY pinned, max_message DESC) a \

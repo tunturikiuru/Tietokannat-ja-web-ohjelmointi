@@ -9,15 +9,36 @@
 <h3>{{ subforum[0] }}</h3> <br>
 <a href="/subforum/{{ subforum[1] }}/new_topic"><button>Uusi keskustelu</button></a>
 {% endif %}
-<hr>
+
 {% if topics %}
-{% for topic in topics %}
-<a href="/topic/{{ topic[1] }}">{{ topic[0]}}</a>
-<hr>
-{% endfor %}
+<table class="topics">
+    <tr class="topic-heading">
+        <th> </th>
+        <th>KESKUSTELUT</th>
+        <th>VASTAUKSET</th>
+        <th>UUSIN VIESTI</th>
+    </tr>
+    {% for topic in topics %}
+    <tr>
+        <td></td>
+        <td>
+            <ul>
+                <li><a href="/topic/{{ topic[1] }}">{{ topic[0]}}</a></li>
+                <li> {{topic[5]}} {{topic[4].strftime("%d.%m.%Y - %H:%M")}} </li>
+            </ul>
+        </td>
+        <td>{{topic[3]}}</td>
+        <td>
+            <ul>
+                <li>{{topic[7]}}</li>
+                <li>{{topic[6].strftime("%d.%m.%Y - %H:%M")}}</li>
+            </ul>
+        </td>
+    </tr>
+    {% endfor %}      
+</table>
 {% else %}
-Ei vielä keskusteluja
-<hr>
+<p>Ei vielä keskusteluja </p>
 {% endif %}
 {% if session.get('username') %}
 <a href="/subforum/{{ subforum[1] }}/new_topic"><button>Uusi keskustelu</button></a>

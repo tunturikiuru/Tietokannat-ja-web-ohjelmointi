@@ -40,7 +40,6 @@ h3 {
     height: 1em;
 }
 .login {  
-
     float: right;
 }
 .message {
@@ -58,8 +57,8 @@ h3 {
     height: 24px;
 }
 .message-header button {
-        float: right;
-    }
+    float: right;
+}
 .message-left {
     background-color: #ededed;
     width: 170px;
@@ -86,10 +85,25 @@ h3 {
     border-left: 3px solid #f9e1b1;
     border-right: 3px solid #f9e1b1;
     padding: 15px 30px 15px;
-    /*margin: 15px 30px 15px;*/
 }
 .settings {    
     float: left;
+}
+.topics {
+    table-layout: auto;
+    width: 100%;
+}
+tr.topic-heading {
+    background-color: #67593f;
+    height: 36px;
+    size: 12px;
+}
+.topics tr td li {
+    
+}
+.topics tr td {
+    border: 1px solid #cbcbcb;
+    margin: 2px;
 }
 #bottom_button {
     margin-top: 17px;
