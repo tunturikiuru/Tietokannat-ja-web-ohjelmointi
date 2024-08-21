@@ -17,7 +17,7 @@ def index():
         if forum_name[0] == "":
             return render_template("start.html")
         else:
-            subforum_order = dbf.headings_and_subforums2()
+            subforum_order = dbf.index_page()
             return render_template("index.html", forum_name=forum_name, subforum_order=subforum_order)
     if request.method == "POST":
         error_message = forum_setup(request)
@@ -42,7 +42,7 @@ def forum_setup(request):
 def subforum(subforum_id):
     forum_name = dbf.fetch_title()
     subforum = dbf.fetch_subforum_by_id(subforum_id)
-    topics = dbf.topic_page(subforum_id)
+    topics = dbf.subforum_page(subforum_id)
     return render_template("subforum.html", subforum=subforum, topics=topics, forum_name=forum_name)
 
 @app.route("/subforum/<int:id>/new_topic")
@@ -68,7 +68,7 @@ def topic(topic_id):
     forum_name = dbf.fetch_title()
     subforum = dbf.fetch_subforum_by_topic(topic_id)
     topic = dbf.fetch_topic(topic_id)
-    messages = dbf.fetch_messages(topic_id)
+    messages = dbf.topic_page(topic_id)
     return render_template("topic.html", messages=messages, subforum=subforum, topic=topic, forum_name=forum_name)
 
 @app.route("/topic/<int:topic_id>/new_message/")

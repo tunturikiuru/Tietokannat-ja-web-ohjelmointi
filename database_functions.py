@@ -120,8 +120,14 @@ def subforum_list():
     subforums = result.fetchall()
     return subforums
 
+def fetch_topic(topic_id):
+    sql = "SELECT topic_name, topic_id FROM topics WHERE topic_id=:topic_id ORDER BY pinned, updated"
+    result = db.session.execute(text(sql), {"topic_id":topic_id})
+    topic = result.fetchone()
+    return topic
+
 def headings_and_subforums2():
-    sql = "SELECT h.order_index, s.order_index, h.heading_name h_name, s.subforum_name s_name, s.subforum_id s_id, COUNT(t.topic_id) topic_count, COUNT(m.message_id) message_count\
+    sql = "SELECT h.order_index, s.order_index, h.heading_name h_name, s.subforum_name s_name, s.subforum_id s_id, COUNT(DISTINCT t.topic_id) topic_count, COUNT(m.message_id) message_count \
         FROM headings h LEFT JOIN subforums s ON h.heading_id=s.heading_id LEFT JOIN topics t ON s.subforum_id=t.subforum_id LEFT JOIN messages m ON t.topic_id=m.topic_id \
         WHERE h.order_index > 2 GROUP BY h_name, h.order_index, s_name, s.order_index, s_id ORDER BY h.order_index, s.order_index"
     result = db.session.execute(text(sql))
@@ -131,16 +137,26 @@ def headings_and_subforums2():
         if item.h_name not in forum_structure:
             forum_structure[item.h_name] = []
         if item.s_id:
-            forum_structure[item.h_name].append([item.s_id, item.s_name, item.topic_count, item.message_count])
+            forum_structure[item.h_name].append(item[3:])
     return forum_structure
 
-def fetch_topic(topic_id):
-    sql = "SELECT topic_name, topic_id FROM topics WHERE topic_id=:topic_id ORDER BY pinned, updated"
-    result = db.session.execute(text(sql), {"topic_id":topic_id})
-    topic = result.fetchone()
-    return topic
+def index_page():
+    sql = "SELECT a.h_ind, a.s_ind, a.h_name h_name, a.s_id s_id, a.s_name, a.topic_count, a.message_count, c.topic_name, b.sender, b.time \
+        FROM (SELECT h.order_index h_ind, s.order_index s_ind, h.heading_name h_name, s.subforum_name s_name, s.subforum_id s_id, COUNT(DISTINCT t.topic_id) topic_count, COUNT(m.message_id) message_count, MAX(a.message_id) message_id \
+        FROM headings h LEFT JOIN subforums s ON h.heading_id=s.heading_id LEFT JOIN topics t ON s.subforum_id=t.subforum_id LEFT JOIN messages m ON t.topic_id=m.topic_id LEFT JOIN messages a ON m.message_id=a.message_id \
+        WHERE h.order_index > 2 GROUP BY h_name, h.order_index, s_name, s.order_index, s_id ORDER BY h.order_index, s.order_index) a \
+        LEFT JOIN messages b ON a.message_id=b.message_id LEFT JOIN topics c ON b.topic_id=c.topic_id"
+    result = db.session.execute(text(sql))
+    query_result = result.fetchall()
+    forum_structure = {}
+    for item in query_result:
+        if item.h_name not in forum_structure:
+            forum_structure[item.h_name] = []
+        if item.s_id:
+            forum_structure[item.h_name].append(item[3:])
+    return forum_structure
 
-def topic_page(id):
+def subforum_page(id):
     sql = "SELECT a.t_name t_name, a.t_id t_id, a.pinned pinned, a.m_count-1 m_count, b.time min_time, b.sender min_sender, c.time max_time, c.sender max_sender \
         FROM (SELECT t.topic_name t_name, t.topic_id t_id, t.pinned pinned, COUNT(m.message_id) m_count, MIN(m.message_id) min_message, MAX(m.message_id) max_message\
         FROM topics t LEFT JOIN messages m ON t.topic_id=m.topic_id WHERE subforum_id=:id \
@@ -150,7 +166,7 @@ def topic_page(id):
     topics = result.fetchall()
     return topics
 
-def fetch_messages(topic_id):
+def topic_page(topic_id):
     sql = "SELECT message, sender, time FROM messages WHERE topic_id=:topic_id ORDER BY time"
     result = db.session.execute(text(sql), {"topic_id":topic_id})
     messages = result.fetchall()
