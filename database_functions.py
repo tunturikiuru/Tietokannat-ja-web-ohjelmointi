@@ -154,6 +154,7 @@ def index_page():
             forum_structure[item.h_name] = []
         if item.s_id:
             forum_structure[item.h_name].append(item[3:])
+    print(forum_structure)
     return forum_structure
 
 def subforum_page(id):

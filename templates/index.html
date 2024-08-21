@@ -4,10 +4,35 @@
 <div>
     {% for heading, subforums in subforum_order.items() %}
     <div>
-        <h4>{{ heading }} </h4>
-        {% for subforum in subforums %}
-            <a href="/subforum/{{subforum[0]}}">{{subforum[1]}}</a> Aiheet {{subforum[2]}} Viestit {{subforum[3]}} {{subforum[4]}} {{subforum[5]}} {{subforum[6]}}<br>
-        {% endfor %}
+        <table>
+            <tr class="topic-heading">
+                <th style="width:65%;">{{ heading }}</th>
+                <th style="width:13%">TILASTOT</th>
+                <th style="width:22%">UUSIN VIESTI</th>
+            </tr>
+            {% if subforums %}
+            {% for subforum in subforums %}
+            <tr>
+                <td><a href="/subforum/{{subforum[0]}}">{{subforum[1]}}</a></td>
+                <td>
+                    <ul>
+                        <li>Aiheet: {{subforum[2]}}</li>
+                        <li>Viestit: {{subforum[3]}}</li>
+                    </ul>
+                </td>
+                <td>
+                    {% if subforum[4] %}
+                    <ul>
+                        <li>{{subforum[4]}}</li>
+                        <li> {{subforum[6].strftime("%d.%m.%Y %H:%M")}} {{subforum[5]}}</li>
+                    </ul>
+                    {% else %}
+                    Ei viestejä
+                    {% endif %}
+                </td>
+            {% endfor %}
+            {% endif %}
+        </table>
     </div>
     {% endfor %}
 </div>

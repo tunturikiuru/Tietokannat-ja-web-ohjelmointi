@@ -89,9 +89,10 @@ h3 {
 .settings {    
     float: left;
 }
-.topics {
+table {
     table-layout: auto;
     width: 100%;
+    overflow: hidden;
 }
 tr.topic-heading {
     background-color: #67593f;

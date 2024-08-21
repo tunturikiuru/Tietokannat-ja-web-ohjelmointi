@@ -5,14 +5,13 @@
 Keskustelufoorumi, joka on kurssin "Tietokannat ja web-ohjelmointi" -materiaalin perusteella itsenäisesti (ilman ohjausta) tehty harjoitustyö.
 
 # Backlog
-etusivun asettelu ja CSS
 poistot - käyttäjä voi poistaa ja muokata omia viestejään, moderaattorit poistaa ja muookata omalla alueellaan
 haku - haku topiciin, koko foorumiin ja laajennettu haku
 tarkista input
 
 moderaattorit - oma taulu?
-topic-sivun CSS
-katkaise pitkät sanat/otsikot
+taulukoiden CSS - etusivu ja subfoorumit
+katkaise pitkät sanat/otsikot - taulukot ja viestit
 tarkista, ettei kirjautumis- ja rekisteräitumismahdollisuutta ennen foorumin luontia
 tietokantafuntioiden parantelu - kaikki polkuun tarvittavat yhdellä haulla
 ettei foormin nimäa tarvitse hakea aina tietokannasta - yhdistetäänkö polkufunktioon vai laitetaaanko sanakirjaan tms?
