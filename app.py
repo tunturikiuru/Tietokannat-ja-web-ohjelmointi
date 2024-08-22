@@ -118,6 +118,16 @@ def logout():
     return redirect("/")
 
 
+#SEARCH
+@app.route("/topic/<int:topic_id>/result")
+def search_from_topic(topic_id):
+    forum_name = dbf.fetch_title()
+    subforum = dbf.fetch_subforum_by_topic(topic_id)
+    topic = dbf.fetch_topic(topic_id)
+    messages = dbf.search_from_topic(request, topic_id)
+    return render_template("result.html", messages=messages, forum_name=forum_name, subforum=subforum, topic=topic)
+
+
 # SETTINGS
 @app.route("/settings")
 def settings():

@@ -1,13 +1,20 @@
 {% extends "layout.html" %}
+
+{% block search %}
+<form action="/topic/{{ topic[1] }}/result" method="GET">
+    <input type="text" name="query" placeholder="etsi viestiketjusta">
+    <input type="submit" value="Etsi">
+</form>
+<a href="/search"><button class="advanced_search">Haku</button></a>
+{% endblock %}
+
 {% block path %}
  / <a href="/subforum/{{ subforum[1] }}">{{ subforum[0] }}</a> / <a href="/topic/{{ topic[1] }}"> {{ topic[0] }} </a><br>
 {% endblock %}
 
 {% block content %}
-<h3>{{ topic[0] }}</h3>
-{% if session.get('username')%}
-<a href="/topic/{{ topic[1] }}/new_message/"> <button>Uusi viesti</button></a> 
-{% endif %}
+<h3>{{topic[0]}}</h3>
+
 <div class="messages">
     {% for message in messages %}
     <section class="message">

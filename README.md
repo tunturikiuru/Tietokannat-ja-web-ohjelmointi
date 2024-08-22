@@ -6,10 +6,17 @@ Keskustelufoorumi, joka on kurssin "Tietokannat ja web-ohjelmointi" -materiaalin
 
 # Backlog
 poistot - käyttäjä voi poistaa ja muokata omia viestejään, moderaattorit poistaa ja muookata omalla alueellaan
-haku - haku topiciin, koko foorumiin ja laajennettu haku
+haku - haku foorumiin ja laajennettu haku
 tarkista input
+ulkonäön viimeistely
 
 moderaattorit - oma taulu?
+tarkenettu haku
+haku: *:lla ja ilman
+haku: kirjainkoolla ei väliä
+haku: maalaa  hakusana tuloksista
+haku: hyppää viestiin -linkki
+haku: palaa keskusteluun -linkki
 taulukoiden CSS - etusivu ja subfoorumit
 katkaise pitkät sanat/otsikot - taulukot ja viestit
 tarkista, ettei kirjautumis- ja rekisteräitumismahdollisuutta ennen foorumin luontia
@@ -18,8 +25,11 @@ ettei foormin nimäa tarvitse hakea aina tietokannasta - yhdistetäänkö polkuf
 alkuasetusten parantelu ja poistot
 viestien lainaus (tai muuta "lainaa"-napit "vastaa" tms)
 viestien ja aiheiden jako useille sivuille
+
+SELVITÄ:
+haku: hae näistä tuloksista
 käyttäjien sivut - mitä näissä yleensä on? (yksityisviestit?, vietsit joihin vastattu? edellisen kirjautumisen jälkeen tulleet viestit?)
-käyttäjien hallinta
+käyttäjien hallinta - mitä tarvitaan ja kenelle (admin vai moderaattorit?)
 
 
 # Käytön aloittaminen

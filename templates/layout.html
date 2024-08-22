@@ -11,8 +11,6 @@
             <span class="Settings">
                 {% if session.get("role") == "admin" %}
                 <a href="/settings">Foorumin asetukset</a>
-                {% else %}
-                   
                 {% endif %}
             </span>
             <span class="login">
@@ -27,8 +25,13 @@
             <h1>{{ forum_name[0][0] }}</h1>
             <h2>{{ forum_name[1][0] }}</h2>
         </div>
-        <div class="path">
-            <a href="/">Etusivu</a> {% block path %}{% endblock%}
+        <div>
+            <div class="search">
+                {% block search %} {% endblock %}
+            </div>
+            <div class="path">
+                <a href="/">Etusivu</a> {% block path %}{% endblock%}
+            </div>
         </div>
         <div class="content">
         {% block content %} {% endblock %}

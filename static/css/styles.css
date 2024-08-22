@@ -19,6 +19,9 @@ h2 {
 h3 {
     font-size: 1.5em;
 }
+.advanced_search {
+    
+}
 .banner {
     background-color: #ecd29c; 
     padding: 50px 50px 75px;
@@ -85,6 +88,18 @@ h3 {
     border-left: 3px solid #f9e1b1;
     border-right: 3px solid #f9e1b1;
     padding: 15px 30px 15px;
+}
+.search {
+    display: flex;
+    float: right;
+    padding: 15px 30px 15px;
+}
+.search button {
+    margin-top: 0px;
+    margin-left: 5px;
+}
+.search-header {
+    font-weight: bold;
 }
 .settings {    
     float: left;

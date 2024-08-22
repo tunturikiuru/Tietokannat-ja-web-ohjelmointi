@@ -154,7 +154,6 @@ def index_page():
             forum_structure[item.h_name] = []
         if item.s_id:
             forum_structure[item.h_name].append(item[3:])
-    print(forum_structure)
     return forum_structure
 
 def subforum_page(id):
@@ -201,4 +200,14 @@ def update_subforum_name(subforum_name, subforum_id):
     sql = "UPDATE subforums SET subforum_name =:subforum_name WHERE subforum_id =:subforum_id"
     db.session.execute(text(sql), {"name":subforum_name, "subforum_id":subforum_id})
     db.session.commit()
+
+
+# SEARCH 
+def search_from_topic(request, topic_id):
+    query = request.args["query"]
+    sql = "SELECT m.sender sender, m.message message, m.time time, t.topic_name topic \
+        FROM messages m LEFT JOIN topics t ON m.topic_id=t.topic_id WHERE m.topic_id=:topic_id AND m.message LIKE :query"
+    result = db.session.execute(text(sql), {"topic_id":topic_id, "query":"%"+query+"%"})
+    messages = result.fetchall()
+    return messages
 
