@@ -122,10 +122,16 @@ def logout():
 @app.route("/topic/<int:topic_id>/result")
 def search_from_topic(topic_id):
     forum_name = dbf.fetch_title()
-    subforum = dbf.fetch_subforum_by_topic(topic_id)
-    topic = dbf.fetch_topic(topic_id)
+    #subforum = dbf.fetch_subforum_by_topic(topic_id)
+    #topic = dbf.fetch_topic(topic_id)
     messages = dbf.search_from_topic(request, topic_id)
-    return render_template("result.html", messages=messages, forum_name=forum_name, subforum=subforum, topic=topic)
+    return render_template("result.html", messages=messages, forum_name=forum_name)
+
+@app.route("/subforum/<int:subforum_id>/result")
+def search_from_subforum(subforum_id):
+    forum_name = dbf.fetch_title()
+    messages = dbf.search_from_subforum(request, subforum_id)
+    return render_template("result.html", messages=messages, forum_name=forum_name)
 
 
 # SETTINGS
