@@ -13,14 +13,12 @@
 {% if topics %}
 <table class="topics">
     <tr class="topic-heading">
-        <th> </th>
-        <th>KESKUSTELUT</th>
-        <th>VASTAUKSET</th>
-        <th>UUSIN VIESTI</th>
+        <th style="width:65%;"> KESKUSTELUT</th>
+        <th style="width:13%;"> VASTAUKSET</th>
+        <th style="width:22%;"> UUSIN VIESTI</th>
     </tr>
     {% for topic in topics %}
     <tr>
-        <td></td>
         <td>
             <ul>
                 <li><a href="/topic/{{ topic[1] }}">{{ topic[0]}}</a></li>
