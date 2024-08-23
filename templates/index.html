@@ -1,5 +1,13 @@
 {% extends "layout.html" %}
 
+{% block search %}
+<form action="/result" method="GET">
+    <input type="text" name="query" placeholder="etsi viesteistä">
+    <input type="submit" value="Etsi">
+</form>
+<a href="/search"><button class="advanced_search">Haku</button></a>
+{% endblock %}
+
 {% block content %}
 <div>
     {% for heading, subforums in subforum_order.items() %}

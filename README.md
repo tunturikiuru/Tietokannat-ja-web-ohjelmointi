@@ -4,14 +4,19 @@
 
 Keskustelufoorumi, joka on kurssin "Tietokannat ja web-ohjelmointi" -materiaalin perusteella itsenäisesti (ilman ohjausta) tehty harjoitustyö.
 
+
+# Käytön aloittaminen
+
+Ensimmäisellä sivulla foorumi luodaan antamalla sille nimi ja käyttäjätiedot. Käyttäjästä tulee admin-käyttäjä. Tämän jälkeen käyttäjä ohjataan foorumin asetuksiin.
+
+
 # Backlog
 poistot - käyttäjä voi poistaa ja muokata omia viestejään, moderaattorit poistaa ja muookata omalla alueellaan
-haku - haku foorumiin ja laajennettu haku
+tarkennettu haku
 tarkista input
 ulkonäön viimeistely
 
 moderaattorit - oma taulu?
-tarkenettu haku
 haku: *:lla ja ilman
 haku: kirjainkoolla ei väliä
 haku: maalaa  hakusana tuloksista
@@ -29,12 +34,9 @@ viestien ja aiheiden jako useille sivuille
 SELVITÄ:
 haku: hae näistä tuloksista
 käyttäjien sivut - mitä näissä yleensä on? (yksityisviestit?, vietsit joihin vastattu? edellisen kirjautumisen jälkeen tulleet viestit?)
-käyttäjien hallinta - mitä tarvitaan ja kenelle (admin vai moderaattorit?)
+käyttäjien hallinta - mitä tarvitaan ja kenelle kuuluu (admin vai moderaattorit?)
 
 
-# Käytön aloittaminen
-
-Ensimmäisellä sivulla foorumi luodaan antamalla sille nimi ja käyttäjätiedot. Käyttäjästä tulee admin-käyttäjä. Tämän jälkeen käyttäjä ohjataan foorumin asetuksiin.
 
 
 

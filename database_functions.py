@@ -220,3 +220,11 @@ def search_from_subforum(request, subforum_id):
     messages = result.fetchall()
     return messages
 
+def search_from_forum(request):
+    query = request.args["query"]
+    sql = "SELECT m.sender sender, m.message message, m.time time, t.topic_name topic \
+        FROM messages m LEFT JOIN topics t ON m.topic_id=t.topic_id \
+        WHERE m.message LIKE :query OR t.topic_name LIKE :query"
+    result = db.session.execute(text(sql), {"query":"%"+query+"%"})
+    messages = result.fetchall()
+    return messages
