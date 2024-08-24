@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
 
 {% block search %}
-<form action="/result" method="GET">
-    <input type="text" name="query" placeholder="etsi viesteistä">
+<form action="/search/result" method="GET">
+    <input type="text" name="word" placeholder="etsi viesteistä">
     <input type="submit" value="Etsi">
 </form>
 <a href="/search"><button class="advanced_search">Haku</button></a>

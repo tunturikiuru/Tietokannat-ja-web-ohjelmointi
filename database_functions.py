@@ -203,29 +203,12 @@ def update_subforum_name(subforum_name, subforum_id):
 
 
 # SEARCH 
+
 def search_from_topic(request, topic_id):
     query = request.args["query"]
     sql = "SELECT m.sender sender, m.message message, m.time time, t.topic_name topic \
-        FROM messages m LEFT JOIN topics t ON m.topic_id=t.topic_id WHERE m.topic_id=:topic_id AND m.message LIKE :query"
+        FROM messages m LEFT JOIN topics t ON m.topic_id=t.topic_id WHERE m.topic_id=:topic_id AND m.message ILIKE :query"
     result = db.session.execute(text(sql), {"topic_id":topic_id, "query":"%"+query+"%"})
-    messages = result.fetchall()
-    return messages
-
-def search_from_subforum(request, subforum_id):
-    query = request.args["query"]
-    sql = "SELECT m.sender sender, m.message message, m.time time, t.topic_name topic \
-        FROM messages m LEFT JOIN topics t ON m.topic_id=t.topic_id LEFT JOIN subforums s ON t.subforum_id=s.subforum_id \
-        WHERE s.subforum_id=:subforum_id AND m.message LIKE :query OR t.topic_name LIKE :query"
-    result = db.session.execute(text(sql), {"subforum_id":subforum_id, "query":"%"+query+"%"})
-    messages = result.fetchall()
-    return messages
-
-def search_from_forum(request):
-    query = request.args["query"]
-    sql = "SELECT m.sender sender, m.message message, m.time time, t.topic_name topic \
-        FROM messages m LEFT JOIN topics t ON m.topic_id=t.topic_id \
-        WHERE m.message LIKE :query OR t.topic_name LIKE :query"
-    result = db.session.execute(text(sql), {"query":"%"+query+"%"})
     messages = result.fetchall()
     return messages
 

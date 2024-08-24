@@ -138,24 +138,16 @@ def search_from_topic(topic_id):
     messages = dbf.search_from_topic(request, topic_id)
     return render_template("result.html", messages=messages, forum_name=forum_name)
 
-#TÄMÄ YHDISTETÄÄN VARSINAISSEN HAKUUN
 @app.route("/subforum/<int:subforum_id>/result")
 def search_from_subforum(subforum_id):
     forum_name = dbf.fetch_title()
-    messages = dbf.search_from_subforum(request, subforum_id)
-    return render_template("result.html", messages=messages, forum_name=forum_name)
-
-#TÄMÄ YHDISTETÄÄN VARSINAISSEN HAKUUN
-@app.route("/result")
-def search_from_forum():
-    forum_name = dbf.fetch_title()
-    messages = dbf.search_from_forum(request)
+    messages = search_handler(request)
     return render_template("result.html", messages=messages, forum_name=forum_name)
 
 def search_handler(request):
     word = request.args.get("word", "")
     sender = request.args.get("sender", "")
-    subforums = request.args.getlist("subforum", "")
+    subforums = request.args.getlist("subforum")
     subforums = [int(x) for x in subforums]
     time = request.args.get("time", "")
     return dbf.search(word, sender, subforums, time)
