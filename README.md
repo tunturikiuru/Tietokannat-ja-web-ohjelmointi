@@ -7,14 +7,13 @@ Keskustelufoorumi, joka on kurssin "Tietokannat ja web-ohjelmointi" -materiaalin
 
 # Käytön aloittaminen
 
-Ensimmäisellä sivulla foorumi luodaan antamalla sille nimi ja käyttäjätiedot. Käyttäjästä tulee admin-käyttäjä. Tämän jälkeen käyttäjä ohjataan foorumin asetuksiin.
+Ensimmäisellä sivulla foorumi luodaan antamalla sille nimi ja ensimmäisen käyttäjän käyttäjätiedot. Käyttäjästä tulee admin-käyttäjä. Tämän jälkeen käyttäjä ohjataan foorumin asetuksiin.
 
 
 # Backlog
 poistot - käyttäjä voi poistaa ja muokata omia viestejään, moderaattorit poistaa ja muookata omalla alueellaan
-tarkennettu haku
 tarkista input
-ulkonäön viimeistely
+ulkonäön viimeistely -kaikki sivut
 
 moderaattorit - oma taulu?
 haku: *:lla ja ilman

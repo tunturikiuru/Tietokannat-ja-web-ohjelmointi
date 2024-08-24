@@ -10,6 +10,7 @@ import database_functions as dbf
 import users
 
 
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "GET":
@@ -119,23 +120,45 @@ def logout():
 
 
 #SEARCH
+@app.route("/search")
+def search():
+    forum_name = dbf.fetch_title()
+    subforums = dbf.subforum_list()
+    return render_template("search.html", forum_name=forum_name, subforums=subforums)
+
+@app.route("/search/result")
+def search_result():
+    forum_name = dbf.fetch_title()
+    messages = search_handler(request)
+    return render_template("result.html", messages=messages, forum_name=forum_name)
+
 @app.route("/topic/<int:topic_id>/result")
 def search_from_topic(topic_id):
     forum_name = dbf.fetch_title()
     messages = dbf.search_from_topic(request, topic_id)
     return render_template("result.html", messages=messages, forum_name=forum_name)
 
+#TÄMÄ YHDISTETÄÄN VARSINAISSEN HAKUUN
 @app.route("/subforum/<int:subforum_id>/result")
 def search_from_subforum(subforum_id):
     forum_name = dbf.fetch_title()
     messages = dbf.search_from_subforum(request, subforum_id)
     return render_template("result.html", messages=messages, forum_name=forum_name)
 
+#TÄMÄ YHDISTETÄÄN VARSINAISSEN HAKUUN
 @app.route("/result")
 def search_from_forum():
     forum_name = dbf.fetch_title()
     messages = dbf.search_from_forum(request)
     return render_template("result.html", messages=messages, forum_name=forum_name)
+
+def search_handler(request):
+    word = request.args.get("word", "")
+    sender = request.args.get("sender", "")
+    subforums = request.args.getlist("subforum", "")
+    subforums = [int(x) for x in subforums]
+    time = request.args.get("time", "")
+    return dbf.search(word, sender, subforums, time)
 
 
 # SETTINGS
