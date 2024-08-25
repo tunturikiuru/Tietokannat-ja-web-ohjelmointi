@@ -16,9 +16,7 @@ tarkista input
 ulkonäön viimeistely -kaikki sivut
 
 moderaattorit - oma taulu?
-haku: *:lla ja ilman
-haku: kirjainkoolla ei väliä
-haku: maalaa  hakusana tuloksista
+
 haku: hyppää viestiin -linkki
 haku: palaa keskusteluun -linkki
 taulukoiden CSS - etusivu ja subfoorumit
@@ -32,8 +30,10 @@ viestien ja aiheiden jako useille sivuille
 
 SELVITÄ:
 haku: hae näistä tuloksista
+haku: maalaa hakusana tuloksista - työläs, yksityiskohtia selvitettävä
 käyttäjien sivut - mitä näissä yleensä on? (yksityisviestit?, vietsit joihin vastattu? edellisen kirjautumisen jälkeen tulleet viestit?)
-käyttäjien hallinta - mitä tarvitaan ja kenelle kuuluu (admin vai moderaattorit?)
+käyttäjien hallinta - mitä tarvitaan ja kenelle kuuluu (voiko jotain tehtäviä antaa moderaattoreille?)
+
 
 
 

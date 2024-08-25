@@ -10,7 +10,6 @@ import database_functions as dbf
 import users
 
 
-
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "GET":
@@ -146,11 +145,22 @@ def search_from_subforum(subforum_id):
 
 def search_handler(request):
     word = request.args.get("word", "")
+    word = check_asterisk(word)
     sender = request.args.get("sender", "")
+    sender = check_asterisk(sender)
     subforums = request.args.getlist("subforum")
     subforums = [int(x) for x in subforums]
     time = request.args.get("time", "")
-    return dbf.search(word, sender, subforums, time)
+    messages = dbf.search(word, sender, subforums, time)
+    return messages
+
+def check_asterisk(keyword):
+    if keyword:
+        if keyword[-1] == "*":
+            keyword = keyword[0:-1]
+        else:
+            keyword = "^|[^a-öA-Ö0-9]" + keyword + "[^a-öA-Ö0-9]|$"
+    return keyword
 
 
 # SETTINGS
