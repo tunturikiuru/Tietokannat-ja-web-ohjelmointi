@@ -134,7 +134,9 @@ def search_result():
 @app.route("/topic/<int:topic_id>/result")
 def search_from_topic(topic_id):
     forum_name = dbf.fetch_title()
-    messages = dbf.search_from_topic(request, topic_id)
+    word = request.args["query"]
+    word = check_asterisk(word)
+    messages = dbf.search_from_topic(word, topic_id)
     return render_template("result.html", messages=messages, forum_name=forum_name)
 
 @app.route("/subforum/<int:subforum_id>/result")
@@ -159,7 +161,7 @@ def check_asterisk(keyword):
         if keyword[-1] == "*":
             keyword = keyword[0:-1]
         else:
-            keyword = "^|[^a-öA-Ö0-9]" + keyword + "[^a-öA-Ö0-9]|$"
+            keyword =(r"([\.\,!\?\"\'\(\)=\-:;\+/\s]|^)" + keyword + r"([\.\,!\?\"\'\(\)=\-:;\+/\s]|$)")
     return keyword
 
 

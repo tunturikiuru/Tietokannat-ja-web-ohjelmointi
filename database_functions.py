@@ -204,11 +204,10 @@ def update_subforum_name(subforum_name, subforum_id):
 
 # SEARCH 
 
-def search_from_topic(request, topic_id):
-    query = request.args["query"]
+def search_from_topic(word, topic_id):
     sql = "SELECT m.sender sender, m.message message, m.time time, t.topic_name topic \
-        FROM messages m LEFT JOIN topics t ON m.topic_id=t.topic_id WHERE m.topic_id=:topic_id AND m.message ILIKE :query"
-    result = db.session.execute(text(sql), {"topic_id":topic_id, "query":"%"+query+"%"})
+        FROM messages m LEFT JOIN topics t ON m.topic_id=t.topic_id WHERE m.topic_id=:topic_id AND m.message ~* :query"
+    result = db.session.execute(text(sql), {"topic_id":topic_id, "query":word})
     messages = result.fetchall()
     return messages
 
@@ -220,6 +219,6 @@ def search(word, sender, subforums, time):
         WHERE (m.message ~* :word OR t.topic_name ~* :word)\
         AND m.sender ~* :sender" + sql1 + sql2 + " ORDER BY m.message_id DESC"
     result = db.session.execute(text(sql), {"word":word, "sender":sender, "subforums":subforums, "time":time})
-    #result = db.session.execute(text(sql), {"word":"%"+word+"%", "sender":sender+"%", "subforums":subforums, "time":time})
     messages = result.fetchall()
     return messages
+
