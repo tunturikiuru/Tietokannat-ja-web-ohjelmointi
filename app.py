@@ -153,7 +153,8 @@ def search_handler(request):
     subforums = request.args.getlist("subforum")
     subforums = [int(x) for x in subforums]
     time = request.args.get("time", "")
-    messages = dbf.search(word, sender, subforums, time)
+    order = request.args.get("order", "DESC")
+    messages = dbf.search(word, sender, subforums, time, order)
     return messages
 
 def check_asterisk(keyword):

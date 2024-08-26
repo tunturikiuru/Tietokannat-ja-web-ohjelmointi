@@ -14,14 +14,21 @@
     <br>
     Alueelta: 
     {% for subforum in subforums %}
-    <input type="checkbox" name="subforum" value="{{subforum[1]}}">{{subforum[0]}}
+    <input type="checkbox" name="subforum" value="{{ subforum[1] }}">{{subforum[0]}}
     {% endfor %}
+    <br>
     Milloin: <input type="radio" name="time" value="" checked> Milloin tahansa
     <input type="radio" name="time" value="1"> Viimeisin vuorokausi
     <input type="radio" name="time" value="7"> Viimeisin viikko
     <input type="radio" name="time" value="30"> Viimeisin kuukausi
     <input type="radio" name="time" value="183"> Viimeisin puolivuotta
     <input type="radio" name="time" value="365"> Viimeisin vuosi
+    <br>
+    Järjestys: <input type="radio" name="order" value="DESC" checked> Uusin ensin
+    <input type="radio" name="order" value="ASC"> Vanhin ensin
+    <br>
     <input type="submit" value="Etsi">
+
+
 </form>
 {% endblock %}
