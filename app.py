@@ -119,6 +119,7 @@ def logout():
 
 
 #SEARCH
+
 @app.route("/search")
 def search():
     forum_name = dbf.fetch_title()

@@ -17,9 +17,9 @@
 
 <div class="messages">
     {% for message in messages %}
-    <section class="message">
+    <section class="message" id="{{message.topic_id}}-{{message.message_id}}">
         <div class="message-left">
-            {{ message[1]}}
+            {{ message.sender }}
         </div>
         <div class="message-right">
             <div class="message-header">
@@ -27,11 +27,11 @@
                 <a href="/topic/{{ topic[1] }}/new_message/"><button>Lainaa</button></a>
                 {% endif %}
                 <div class="message-time">
-                    {{message[2].strftime("%d.%m.%Y, %H:%M")}}
+                    {{message.time.strftime("%d.%m.%Y, %H:%M")}}
                 </div>
             </div>
             <hr>
-            <p>{{ message[0] }} </p>
+            <p>{{ message.message }} </p>
         </div>
     </section>
     {% endfor %}

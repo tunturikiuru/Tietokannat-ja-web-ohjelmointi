@@ -167,7 +167,7 @@ def subforum_page(id):
     return topics
 
 def topic_page(topic_id):
-    sql = "SELECT message, sender, time FROM messages WHERE topic_id=:topic_id ORDER BY time"
+    sql = "SELECT topic_id, message_id, message, sender, time FROM messages WHERE topic_id=:topic_id ORDER BY time"
     result = db.session.execute(text(sql), {"topic_id":topic_id})
     messages = result.fetchall()
     return messages
@@ -205,7 +205,7 @@ def update_subforum_name(subforum_name, subforum_id):
 # SEARCH 
 
 def search_from_topic(word, topic_id):
-    sql = "SELECT m.sender sender, m.message message, m.time time, t.topic_name topic \
+    sql = "SELECT m.topic_id topic_id, m.message_id message_id, m.sender sender, m.message message, m.time time, t.topic_name topic \
         FROM messages m LEFT JOIN topics t ON m.topic_id=t.topic_id WHERE m.topic_id=:topic_id AND m.message ~* :query \
         ORDER BY m.message_id DESC"
     result = db.session.execute(text(sql), {"topic_id":topic_id, "query":word})
@@ -216,7 +216,7 @@ def search(word, sender, subforums, time, order):
     sql1 = " AND s.subforum_id = ANY(:subforums)" if subforums else ""
     sql2 = " AND m.time >= NOW() - interval :time DAY" if time else ""
     sql3 = order
-    sql =  "SELECT m.sender sender, m.time time, m.message message, t.topic_name topic \
+    sql =  "SELECT m.topic_id topic_id, m.message_id message_id, m.sender sender, m.time time, m.message message, t.topic_name topic \
         FROM messages m LEFT JOIN topics t ON m.topic_id=t.topic_id LEFT JOIN subforums s ON t.subforum_id=s.subforum_id \
         WHERE (m.message ~* :word OR t.topic_name ~* :word)\
         AND m.sender ~* :sender" + sql1 + sql2 + " ORDER BY m.message_id " + sql3
