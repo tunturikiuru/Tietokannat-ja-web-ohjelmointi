@@ -7,8 +7,8 @@
 </div>
 <h3>Kirjaudu sisään:<h3></h3>
 <form action="/login" method="POST">
-    Tunnus: <input type="text" name="username"><br>
-    Salasana: <input type="password" name="password"> <br>
+    Tunnus: <input type="text" name="username" required="required" minlength="1"><br>
+    Salasana: <input type="password" name="password" required="required" minlength="1"> <br>
     <input type="submit" value="Kirjaudu">
 </form>
 </p>

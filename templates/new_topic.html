@@ -6,21 +6,24 @@
 {% if session.get('username')%}
 <form action="/subforum/{{ subforum[1] }}/new_topic/send" method="POST">
     Otsikko:<br>
-    <input type="text" name="title"> <br>
+    <input type="text" name="title" required="required" minlength="1" maxlength="100"> <br>
     Viesti: <br>
-    <textarea name="content" rows="20" cols="100">
-    </textarea><br>
+    <textarea name="content" rows="20" cols="100" required="required" minlength="1" maxlength="5000"></textarea>
+    <br>
     <input type="submit" value="Lähetä">
 </form>
+
 {% else %}
+
 <p>
     Kirjaudu sisään luodaksesi uuden keskustelun:
     <form action="/subforum/{{ subforum[1] }}/new_topic/send" method="POST">
-        Tunnus: <input type="text" name="username"><br>
-        Salasana: <input type="password" name="password"> <br>
+        Tunnus: <input type="text" name="username" required="required" minlength="1"><br>
+        Salasana: <input type="password" name="password" required="required" minlength="1"> <br>
         <input type="submit" value="Kirjaudu">
     </form>
 </p>
 {% endif %}
+
 <p><a href="/subforum/{{ subforum[1] }}"> Takaisin subforumiin </a></p>
 {% endblock %}

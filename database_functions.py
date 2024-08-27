@@ -37,7 +37,8 @@ def fetch_password(username):
     sql = "SELECT password FROM users WHERE username=:username"
     result = db.session.execute(text(sql), {"username":username})
     hash_value = result.fetchone()
-    return hash_value[0]
+    hash_value = hash_value[0] if hash_value else ""
+    return hash_value
 
 def is_admin(username):
     sql = "SELECT 1 FROM users WHERE username=:username AND admin='True'"

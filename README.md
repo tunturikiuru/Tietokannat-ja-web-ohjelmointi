@@ -16,7 +16,6 @@ tarkista input
 ulkonäön viimeistely -kaikki sivut
 
 moderaattorit - oma taulu?
-haku: hyppää viestiin -linkki
 haku: palaa keskusteluun -linkki
 taulukoiden CSS - etusivu ja subfoorumit
 katkaise pitkät sanat/otsikot - taulukot ja viestit

@@ -60,8 +60,10 @@ def send_new_topic(subforum_id):
         topic_id = dbf.new_topic(title, message, subforum_id, username)
         return redirect(url_for("topic", topic_id=topic_id))
     else:
-        users.login(request)
-        return redirect(url_for("create_new_topic", id=subforum_id))
+        if users.login(request):
+            return redirect(url_for("create_new_topic", id=subforum_id))
+        forum_name = dbf.fetch_title()
+        return render_template("error.html", forum_name=forum_name, error = "Väärä käyttäjätunnus tai salasana")
 
 @app.route("/topic/<int:topic_id>")
 def topic(topic_id):
@@ -85,9 +87,10 @@ def send_new_message(topic_id):
         dbf.new_message(topic_id, message, username)
         return redirect(url_for("topic", topic_id=topic_id))
     else:
-        users.login(request)
-        return redirect(url_for("create_new_message", topic_id=topic_id))
-    
+        if users.login(request):
+            return redirect(url_for("create_new_message", topic_id=topic_id))
+        forum_name = dbf.fetch_title()
+        return render_template("error.html", forum_name=forum_name, error = "Väärä käyttäjätunnus tai salasana")
 
 #USERS
 @app.route("/register", methods=["GET", "POST"])
