@@ -16,7 +16,7 @@ Viesti:
     Kirjaudu sisään lähettääksesi viestejä:
     <form action="/topic/{{topic[1]}}/new_message/send" method="POST">
         Tunnus: <input type="text" name="username" required="required" minlength="1"><br>
-        Salasana: <input type="password" name="password" required="required" minlength="1"> <br>
+        Salasana: <input type="password" name="password" required="required" minlength="1"><br>
         <input type="hidden" name="topic_id" value="{{ topic[1] }}">
         <input type="submit" value="Kirjaudu">
     </form>

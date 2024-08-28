@@ -10,9 +10,9 @@
 <p>
 <h3>Rekisteröidy:</h3>
 <form action="/register" method="POST">
-    Käyttäjätunnus: <input type="text" name="username" required="required" minlength="1"><br>
-    Salasana: <input type="password" name="password1" required="required" minlength="8"><br>
-    Salasana uudelleen: <input type="password" name="password2" required="required" minlength="1"><br>
+    Käyttäjätunnus: <input type="text" name="username" required="required" minlength="1" maxlength="25"><br>
+    Salasana: <input type="password" name="password1" required="required" minlength="8" maxlength="15"><br>
+    Salasana uudelleen: <input type="password" name="password2" required="required" minlength="8" maxlength="15"><br>
     <input type="submit" value="Rekisteröidy">
 </form>
 </p>

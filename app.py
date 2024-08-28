@@ -8,7 +8,7 @@ app.secret_key = getenv("SECRET_KEY")
 
 import database_functions as dbf
 import users
-
+import help_functions as help
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -20,13 +20,13 @@ def index():
             subforum_order = dbf.index_page()
             return render_template("index.html", forum_name=forum_name, subforum_order=subforum_order)
     if request.method == "POST":
-        error_message = forum_setup(request)
+        error_message = help.forum_start(request)
         if error_message:
             return render_template("start.html", error_message=error_message)
         else:
             return redirect("/settings")
 
-def forum_setup(request):
+def forum_start(request):
     title = request.form["title"]
     subtitle = request.form["subtitle"]
     username = request.form["username"]
@@ -54,15 +54,17 @@ def create_new_topic(id):
 @app.route("/subforum/<int:subforum_id>/new_topic/send", methods=["POST"])
 def send_new_topic(subforum_id):
     username = users.get_username()
+    forum_name = dbf.fetch_title()
     if username:
         title = request.form["title"]
         message = request.form["content"]
-        topic_id = dbf.new_topic(title, message, subforum_id, username)
-        return redirect(url_for("topic", topic_id=topic_id))
+        if help.check_input(title, 1, 100) and help.check_input(message, 1, 5000):
+            topic_id = dbf.new_topic(title, message, subforum_id, username)
+            return redirect(url_for("topic", topic_id = topic_id))
+        return render_template("error.html", forum_name = forum_name, error = "Otsikon tai viestin pituus ei sallituissa rajoissa")
     else:
         if users.login(request):
             return redirect(url_for("create_new_topic", id=subforum_id))
-        forum_name = dbf.fetch_title()
         return render_template("error.html", forum_name=forum_name, error = "Väärä käyttäjätunnus tai salasana")
 
 @app.route("/topic/<int:topic_id>")
@@ -81,16 +83,18 @@ def create_new_message(topic_id):
 
 @app.route("/topic/<int:topic_id>/new_message/send", methods=["POST"])
 def send_new_message(topic_id):
+    forum_name = dbf.fetch_title()
     username = users.get_username()
     if username:
         message = request.form["message"]
-        dbf.new_message(topic_id, message, username)
-        return redirect(url_for("topic", topic_id=topic_id))
+        if help.check_input(message, 1, 5000):
+            dbf.new_message(topic_id, message, username)
+            return redirect(url_for("topic", topic_id=topic_id))
+        return render_template("error.html", forum_name=forum_name, error = "Viestin pituus ei sallituissa rajoissa.")
     else:
         if users.login(request):
             return redirect(url_for("create_new_message", topic_id=topic_id))
-        forum_name = dbf.fetch_title()
-        return render_template("error.html", forum_name=forum_name, error = "Väärä käyttäjätunnus tai salasana")
+        return render_template("error.html", forum_name=forum_name, error = "Väärä käyttäjätunnus tai salasana.")
 
 #USERS
 @app.route("/register", methods=["GET", "POST"])

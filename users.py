@@ -1,6 +1,7 @@
 from werkzeug.security import check_password_hash, generate_password_hash
 import database_functions as dbf
 from flask import session
+import help_functions as help
 
 
 # FIRST ADMIN
@@ -43,8 +44,12 @@ def register_user(request):
 def before_register(username, password1, password2):
     if username == "" or password1 == "" or password2 == "":
         return "Pakollisia tietoja puuttuu"
+    if not help.check_input(username, 1, 25):
+        return "Käyttäjätunnuksen pituus 1-25 merkkiä."
     if dbf.check_username(username):
         return "Valittu käyttäjätunnus on jo käytössä"
+    if not help.check_input(password1, 8, 15):
+        return "Salasanan pituus 8-15 merkkiä."
     if password1 != password2:
         return "Salasanat eivät täsmää"
     return ""
