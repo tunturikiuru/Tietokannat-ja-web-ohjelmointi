@@ -37,6 +37,14 @@
     {% endfor %}
 </div>
 {% if session.get('username')%}
-<a href="/topic/{{ topic[1] }}/new_message/"> <button id="bottom_button">Uusi viesti</button></a>
+<div>
+    Kommentoi:
+    <form action="/topic/{{ topic[1] }}/send" method="POST">
+        <textarea name="message", rows="15", cols="100" required="required" minlength="1" maxlength="5000"></textarea>
+        <input type="hidden" name="topic_id" value="{{ topic[1] }}">
+        <br>
+        <input type="submit" value="Lähetä">
+    </form>
+</div>
 {% endif %}
 {% endblock %}

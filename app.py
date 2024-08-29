@@ -26,18 +26,6 @@ def index():
         else:
             return redirect("/settings")
 
-def forum_start(request):
-    title = request.form["title"]
-    subtitle = request.form["subtitle"]
-    username = request.form["username"]
-    password1 = request.form["password1"]
-    password2 = request.form["password2"]
-    if title == "":
-        error_message = "Foorumin nimi on pakollinen tieto"
-        return error_message
-    error_message = users.forum_setup(username, password1, password2, title, subtitle)
-    return error_message
-
 @app.route("/subforum/<int:subforum_id>")
 def subforum(subforum_id):
     forum_name = dbf.fetch_title()
@@ -75,13 +63,7 @@ def topic(topic_id):
     messages = dbf.topic_page(topic_id)
     return render_template("topic.html", messages=messages, subforum=subforum, topic=topic, forum_name=forum_name)
 
-@app.route("/topic/<int:topic_id>/new_message/")
-def create_new_message(topic_id):
-    forum_name = dbf.fetch_title()
-    topic = dbf.fetch_topic(topic_id)
-    return render_template("new_message.html", topic=topic, forum_name=forum_name)
-
-@app.route("/topic/<int:topic_id>/new_message/send", methods=["POST"])
+@app.route("/topic/<int:topic_id>/send", methods=["POST"])
 def send_new_message(topic_id):
     forum_name = dbf.fetch_title()
     username = users.get_username()
@@ -136,42 +118,22 @@ def search():
 @app.route("/search/result")
 def search_result():
     forum_name = dbf.fetch_title()
-    messages = search_handler(request)
+    messages = help.search_handler(request)
     return render_template("result.html", messages=messages, forum_name=forum_name)
 
 @app.route("/topic/<int:topic_id>/result")
 def search_from_topic(topic_id):
     forum_name = dbf.fetch_title()
     word = request.args["query"]
-    word = check_asterisk(word)
+    word = help.check_asterisk(word)
     messages = dbf.search_from_topic(word, topic_id)
     return render_template("result.html", messages=messages, forum_name=forum_name)
 
 @app.route("/subforum/<int:subforum_id>/result")
 def search_from_subforum(subforum_id):
     forum_name = dbf.fetch_title()
-    messages = search_handler(request)
+    messages = help.search_handler(request)
     return render_template("result.html", messages=messages, forum_name=forum_name)
-
-def search_handler(request):
-    word = request.args.get("word", "")
-    word = check_asterisk(word)
-    sender = request.args.get("sender", "")
-    sender = check_asterisk(sender)
-    subforums = request.args.getlist("subforum")
-    subforums = [int(x) for x in subforums]
-    time = request.args.get("time", "")
-    order = request.args.get("order", "DESC")
-    messages = dbf.search(word, sender, subforums, time, order)
-    return messages
-
-def check_asterisk(keyword):
-    if keyword:
-        if keyword[-1] == "*":
-            keyword = keyword[0:-1]
-        else:
-            keyword =(r"([\.\,!\?\"\'\(\)=\-:;\+/\s]|^)" + keyword + r"([\.\,!\?\"\'\(\)=\-:;\+/\s]|$)")
-    return keyword
 
 
 # SETTINGS
