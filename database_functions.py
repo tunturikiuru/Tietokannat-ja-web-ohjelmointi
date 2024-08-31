@@ -222,13 +222,14 @@ def update_subforum_name(subforum_name, subforum_id):
     db.session.execute(text(sql), {"name":subforum_name, "subforum_id":subforum_id})
     db.session.commit()
 
-def update_topic(topic_name, pinned, locked, visibility, topic_id):
+def update_topic(topic_name, pinned, locked, visibility, topic_id, subforum_id):
     try:
-        sql = "UPDATE topics SET topic_name=:topic_name, pinned=:pinned, locked=:locked, visibility=:visibility WHERE topic_id=:topic_id"
-        db.session.execute(text(sql), {"topic_name":topic_name, "pinned":pinned, "locked":locked, "visibility":visibility, "topic_id":topic_id}) 
+        sql = "UPDATE topics SET topic_name=:topic_name, subforum_id=:subforum_id, pinned=:pinned, locked=:locked, visibility=:visibility WHERE topic_id=:topic_id"
+        db.session.execute(text(sql), {"topic_name":topic_name, "subforum_id":subforum_id, "pinned":pinned, "locked":locked, "visibility":visibility, "topic_id":topic_id}) 
         db.session.commit()
         return ""
     except: 
+        db.session.rollback()
         return "Tapahtui virhe"
 
 

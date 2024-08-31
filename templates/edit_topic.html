@@ -44,10 +44,10 @@
     <input type="text" name="topic_name" value="{{ topic[0] }}" required="required" minlength="1" maxlength="100">
     <br>
     Siirrä alueelle: 
-    <select name="new_subforum">
+    <select name="subforum_id">
         <option value="subforum.{{ subforum[1]}}" selected>Nykyinen: {{ subforum[0] }}
         {% for forum in subforum_list %}
-        <option value="forum.subforum_name"> {{forum.subforum_name}}
+        <option value="{{ forum.subforum_id }}"> {{forum.subforum_name}}
         {% endfor %}
     </select>
     <br>

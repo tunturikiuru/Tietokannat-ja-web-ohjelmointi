@@ -35,6 +35,7 @@ haku: maalaa hakusana tuloksista - työläs, yksityiskohtia selvitettävä
 javascript - lainaa-nappi (tai muuta "vastaa"-napiksi ilman lainausta)
 javascript - input tarkistus
 javascript - lisää näkyvyysvaihtoehtoja (checked oikeassa kohdassa)
+javascript - poistoihin varmistusponnahdusikkuna!!!
 käyttäjien sivut - mitä näissä yleensä on? (yksityisviestit?, vietsit joihin vastattu? edellisen kirjautumisen jälkeen tulleet viestit?)
 käyttäjien hallinta - mitä tarvitaan ja kenelle kuuluu (voiko jotain tehtäviä antaa moderaattoreille?)
 

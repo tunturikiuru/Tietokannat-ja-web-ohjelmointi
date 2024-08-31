@@ -23,7 +23,8 @@ def update_topic(request, topic_id):
     pinned = request.form["pinned"]
     locked = request.form["locked"]
     visibility = request.form["visibility"]
-    error_message = dbf.update_topic(topic_name, pinned, locked, visibility, topic_id)
+    subforum_id = request.form["subforum_id"]
+    error_message = dbf.update_topic(topic_name, pinned, locked, visibility, topic_id, subforum_id)
     return error_message
 
 def delete_topic(request):
