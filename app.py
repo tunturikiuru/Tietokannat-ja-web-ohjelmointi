@@ -78,6 +78,28 @@ def send_new_message(topic_id):
             return redirect(url_for("create_new_message", topic_id=topic_id))
         return render_template("error.html", forum_name=forum_name, error = "Väärä käyttäjätunnus tai salasana.")
 
+@app.route("/topic/<int:topic_id>/edit")
+def edit_topic(topic_id):
+    forum_name = dbf.fetch_title()
+    if users.is_admin():
+        subforum = dbf.fetch_subforum_by_topic(topic_id)
+        subforum_list = dbf.subforum_list()
+        topic = dbf.fetch_topic_data(topic_id)
+        return render_template("edit_topic.html", forum_name=forum_name, subforum=subforum, topic=topic, subforum_list=subforum_list)
+    return render_template("error.html", forum_name=forum_name, error = "Ei oikeutta nähdä sivua.")
+
+@app.route("/topic/<int:topic_id>/edit/send", methods=["POST"])
+def edit_topic_send(topic_id):
+    forum_name = dbf.fetch_title()
+    error = "Ei oikeutta pyyntöön."
+    if users.is_admin():
+        error = help.update_topic(request, topic_id)
+        if not error:
+            return redirect(url_for("topic", topic_id=topic_id))
+    return render_template("error.html", forum_name=forum_name, error = error)
+
+
+
 #USERS
 @app.route("/register", methods=["GET", "POST"])
 def register():

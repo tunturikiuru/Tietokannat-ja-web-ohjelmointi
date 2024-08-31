@@ -1,5 +1,8 @@
+import users
+import database_functions as dbf
 
-# FORUM START
+
+# REQUEST HANDLERS
 
 def forum_start(request):
     title = request.form["title"]
@@ -11,6 +14,16 @@ def forum_start(request):
         error_message = "Foorumin nimi on pakollinen tieto"
         return error_message
     error_message = users.forum_setup(username, password1, password2, title, subtitle)
+    return error_message
+
+def update_topic(request, topic_id):
+    topic_name = request.form["topic_name"]
+    if not check_input(topic_name, 1, 100):
+        return "Otsikon pituus 1-100 merkkiä"
+    pinned = request.form["pinned"]
+    locked = request.form["locked"]
+    visibility = request.form["visibility"]
+    error_message = dbf.update_topic(topic_name, pinned, locked, visibility, topic_id)
     return error_message
 
 

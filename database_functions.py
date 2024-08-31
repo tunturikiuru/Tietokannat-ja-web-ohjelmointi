@@ -122,10 +122,16 @@ def subforum_list():
     return subforums
 
 def fetch_topic(topic_id):
-    sql = "SELECT topic_name, topic_id FROM topics WHERE topic_id=:topic_id ORDER BY pinned, updated"
+    sql = "SELECT topic_name, topic_id FROM topics WHERE topic_id=:topic_id"
     result = db.session.execute(text(sql), {"topic_id":topic_id})
     topic = result.fetchone()
     return topic
+
+def fetch_topic_data(topic_id):
+    sql = "SELECT topic_name, topic_id, pinned, locked, visibility FROM topics WHERE topic_id=:topic_id"
+    result = db.session.execute(text(sql), {"topic_id":topic_id})
+    data = result.fetchone()
+    return data
 
 def headings_and_subforums2():
     sql = "SELECT h.order_index, s.order_index, h.heading_name h_name, s.subforum_name s_name, s.subforum_id s_id, COUNT(DISTINCT t.topic_id) topic_count, COUNT(m.message_id) message_count \
@@ -140,6 +146,9 @@ def headings_and_subforums2():
         if item.s_id:
             forum_structure[item.h_name].append(item[3:])
     return forum_structure
+
+
+#PAGE
 
 def index_page():
     sql = "SELECT a.h_ind, a.s_ind, a.h_name h_name, a.s_id s_id, a.s_name, a.topic_count, a.message_count, c.topic_name, b.sender, b.time \
@@ -162,7 +171,7 @@ def subforum_page(id):
         FROM (SELECT t.topic_name t_name, t.topic_id t_id, t.pinned pinned, COUNT(m.message_id) m_count, MIN(m.message_id) min_message, MAX(m.message_id) max_message\
         FROM topics t LEFT JOIN messages m ON t.topic_id=m.topic_id WHERE subforum_id=:id \
         GROUP BY t_name, t_id ORDER BY pinned, max_message DESC) a \
-        LEFT JOIN messages b ON a.min_message=b.message_id LEFT JOIN messages c ON a.max_message=c.message_id ORDER BY max_time DESC"
+        LEFT JOIN messages b ON a.min_message=b.message_id LEFT JOIN messages c ON a.max_message=c.message_id ORDER BY pinned DESC, max_time DESC"
     result = db.session.execute(text(sql), {"id":id})
     topics = result.fetchall()
     return topics
@@ -193,7 +202,7 @@ def update_order_index(order_index: list, ids: list, category: str):
     db.session.commit() 
 
 def update_heading(heading_name, heading_id):
-    sql = "UPDATE headings SET heading_name = :heading_name WHERE heading_id = :heading_id"
+    sql = "UPDATE headings SET heading_name=:heading_name WHERE heading_id=:heading_id"
     db.session.execute(text(sql), {"heading_name":heading_name, "heading_id":heading_id})
     db.session.commit()
 
@@ -201,6 +210,18 @@ def update_subforum_name(subforum_name, subforum_id):
     sql = "UPDATE subforums SET subforum_name =:subforum_name WHERE subforum_id =:subforum_id"
     db.session.execute(text(sql), {"name":subforum_name, "subforum_id":subforum_id})
     db.session.commit()
+
+def update_topic(topic_name, pinned, locked, visibility, topic_id):
+    try:
+        sql = "UPDATE topics SET topic_name=:topic_name, pinned=:pinned, locked=:locked, visibility=:visibility WHERE topic_id=:topic_id"
+        db.session.execute(text(sql), {"topic_name":topic_name, "pinned":pinned, "locked":locked, "visibility":visibility, "topic_id":topic_id}) 
+        db.session.commit()
+        return ""
+    except: 
+        return "Tapahtui virhe"
+
+    
+    
 
 
 # SEARCH 

@@ -15,7 +15,9 @@ CREATE TABLE topics (
     topic_id SERIAL PRIMARY KEY, 
     subforum_id INTEGER REFERENCES subforums(subforum_id), 
     topic_name TEXT NOT NULL,
-    pinned BOOLEAN DEFAULT FALSE);
+    pinned BOOLEAN DEFAULT FALSE,
+    locked BOOLEAN DEFAULT FALSE,
+    visibility INTEGER DEFAULT 0);
 
 CREATE TABLE users(
     user_id SERIAL PRIMARY KEY,

@@ -22,9 +22,16 @@
 {% if topics %}
 <table class="topics">
     <tr class="topic-heading">
-        <th style="width:65%;"> KESKUSTELUT</th>
-        <th style="width:13%;"> VASTAUKSET</th>
-        <th style="width:22%;"> UUSIN VIESTI</th>
+        {% if session.get('role') == 'admin' %}
+        <th style="width:61%;">KESKUSTELUT</th>
+        <th style="width:12%;">VASTAUKSET</th>
+        <th style="width:17%;">UUSIN VIESTI</th>   
+        <th style="width:10%;">asetukset</th>
+        {% else %}
+        <th style="width:65%;">KESKUSTELUT</th>
+        <th style="width:13%;">VASTAUKSET</th>
+        <th style="width:22%;">UUSIN VIESTI</th>  
+        {% endif %}
     </tr>
     {% for topic in topics %}
     <tr>
@@ -41,6 +48,11 @@
                 <li>{{topic[6].strftime("%d.%m.%Y - %H:%M")}}</li>
             </ul>
         </td>
+        {% if session.get('role') == 'admin' %}
+        <td>
+            <a href="/topic/{{ topic[1] }}/edit">asetukset</a>
+        </td>
+        {% endif %}
     </tr>
     {% endfor %}      
 </table>
