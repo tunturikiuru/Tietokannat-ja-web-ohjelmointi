@@ -72,6 +72,9 @@ def logout():
 def is_admin():
     return session.get("role") == "admin"
 
+def is_user():
+    return True if session.get('username') else False
+
 def get_username():
     return session.get('username')
 

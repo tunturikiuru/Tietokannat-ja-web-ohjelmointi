@@ -12,14 +12,13 @@ Ensimmäisellä sivulla foorumi luodaan antamalla sille nimi ja ensimmäisen kä
 
 
 # Backlog
-poistot - käyttäjä voi muokata omia viestejään, moderaattorit poistaa ja muokata omalla alueellaan
+poistot - viestien muokkaus ja poisto
 ulkonäön viimeistely -kaikki sivut
 
 moderaattorit - oma taulu?
 haku: palaa keskusteluun -linkki
 
 näkyvyys
-lukitseminen
 kirjautumisen jälkeeen paluu samalle sivulle
 taulukoiden CSS - etusivu ja subfoorumit
 katkaise pitkät sanat/otsikot - taulukot ja viestit

@@ -30,6 +30,15 @@ def delete_topic(request):
     topic_id = int(request.form["delete"])
     subforum_id = dbf.delete_topic(topic_id)
     return subforum_id
+
+def new_message(request, topic_id):
+    message = request.form["message"]
+    username = users.get_username()
+    if check_input(message, 1, 5000) and not dbf.topic_locked(topic_id):
+        error = dbf.new_message(topic_id, message, username)
+        return error
+    error = "Viestin pituus ei sallituissa rajoissa."
+    return error
         
 
 #SEARCH

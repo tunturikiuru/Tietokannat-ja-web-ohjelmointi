@@ -82,9 +82,14 @@ def new_topic(topic_id, message, subforum_id, sender):
     return topic_id[0]
 
 def new_message(topic_id, message, sender):
-    sql = "INSERT INTO messages (topic_id, message, sender, time) VALUES (:topic_id, :message, :sender, NOW())"
-    db.session.execute(text(sql), {"topic_id":topic_id, "message":message, "sender":sender})
-    db.session.commit()
+    try:
+        sql = "INSERT INTO messages (topic_id, message, sender, time) VALUES (:topic_id, :message, :sender, NOW())"
+        db.session.execute(text(sql), {"topic_id":topic_id, "message":message, "sender":sender})
+        db.session.commit()
+        return ""
+    except:
+        db.session.rollback()
+        return "Tapahtui virhe."
 
 
 # GET
@@ -147,6 +152,11 @@ def headings_and_subforums2():
             forum_structure[item.h_name].append(item[3:])
     return forum_structure
 
+def topic_locked(topic_id):
+    sql = "SELECT locked FROM topics WHERE topic_id=:topic_id"
+    result = db.session.execute(text(sql), {"topic_id":topic_id})
+    locked = result.scalar()
+    return locked
 
 #PAGE
 
@@ -177,7 +187,8 @@ def subforum_page(id):
     return topics
 
 def topic_page(topic_id):
-    sql = "SELECT topic_id, message_id, message, sender, time FROM messages WHERE topic_id=:topic_id ORDER BY time"
+    sql = "SELECT m.topic_id topic_id, m.message_id message_id, m.message message, m.sender sender, m.time time, t.locked \
+        FROM messages m LEFT JOIN topics t ON  m.topic_id=t.topic_id WHERE m.topic_id=:topic_id ORDER BY time"
     result = db.session.execute(text(sql), {"topic_id":topic_id})
     messages = result.fetchall()
     return messages

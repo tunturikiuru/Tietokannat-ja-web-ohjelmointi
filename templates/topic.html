@@ -37,6 +37,9 @@
     {% endfor %}
 </div>
 {% if session.get('username')%}
+{% if messages[0].locked %}
+<p>Keskustelu on lukittu.</p>
+{% else %}
 <div>
     Kommentoi:
     <br>
@@ -47,5 +50,6 @@
         <input type="submit" value="Lähetä">
     </form>
 </div>
+{% endif %}
 {% endif %}
 {% endblock %}

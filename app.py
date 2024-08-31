@@ -66,17 +66,16 @@ def topic(topic_id):
 @app.route("/topic/<int:topic_id>/send", methods=["POST"])
 def send_new_message(topic_id):
     forum_name = dbf.fetch_title()
-    username = users.get_username()
-    if username:
-        message = request.form["message"]
-        if help.check_input(message, 1, 5000):
-            dbf.new_message(topic_id, message, username)
+    error = ""
+    if users.is_user():
+        error = help.new_message(request, topic_id)
+        if not error:
             return redirect(url_for("topic", topic_id=topic_id))
-        return render_template("error.html", forum_name=forum_name, error = "Viestin pituus ei sallituissa rajoissa.")
     else:
         if users.login(request):
             return redirect(url_for("create_new_message", topic_id=topic_id))
-        return render_template("error.html", forum_name=forum_name, error = "Väärä käyttäjätunnus tai salasana.")
+        error = "Väärä käyttäjätunnus tai salasana."
+    return render_template("error.html", forum_name=forum_name, error = error)
 
 @app.route("/topic/<int:topic_id>/edit")
 def edit_topic(topic_id):
