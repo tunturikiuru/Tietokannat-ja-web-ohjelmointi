@@ -15,6 +15,7 @@ CREATE TABLE topics (
     topic_id SERIAL PRIMARY KEY, 
     subforum_id INTEGER REFERENCES subforums(subforum_id), 
     topic_name TEXT NOT NULL,
+    created TIMESTAMP,
     pinned BOOLEAN DEFAULT FALSE,
     locked BOOLEAN DEFAULT FALSE,
     visibility INTEGER DEFAULT 0);
@@ -27,7 +28,7 @@ CREATE TABLE users(
 
 CREATE TABLE messages (
 	message_id SERIAL PRIMARY KEY,
-	topic_id INTEGER REFERENCES topics(topic_id),
+	topic_id INTEGER REFERENCES topics(topic_id) ON DELETE CASCADE,
 	message TEXT,
 	sender TEXT REFERENCES users(username),
 	time TIMESTAMP);

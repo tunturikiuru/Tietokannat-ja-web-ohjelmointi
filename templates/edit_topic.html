@@ -55,8 +55,9 @@
 </form>
 
 <h3>Poista keskustelu</h3>
-<form>
-    <input type="submit" name="delete" value="Poista keskustelu">
+<form action="/topic/delete" method="POST">
+    <input type="hidden" name="delete" value="{{ topic.topic_id }}">
+    <input type="submit" value="Poista keskustelu">
 </form>
 
 {% endblock %}

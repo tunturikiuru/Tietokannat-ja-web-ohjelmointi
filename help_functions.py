@@ -26,6 +26,11 @@ def update_topic(request, topic_id):
     error_message = dbf.update_topic(topic_name, pinned, locked, visibility, topic_id)
     return error_message
 
+def delete_topic(request):
+    topic_id = int(request.form["delete"])
+    subforum_id = dbf.delete_topic(topic_id)
+    return subforum_id
+        
 
 #SEARCH
 

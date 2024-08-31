@@ -73,7 +73,7 @@ def new_subforum(subforum, heading_id):
     db.session.commit()    
 
 def new_topic(topic_id, message, subforum_id, sender):
-    sql = "INSERT INTO topics (subforum_id, topic_name, created, updated) VALUES (:subforum_id, :topic, NOW(), NOW()) RETURNING topic_id"
+    sql = "INSERT INTO topics (subforum_id, topic_name) VALUES (:subforum_id, :topic) RETURNING topic_id"
     result = db.session.execute(text(sql), {"subforum_id":subforum_id, "topic":topic_id})
     topic_id = result.fetchone()
     sql = "INSERT INTO messages (topic_id, message, sender, time) VALUES (:topic_id, :message, :sender, NOW())"
@@ -104,7 +104,7 @@ def fetch_headings():
     return headings
 
 def fetch_subforum_by_topic(topic_id):
-    sql = "SELECT s.subforum_name, s.subforum_id FROM topics t LEFT JOIN subforums s ON t.subforum_id=s.subforum_id WHERE t.topic_id=:topic_id"
+    sql = "SELECT s.subforum_name subforum_name, s.subforum_id subforum_id FROM topics t LEFT JOIN subforums s ON t.subforum_id=s.subforum_id WHERE t.topic_id=:topic_id"
     result = db.session.execute(text(sql), {"topic_id":topic_id})
     topics = result.fetchone()
     return topics
@@ -220,8 +220,20 @@ def update_topic(topic_name, pinned, locked, visibility, topic_id):
     except: 
         return "Tapahtui virhe"
 
-    
-    
+
+# DELETE 
+
+def delete_topic(topic_id):
+    sql = "DELETE FROM topics WHERE topic_id=:topic_id RETURNING subforum_id"
+    try:
+        result = db.session.execute(text(sql), {"topic_id":topic_id})
+        subforum_id = result.scalar()
+        print(subforum_id)
+        db.session.commit()
+        return subforum_id
+    except:
+        db.session.rollback()
+        return None
 
 
 # SEARCH 

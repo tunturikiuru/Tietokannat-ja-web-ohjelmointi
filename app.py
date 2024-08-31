@@ -92,11 +92,24 @@ def edit_topic(topic_id):
 def edit_topic_send(topic_id):
     forum_name = dbf.fetch_title()
     error = "Ei oikeutta pyyntöön."
+    subforum = dbf.fetch_subforum_by_topic(topic_id)
     if users.is_admin():
         error = help.update_topic(request, topic_id)
         if not error:
-            return redirect(url_for("topic", topic_id=topic_id))
-    return render_template("error.html", forum_name=forum_name, error = error)
+            return redirect(url_for("subforum", subforum_id=subforum.subforum_id))
+    return render_template("error.html", forum_name=forum_name, error=error)
+
+@app.route("/topic/delete", methods=["POST"])
+def delete_topic():
+    forum_name = dbf.fetch_title()    
+    error = "Ei oikeutta pyyntöön."
+    if users.is_admin():
+        subforum_id = help.delete_topic(request)
+        if subforum_id:
+            return redirect(url_for("subforum", subforum_id=subforum_id))
+    error = "Tapahtui virhe."
+    return render_template("error.html", forum_name=forum_name, error=error)
+
 
 
 
