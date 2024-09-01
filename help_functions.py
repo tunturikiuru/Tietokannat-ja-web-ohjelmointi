@@ -27,16 +27,14 @@ def update_topic(request, topic_id):
     error_message = dbf.update_topic(topic_name, pinned, locked, visibility, topic_id, subforum_id)
     return error_message
 
-def delete_topic(request):
-    topic_id = int(request.form["delete"])
-    subforum_id = dbf.delete_topic(topic_id)
-    return subforum_id
-
-def delete_message(request):
-    message_id = int(request.form["delete_message"])
-    
-    topic_id = dbf.delete_message(message_id)
-    return topic_id
+def delete_topics_messages(request):
+    message_id = request.form.get("delete_message")
+    topic_id = request.form.get("delete_topic")
+    if message_id:
+        return ("topic", dbf.delete_message(int(message_id)))
+    if topic_id:
+        return ("subforum", dbf.delete_topic(int(topic_id)))
+    return (None, None)
 
 def new_message(request, topic_id):
     message = request.form["message"]

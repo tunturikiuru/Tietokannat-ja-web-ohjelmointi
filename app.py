@@ -124,25 +124,16 @@ def edit_message_send():
 
 # DELETE
 
-@app.route("/delete/topic", methods=["POST"])
-def delete_topic():
-    forum_name = dbf.fetch_title()    
-    error = "Ei oikeutta pyyntöön."
-    if users.is_admin():
-        subforum_id = help.delete_topic(request)
-        if subforum_id:
-            return redirect(url_for("subforum", subforum_id=subforum_id))
-        error = "Tapahtui virhe."
-    return render_template("error.html", forum_name=forum_name, error=error)
-
-@app.route("/delete/message", methods=["POST"])
-def delete_message():
+@app.route("/delete/topics_and_messages", methods=["POST"])
+def delete_topics_messages():
     forum_name = dbf.fetch_title()
     error = "Ei oikeutta pyyntöön."
     if users.is_admin():
-        topic_id = help.delete_message(request)
-        if topic_id:
-            return redirect(url_for("topic", topic_id=topic_id))
+        target, id = help.delete_topics_messages(request)
+        if id and target == "topic":
+            return redirect(url_for("topic", topic_id=id))
+        if id and target == "subforum":
+            return redirect(url_for("subforum", subforum_id=id))
         error = "Tapahtui virhe."
     return render_template("error.html", forum_name=forum_name, error=error)
 

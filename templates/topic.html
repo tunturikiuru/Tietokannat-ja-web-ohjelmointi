@@ -24,7 +24,7 @@
             </div>
             {% if session.get('role') == 'admin' %}
             <div class="delete_message">
-                <form action="/delete/message" method="POST">
+                <form action="/delete/topics_and_messages" method="POST">
                     <input type="hidden" name="delete_message" value="{{ message.message_id }}">
                     <input type="submit" value="delete">
                 </form>
