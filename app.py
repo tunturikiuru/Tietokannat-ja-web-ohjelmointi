@@ -109,7 +109,7 @@ def edit_topic_send(topic_id):
 def edit_message(message_id):
     forum_name = dbf.fetch_title()
     message = dbf.fetch_message(message_id)
-    if users.get_username == message.sender or users.is_admin():
+    if users.get_username() == message.sender or users.is_admin():
         return render_template("edit_message.html", forum_name=forum_name, message=message)
     return render_template("error.html", forum_name=forum_name, error = "Ei oikeutta nähdä sivua.")
 
