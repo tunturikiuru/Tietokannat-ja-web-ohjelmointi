@@ -58,6 +58,15 @@ def hash_password(password):
     return generate_password_hash(password)
 
 
+# CHECK
+
+def check_credentials(username):
+    if is_admin():
+        return True
+    current_username = get_username()
+    return username == current_username
+
+
 # SESSION
 def create_session(username):
     session["username"] = username

@@ -32,6 +32,12 @@ def delete_topic(request):
     subforum_id = dbf.delete_topic(topic_id)
     return subforum_id
 
+def delete_message(request):
+    message_id = int(request.form["delete_message"])
+    
+    topic_id = dbf.delete_message(message_id)
+    return topic_id
+
 def new_message(request, topic_id):
     message = request.form["message"]
     username = users.get_username()
@@ -40,7 +46,17 @@ def new_message(request, topic_id):
         return error
     error = "Viestin pituus ei sallituissa rajoissa."
     return error
-        
+
+def edit_message(request):
+    message = request.form["message"]
+    message_id = request.form["message_id"]
+    sender, topic_id = dbf.message_sender_and_topic(message_id)
+    if not users.check_credentials(sender):
+        return ("Ei oikeutta tehdä muutoksia.", message_id, topic_id)
+    if not check_input(message, 1, 5000):
+        return ("Viestin pituus ei sallituissa rajoissa.", message_id, topic_id)
+    return (dbf.update_message(message, message_id), message_id, topic_id)
+
 
 #SEARCH
 
@@ -57,7 +73,7 @@ def search_handler(request):
     return messages
 
 
-# CHECK INPUT
+# CHECK
 
 def check_input(content: str, min: int, max:int):
     if min <= len(content) <= max:

@@ -12,10 +12,9 @@ Ensimmäisellä sivulla foorumi luodaan antamalla sille nimi ja ensimmäisen kä
 
 
 # Backlog
-poistot - viestien muokkaus ja poisto
 ulkonäön viimeistely -kaikki sivut
 
-moderaattorit - oma taulu?
+moderaattorit - oma taulu, oikeudet, tarvitaanko loki poistoista ja muokkauksista moderaattorien valvontaan?
 haku: palaa keskusteluun -linkki
 
 näkyvyys

@@ -45,6 +45,11 @@ def is_admin(username):
     result = db.session.execute(text(sql), {"username":username})
     return result.fetchone()
 
+def message_sender_and_topic(message_id):
+    sql = "SELECT sender, topic_id FROM messages WHERE message_id=:message_id"
+    result = db.session.execute(text(sql), {"message_id":message_id})
+    return result.fetchone()
+
 
 # NEW
 
@@ -152,11 +157,18 @@ def headings_and_subforums2():
             forum_structure[item.h_name].append(item[3:])
     return forum_structure
 
+def fetch_message(message_id):
+    sql = "SELECT message_id, message, sender, topic_id FROM messages WHERE message_id=:message_id"
+    result = db.session.execute(text(sql), {"message_id":message_id})
+    message = result.fetchone()
+    return message
+    
 def topic_locked(topic_id):
     sql = "SELECT locked FROM topics WHERE topic_id=:topic_id"
     result = db.session.execute(text(sql), {"topic_id":topic_id})
     locked = result.scalar()
     return locked
+
 
 #PAGE
 
@@ -231,6 +243,16 @@ def update_topic(topic_name, pinned, locked, visibility, topic_id, subforum_id):
     except: 
         db.session.rollback()
         return "Tapahtui virhe"
+    
+def update_message(message, message_id):
+    try:
+        sql = "UPDATE messages SET message=:message WHERE message_id=:message_id"
+        db.session.execute(text(sql), {"message":message, "message_id":message_id})
+        db.session.commit()
+        return ""
+    except: 
+        db.session.rollback()
+        return "Tapahtui virhe"
 
 
 # DELETE 
@@ -240,9 +262,19 @@ def delete_topic(topic_id):
     try:
         result = db.session.execute(text(sql), {"topic_id":topic_id})
         subforum_id = result.scalar()
-        print(subforum_id)
         db.session.commit()
         return subforum_id
+    except:
+        db.session.rollback()
+        return None
+    
+def delete_message(message_id):
+    sql = "DELETE FROM messages WHERE message_id=:message_id RETURNING topic_id"
+    try:
+        result = db.session.execute(text(sql), {"message_id":message_id})
+        topic_id = result.scalar()
+        db.session.commit()
+        return topic_id
     except:
         db.session.rollback()
         return None

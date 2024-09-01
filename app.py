@@ -63,6 +63,10 @@ def topic(topic_id):
     messages = dbf.topic_page(topic_id)
     return render_template("topic.html", messages=messages, subforum=subforum, topic=topic, forum_name=forum_name)
 
+@app.route("/topic/<int:topic_id>/message/<int:message_id>")
+def jump_to_message(topic_id, message_id):
+    return redirect(url_for("topic", topic_id=topic_id) + f'#{topic_id}-{message_id}')
+
 @app.route("/topic/<int:topic_id>/send", methods=["POST"])
 def send_new_message(topic_id):
     forum_name = dbf.fetch_title()
@@ -76,6 +80,9 @@ def send_new_message(topic_id):
             return redirect(url_for("create_new_message", topic_id=topic_id))
         error = "Väärä käyttäjätunnus tai salasana."
     return render_template("error.html", forum_name=forum_name, error = error)
+
+
+# EDIT
 
 @app.route("/topic/<int:topic_id>/edit")
 def edit_topic(topic_id):
@@ -98,7 +105,26 @@ def edit_topic_send(topic_id):
             return redirect(url_for("subforum", subforum_id=subforum.subforum_id))
     return render_template("error.html", forum_name=forum_name, error=error)
 
-@app.route("/topic/delete", methods=["POST"])
+@app.route("/edit/message/<int:message_id>")
+def edit_message(message_id):
+    forum_name = dbf.fetch_title()
+    message = dbf.fetch_message(message_id)
+    if users.get_username == message.sender or users.is_admin():
+        return render_template("edit_message.html", forum_name=forum_name, message=message)
+    return render_template("error.html", forum_name=forum_name, error = "Ei oikeutta nähdä sivua.")
+
+@app.route("/edit/message/send", methods=["POST"])
+def edit_message_send():
+    forum_name = dbf.fetch_title()
+    error, message_id, topic_id = help.edit_message(request)
+    if not error:
+        return redirect(url_for("jump_to_message", topic_id=topic_id, message_id=message_id))
+    return render_template("error.html", forum_name=forum_name, error = error)
+
+
+# DELETE
+
+@app.route("/delete/topic", methods=["POST"])
 def delete_topic():
     forum_name = dbf.fetch_title()    
     error = "Ei oikeutta pyyntöön."
@@ -106,13 +132,23 @@ def delete_topic():
         subforum_id = help.delete_topic(request)
         if subforum_id:
             return redirect(url_for("subforum", subforum_id=subforum_id))
-    error = "Tapahtui virhe."
+        error = "Tapahtui virhe."
+    return render_template("error.html", forum_name=forum_name, error=error)
+
+@app.route("/delete/message", methods=["POST"])
+def delete_message():
+    forum_name = dbf.fetch_title()
+    error = "Ei oikeutta pyyntöön."
+    if users.is_admin():
+        topic_id = help.delete_message(request)
+        if topic_id:
+            return redirect(url_for("topic", topic_id=topic_id))
+        error = "Tapahtui virhe."
     return render_template("error.html", forum_name=forum_name, error=error)
 
 
-
-
 #USERS
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     forum_name = dbf.fetch_title()

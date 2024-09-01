@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h5>Muokkaa viestiä:</h5>
+<form action="/edit/message/send" method="POST">
+    <textarea name="message", rows="15", cols="100" required="required" minlength="1" maxlength="5000">{{ message.message }}</textarea>
+    <input type="hidden" name="message_id" value="{{message.message_id}}">
+    <br>
+    <input type="submit" value="Lähetä">
+</form>
+
+<p><a href="/topic/{{ message.topic_id }}"> Takaisin keskusteluun </a></p>
+{% endblock %}
