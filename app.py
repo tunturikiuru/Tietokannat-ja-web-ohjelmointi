@@ -1,14 +1,18 @@
 from flask import Flask
-from flask import redirect, render_template, request, url_for, session
-#from werkzeug.security import generate_password_hash
+from flask import redirect, render_template, request, url_for
 from os import getenv
 
-app = Flask(__name__)
-app.secret_key = getenv("SECRET_KEY")
+def create_app():
+    app = Flask(__name__)
+    app.secret_key = getenv("SECRET_KEY")
+    return app
+
+app = create_app()
 
 import database_functions as dbf
 import users
 import help_functions as help
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():

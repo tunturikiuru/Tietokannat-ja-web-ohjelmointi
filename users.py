@@ -1,6 +1,6 @@
 from werkzeug.security import check_password_hash, generate_password_hash
-import database_functions as dbf
 from flask import session
+import database_functions as dbf
 import help_functions as help
 
 
