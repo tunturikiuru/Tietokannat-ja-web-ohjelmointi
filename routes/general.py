@@ -1,35 +1,12 @@
-from flask import Flask
-#from flask import redirect, render_template, request, url_for
-from flask_sqlalchemy import SQLAlchemy
-from os import getenv
-from db import db
-
-def create_app():
-    app = Flask(__name__)
-    app.secret_key = getenv("SECRET_KEY")
-
-    app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
-    db.init_app(app)
-
-    from routes.settings import settings_bp
-    from routes.general import general_bp
-
-    app.register_blueprint(settings_bp, url_prefix="/settings")
-    app.register_blueprint(general_bp)
-
-    return app
-
-app = create_app()
-
-
-
-# JUST IN CASE
-'''import database_functions as dbf
+from flask import Blueprint, redirect, render_template, request, url_for
+import database_functions as dbf
 import users
 import help_functions as help
 
+general_bp = Blueprint("general", __name__)
 
-@app.route("/", methods=["GET", "POST"])
+
+@general_bp.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "GET":
         forum_name = dbf.fetch_title()
@@ -45,20 +22,20 @@ def index():
         else:
             return redirect("/settings")
 
-@app.route("/subforum/<int:subforum_id>")
+@general_bp.route("/subforum/<int:subforum_id>")
 def subforum(subforum_id):
     forum_name = dbf.fetch_title()
     subforum = dbf.fetch_subforum_by_id(subforum_id)
     topics = dbf.subforum_page(subforum_id)
     return render_template("subforum.html", subforum=subforum, topics=topics, forum_name=forum_name)
 
-@app.route("/subforum/<int:id>/new_topic")
+@general_bp.route("/subforum/<int:id>/new_topic")
 def create_new_topic(id):
     forum_name = dbf.fetch_title()
     subforum = dbf.fetch_subforum_by_id(id)
     return render_template("new_topic.html", subforum=subforum, forum_name=forum_name)
 
-@app.route("/subforum/<int:subforum_id>/new_topic/send", methods=["POST"])
+@general_bp.route("/subforum/<int:subforum_id>/new_topic/send", methods=["POST"])
 def send_new_topic(subforum_id):
     username = users.get_username()
     forum_name = dbf.fetch_title()
@@ -67,14 +44,14 @@ def send_new_topic(subforum_id):
         message = request.form["content"]
         if help.check_input(title, 1, 100) and help.check_input(message, 1, 5000):
             topic_id = dbf.new_topic(title, message, subforum_id, username)
-            return redirect(url_for("topic", topic_id = topic_id))
+            return redirect(url_for("general.topic", topic_id = topic_id))
         return render_template("error.html", forum_name = forum_name, error = "Otsikon tai viestin pituus ei sallituissa rajoissa")
     else:
         if users.login(request):
-            return redirect(url_for("create_new_topic", id=subforum_id))
+            return redirect(url_for("general.create_new_topic", id=subforum_id))
         return render_template("error.html", forum_name=forum_name, error = "Väärä käyttäjätunnus tai salasana")
 
-@app.route("/topic/<int:topic_id>")
+@general_bp.route("/topic/<int:topic_id>")
 def topic(topic_id):
     forum_name = dbf.fetch_title()
     subforum = dbf.fetch_subforum_by_topic(topic_id)
@@ -82,28 +59,28 @@ def topic(topic_id):
     messages = dbf.topic_page(topic_id)
     return render_template("topic.html", messages=messages, subforum=subforum, topic=topic, forum_name=forum_name)
 
-@app.route("/topic/<int:topic_id>/message/<int:message_id>")
+@general_bp.route("/topic/<int:topic_id>/message/<int:message_id>")
 def jump_to_message(topic_id, message_id):
-    return redirect(url_for("topic", topic_id=topic_id) + f'#{topic_id}-{message_id}')
+    return redirect(url_for("general.topic", topic_id=topic_id) + f'#{topic_id}-{message_id}')
 
-@app.route("/topic/<int:topic_id>/send", methods=["POST"])
+@general_bp.route("/topic/<int:topic_id>/send", methods=["POST"])
 def send_new_message(topic_id):
     forum_name = dbf.fetch_title()
     error = ""
     if users.is_user():
         error = help.new_message(request, topic_id)
         if not error:
-            return redirect(url_for("topic", topic_id=topic_id))
+            return redirect(url_for("general.topic", topic_id=topic_id))
     else:
         if users.login(request):
-            return redirect(url_for("create_new_message", topic_id=topic_id))
+            return redirect(url_for("general.create_new_message", topic_id=topic_id))
         error = "Väärä käyttäjätunnus tai salasana."
     return render_template("error.html", forum_name=forum_name, error = error)
 
 
 # EDIT
 
-@app.route("/topic/<int:topic_id>/edit")
+@general_bp.route("/topic/<int:topic_id>/edit")
 def edit_topic(topic_id):
     forum_name = dbf.fetch_title()
     if users.is_admin():
@@ -113,7 +90,7 @@ def edit_topic(topic_id):
         return render_template("edit_topic.html", forum_name=forum_name, subforum=subforum, topic=topic, subforum_list=subforum_list)
     return render_template("error.html", forum_name=forum_name, error = "Ei oikeutta nähdä sivua.")
 
-@app.route("/topic/<int:topic_id>/edit/send", methods=["POST"])
+@general_bp.route("/topic/<int:topic_id>/edit/send", methods=["POST"])
 def edit_topic_send(topic_id):
     forum_name = dbf.fetch_title()
     error = "Ei oikeutta pyyntöön."
@@ -121,10 +98,10 @@ def edit_topic_send(topic_id):
     if users.is_admin():
         error = help.update_topic(request, topic_id)
         if not error:
-            return redirect(url_for("subforum", subforum_id=subforum.subforum_id))
+            return redirect(url_for("general.subforum", subforum_id=subforum.subforum_id))
     return render_template("error.html", forum_name=forum_name, error=error)
 
-@app.route("/edit/message/<int:message_id>")
+@general_bp.route("/edit/message/<int:message_id>")
 def edit_message(message_id):
     forum_name = dbf.fetch_title()
     message = dbf.fetch_message(message_id)
@@ -132,34 +109,34 @@ def edit_message(message_id):
         return render_template("edit_message.html", forum_name=forum_name, message=message)
     return render_template("error.html", forum_name=forum_name, error = "Ei oikeutta nähdä sivua.")
 
-@app.route("/edit/message/send", methods=["POST"])
+@general_bp.route("/edit/message/send", methods=["POST"])
 def edit_message_send():
     forum_name = dbf.fetch_title()
     error, message_id, topic_id = help.edit_message(request)
     if not error:
-        return redirect(url_for("jump_to_message", topic_id=topic_id, message_id=message_id))
+        return redirect(url_for("general.jump_to_message", topic_id=topic_id, message_id=message_id))
     return render_template("error.html", forum_name=forum_name, error = error)
 
 
 # DELETE
 
-@app.route("/delete/topics_and_messages", methods=["POST"])
+@general_bp.route("/delete/topics_and_messages", methods=["POST"])
 def delete_topics_messages():
     forum_name = dbf.fetch_title()
     error = "Ei oikeutta pyyntöön."
     if users.is_admin():
         target, id = help.delete_topics_messages(request)
         if id and target == "topic":
-            return redirect(url_for("topic", topic_id=id))
+            return redirect(url_for("general.topic", topic_id=id))
         if id and target == "subforum":
-            return redirect(url_for("subforum", subforum_id=id))
+            return redirect(url_for("general.subforum", subforum_id=id))
         error = "Tapahtui virhe."
     return render_template("error.html", forum_name=forum_name, error=error)
 
 
 #USERS
 
-@app.route("/register", methods=["GET", "POST"])
+@general_bp.route("/register", methods=["GET", "POST"])
 def register():
     forum_name = dbf.fetch_title()
     if request.method == "GET":
@@ -171,7 +148,7 @@ def register():
         else:
             return redirect("/")
 
-@app.route("/login", methods=["GET", "POST"])
+@general_bp.route("/login", methods=["GET", "POST"])
 def login():
     forum_name = dbf.fetch_title()
     if request.method == "GET":
@@ -181,7 +158,7 @@ def login():
             return redirect("/")
     return render_template("login.html", message="Väärä käyttäjätunnus tai salasana", forum_name=forum_name)
     
-@app.route("/logout")
+@general_bp.route("/logout")
 def logout():
     users.logout()
     return redirect("/")
@@ -189,19 +166,19 @@ def logout():
 
 #SEARCH
 
-@app.route("/search")
+@general_bp.route("/search")
 def search():
     forum_name = dbf.fetch_title()
     subforums = dbf.subforum_list()
     return render_template("search.html", forum_name=forum_name, subforums=subforums)
 
-@app.route("/search/result")
+@general_bp.route("/search/result")
 def search_result():
     forum_name = dbf.fetch_title()
     messages = help.search_handler(request)
     return render_template("result.html", messages=messages, forum_name=forum_name)
 
-@app.route("/topic/<int:topic_id>/result")
+@general_bp.route("/topic/<int:topic_id>/result")
 def search_from_topic(topic_id):
     forum_name = dbf.fetch_title()
     word = request.args["query"]
@@ -209,102 +186,8 @@ def search_from_topic(topic_id):
     messages = dbf.search_from_topic(word, topic_id)
     return render_template("result.html", messages=messages, forum_name=forum_name)
 
-@app.route("/subforum/<int:subforum_id>/result")
+@general_bp.route("/subforum/<int:subforum_id>/result")
 def search_from_subforum(subforum_id):
     forum_name = dbf.fetch_title()
     messages = help.search_handler(request)
     return render_template("result.html", messages=messages, forum_name=forum_name)
-
-    '''
-'''
-# SETTINGS
-@app.route("/settings")
-def settings():
-    forum_name = dbf.fetch_title()
-    if users.is_admin():
-        titles = dbf.fetch_title()
-        return render_template("settings.html", titles=titles, forum_name=forum_name)
-    return render_template("error.html", forum_name=forum_name, error="Ei oikeutta nähdä sivua.")
-
-@app.route("/settings/headings")
-def heading_settings():
-    forum_name = dbf.fetch_title()
-    if users.is_admin():        
-        headings = dbf.fetch_headings()
-        return render_template("heading_settings.html", headings=headings, forum_name=forum_name)
-    return render_template("error.html", forum_name=forum_name, error="Ei oikeutta nähdä sivua.")
-
-@app.route("/settings/subforums")
-def subforums():
-    forum_name = dbf.fetch_title()
-    if users.is_admin():
-        headings = dbf.fetch_headings()
-        subforums_list = dbf.subforum_list()
-        headings_and_subforums = dbf.headings_and_subforums2()
-        return render_template("subforum_settings.html", headings=headings, subforums_list=subforums_list, headings_and_subforums=headings_and_subforums, forum_name=forum_name)
-    return render_template("error.html", forum_name=forum_name, error="Ei oikeutta nähdä sivua.")
-
-
-## Settings send
-@app.route("/settings/send", methods=["POST"])
-def send_settings():
-    title = request.form["title"]
-    if title != "":
-        dbf.new_title(title)
-    subtitle = request.form["subtitle"]
-    if subtitle != "":
-        dbf.new_subtitle(subtitle)
-    else:
-        pass
-        # POISTA ALAOTSIKKO
-    return redirect("/")
-
-@app.route("/settings/heading_name/send", methods=["POST"])
-def send_new_heading():
-    heading_name = request.form["heading"]
-    if heading_name != "":
-        dbf.new_heading(heading_name)
-    return redirect("/settings/headings")
-
-@app.route("/settings/heading_rename/send", methods=["POST"])
-def send_change_heading_name():
-    heading_id = request.form["heading_id"]
-    new_name = request.form["new_heading"]
-    if new_name != "":
-        dbf.update_heading(new_name, heading_id)
-    return redirect("/settings/headings")
-
-@app.route("/settings/heading_order/send", methods=["POST"])
-def send_heading_order():
-    heading_order = request.form.getlist("heading_order")
-    heading_ids = request.form.getlist("heading_id")
-    dbf.update_order_index(heading_order, heading_ids, "heading")
-    return redirect("/settings/headings")
-
-@app.route("/settings/delete_heading/send", methods=["POST"])
-def send_delete_heading():
-    pass
-
-@app.route("/settings/new_subforum/send", methods=["POST"])
-def send_subforum():
-    subforum = request.form["new_subforum"]
-    heading = request.form["heading"]
-    dbf.new_subforum(subforum, heading)
-    return redirect("/settings/subforums")
-
-@app.route("/settings/subforum_rename/send", methods=["POST"])
-def rename_subforum():
-    subforum_id = request.form["old_name"]
-    name = request.form["new_name"]
-    if name != "":
-        dbf.update_subforum_name(name, subforum_id)
-    return redirect("/settings/subforums")
-
-@app.route("/settings/subforum_order/send", methods=["POST"])
-def update_subforum_order():
-    subforum_order = request.form.getlist("subforum_order")
-    subforum_ids = request.form.getlist("subforum_id")
-    dbf.update_order_index(subforum_order, subforum_ids, "subforum")
-    return redirect("/settings/subforums")
-
-'''
