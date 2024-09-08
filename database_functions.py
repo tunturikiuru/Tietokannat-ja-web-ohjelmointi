@@ -143,8 +143,22 @@ def fetch_topic_data(topic_id):
     data = result.fetchone()
     return data
 
-def headings_and_subforums2():
-    sql = "SELECT h.order_index, s.order_index, h.heading_name h_name, s.subforum_name s_name, s.subforum_id s_id, COUNT(DISTINCT t.topic_id) topic_count, COUNT(m.message_id) message_count \
+def get_forum_structure():
+    sql = "SELECT h.heading_id h_id, h.heading_name h_name, s.subforum_id s_id, s.subforum_name s_name, h.order_index, s.order_index \
+        FROM headings h LEFT JOIN subforums s ON h.heading_id=s.heading_id \
+        WHERE h.order_index > 2 GROUP BY h_name, h_id, s_name, s_id ORDER BY h.order_index, s.order_index"
+    result = db.session.execute(text(sql))
+    query_result = result.fetchall()
+    forum_structure = {}
+    for item in query_result:
+        if (item.h_id, item.h_name) not in forum_structure:
+            forum_structure[(item.h_id, item.h_name)] = []
+        if item.s_id:
+            forum_structure[(item.h_id, item.h_name)].append(item[2:4])
+    return forum_structure
+
+def headings_and_subforums2(): #poista, kun ei enää tarvita, KORVATAAN 
+    sql = "SELECT h.order_index h_index, s.order_index s_index, h.heading_name h_name, s.subforum_name s_name, s.subforum_id s_id, COUNT(DISTINCT t.topic_id) topic_count, COUNT(m.message_id) message_count \
         FROM headings h LEFT JOIN subforums s ON h.heading_id=s.heading_id LEFT JOIN topics t ON s.subforum_id=t.subforum_id LEFT JOIN messages m ON t.topic_id=m.topic_id \
         WHERE h.order_index > 2 GROUP BY h_name, h.order_index, s_name, s.order_index, s_id ORDER BY h.order_index, s.order_index"
     result = db.session.execute(text(sql))

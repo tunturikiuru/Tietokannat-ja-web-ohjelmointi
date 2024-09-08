@@ -39,9 +39,22 @@ h3 {
     color: red;
     size: 1.5em;
 }
+.forum_settings {
+    display: inline-block;
+    padding-left: 40px;
+}
+.forum_structure {
+    display: inline-block;
+    border: 1px solid black;
+    padding: 0px 60px 20px 60px;
+}
 .header {
     margin: 10px 0px 5px;
     height: 1em;
+}
+.hint {
+    color:red;
+    font-size: 0.7em;
 }
 .login {  
     float: right;

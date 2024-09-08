@@ -1,26 +1,82 @@
 {% extends "layout.html" %}
 
 {% block path %} 
- / Asetukset / <a href="/settings">Perustiedot</a>
+ / Asetukset 
 {% endblock %}
 
 {% block content %}
 <nav>
-<a href="/settings">Perustiedot</a> 
-<a href="/settings/headings">Väliotsikot</a> 
+Foorumin rakenne  |  
+<a href="/settings/headings">Väliotsikot</a>  |  
 <a href="/settings/subforums">Subfoorumit</a>
 </nav>
 <br>
-<h3>Foorumin Perusasetukset</h3>
-<p>
-Tällä sivulla voit muuttaa foorumin nimeä ja alaotsikkoa. (Alaotsikon voi poistaa ....)
-</p>
-<h4>Foorumin otsikko ja alaotsikko</h4>
-<form action="/settings/send" method="POST">
-    Forumin nimi: <input type="text" name="title" value="{{ forum_name[0][0] }}" > <br>
-    Forumin alaotsikko: <input type="text" name="subtitle" value="{{ forum_name[1][0] }}"> <br>
-    <input type="submit" value="Lähetä">
-</form>
+<h3>Foorumin rakenne</h3>
+<span>Foorumin rakenne:</span>
+<div class="settings_page">   
+    <div class="forum_structure">
+        <h3>{{ forum_name[0].heading_name }}</h3>
+        <h4>{{ forum_name[1].heading_name }}</h4>
+        {% for heading, subforums in forum_structure.items() %}
+        <h5> {{ heading[1] }}</h5>
+        {% if subforums %}
+        <ul>
+            {% for subforum in subforums %}
+            <li>{{ subforum[1] }}</li>
+            {% endfor %}
+        </ul>  
+        {% else %}
+        <span style="color:red">(ei subfoorumeita)</span>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <div class="forum_settings">
+        <h5>Muuta foorumin nimeä:</h5>
+        <span class="hint">Jos haluat poistaa otsikon muuta se välilyönniksi</span>
+        <form action="/settings/send" method="POST">
+            <table>
+                <tr>
+                    <td>Forumin nimi:</td>
+                    <td><input type="text" name="title" value="{{ forum_name[0][0] }}"></td>
+                </tr>
+                <tr>
+                    <td>Forumin alaotsikko:</td>
+                    <td><input type="text" name="subtitle" value="{{ forum_name[1][0] }}"> </td>
+                </tr>
+            </table>
+            <input type="submit" value="Lähetä">
+        </form>
+        <h5>Lisää väliotsikoita:</h5>
+        <span class="hint">Voit muokata väliotsikoita Väliotsikot-kohdasta</span>
+        <form action="/settings/heading_name/send" method="POST">
+            <input type="text" name="heading"> </p>
+            <input type="submit" value="Lähetä">
+        </form>
+        {% if forum_structure %}
+        <h5>Lisää subforumeita:</h5>
+        <form action="/settings/new_subforum/send" method="POST">  
+            <table>
+                <tr>
+                    <td>Subforumin nimi:</td>
+                    <td><input type="text" name="new_subforum"></td>
+                </tr>
+                <tr>
+                    <td>Alueelle: </td>
+                    <td>
+                        <select name="heading">
+                            {% for heading in forum_structure.keys() %}
+                            <option value="{{ heading[0] }}"> {{ heading[1] }}
+                            {% endfor %}
+                        </select></p>
+                    </td>
+                </tr>                
+            </table>  
+            <input type="submit" value="Lähetä">
+        </form>
+        {% endif %}
+    </div>
+</div>
+
 {% endblock %}
 
 
