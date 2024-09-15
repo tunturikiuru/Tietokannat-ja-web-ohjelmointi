@@ -7,30 +7,37 @@ import help_functions as help
 settings_bp = Blueprint('settings', __name__)
 
 
+
+@settings_bp.before_request
+def before_request():
+    if not users.is_admin():
+        forum_name = dbf.fetch_title()
+        return render_template("error.html", forum_name=forum_name, error="Ei oikeutta nähdä sivua.")
+
+
 # SETTINGS
 @settings_bp.route("/")
 def settings():
     forum_name = dbf.fetch_title()
-    if users.is_admin():
-        forum_structure = dbf.get_forum_structure()
-        return render_template("settings.html", forum_name=forum_name, forum_structure=forum_structure)
-    return render_template("error.html", forum_name=forum_name, error="Ei oikeutta nähdä sivua.")
+    forum_structure = dbf.get_forum_structure()
+    return render_template("settings.html", forum_name=forum_name, forum_structure=forum_structure)
 
-@settings_bp.route("/headings") #ei tarkistettu
+@settings_bp.route("/headings")
 def heading_settings():
-    forum_name = dbf.fetch_title()
-    if users.is_admin():        
-        headings = dbf.fetch_headings()
-        return render_template("heading_settings.html", headings=headings, forum_name=forum_name)
-    return render_template("error.html", forum_name=forum_name, error="Ei oikeutta nähdä sivua.")
+    forum_name = dbf.fetch_title()   
+    headings = dbf.fetch_headings()
+    return render_template("heading_settings.html", headings=headings, forum_name=forum_name)
 
-@settings_bp.route("/subforums") #ei tarkistettu
+@settings_bp.route("/subforums")
 def subforums():
     forum_name = dbf.fetch_title()
-    if users.is_admin():
-        forum_structure = dbf.get_forum_structure()
-        return render_template("subforum_settings.html", forum_structure=forum_structure, forum_name=forum_name)
-    return render_template("error.html", forum_name=forum_name, error="Ei oikeutta nähdä sivua.")
+    forum_structure = dbf.get_forum_structure()
+    return render_template("subforum_settings.html", forum_structure=forum_structure, forum_name=forum_name)
+
+@settings_bp.route("/admins")
+
+
+@settings_bp.route("/users")
 
 
 ## Settings send
