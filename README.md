@@ -29,6 +29,7 @@ alkuasetusten parantelu ja poistot
 settings sivu kuntoon - input tarkistus
 viestien ja aiheiden jako useille sivuille
 
+
 SELVITÄ:
 haku: hae näistä tuloksista
 haku: maalaa hakusana tuloksista - työläs, yksityiskohtia selvitettävä
@@ -38,11 +39,4 @@ javascript - lisää näkyvyysvaihtoehtoja (checked oikeassa kohdassa)
 javascript - poistoihin varmistusponnahdusikkuna!!!
 käyttäjien sivut - mitä näissä yleensä on? (yksityisviestit?, vietsit joihin vastattu? edellisen kirjautumisen jälkeen tulleet viestit?)
 käyttäjien hallinta - mitä tarvitaan ja kenelle kuuluu (voiko jotain tehtäviä antaa moderaattoreille?)
-
-
-
-
-
-
-
 

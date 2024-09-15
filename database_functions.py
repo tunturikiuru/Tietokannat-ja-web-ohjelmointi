@@ -50,6 +50,32 @@ def message_sender_and_topic(message_id):
     result = db.session.execute(text(sql), {"message_id":message_id})
     return result.fetchone()
 
+def get_users():
+    sql= "SELECT user_id, username, admin FROM users ORDER BY user_id"
+    result = db.session.execute(text(sql))
+    return result.fetchall()
+
+def new_admin(user_id):
+    try:
+        sql = "UPDATE users SET admin=True WHERE user_id=:user_id"
+        db.session.execute(text(sql), {"user_id":user_id})
+        db.session.commit()
+        return ""
+    except:
+        db.session.rollback()
+        return "Tapahtui virhe."
+    
+def remove_admin(user_id):
+    try:
+        sql = "UPDATE users SET admin=False WHERE user_id=:user_id"
+        db.session.execute(text(sql), {"user_id":user_id})
+        db.session.commit()
+        return ""
+    except:
+        db.session.rollback()
+        return "Tapahtui virhe."
+
+
 
 # NEW
 

@@ -35,12 +35,21 @@ def subforums():
     return render_template("subforum_settings.html", forum_structure=forum_structure, forum_name=forum_name)
 
 @settings_bp.route("/admins")
-
+def admins():
+    forum_name = dbf.fetch_title()
+    users = dbf.get_users()
+    return render_template("admin.html", users=users, forum_name=forum_name)
 
 @settings_bp.route("/users")
+def user_settings():
+    forum_name = dbf.fetch_title()
+    users = dbf.get_users()
+    print(users)
+    return render_template("admin.html", users=users, forum_name=forum_name)
 
 
-## Settings send
+# SETTINGS SEND
+
 @settings_bp.route("/send", methods=["POST"]) #ei tarkistettu
 def send_settings():
     title = request.form["title"]
@@ -58,7 +67,7 @@ def send_new_heading():
     heading_name = request.form["heading"]
     if heading_name != "":
         dbf.new_heading(heading_name)
-    return redirect("/settings/headings")
+    return redirect("/settings/")
 
 @settings_bp.route("/heading_rename/send", methods=["POST"]) #ei tarkistettu
 def send_change_heading_name():
@@ -73,7 +82,7 @@ def send_heading_order():
     heading_order = request.form.getlist("heading_order")
     heading_ids = request.form.getlist("heading_id")
     dbf.update_order_index(heading_order, heading_ids, "heading")
-    return redirect("/settings/headings")
+    return redirect("/settings/")
 
 @settings_bp.route("/delete_heading/send", methods=["POST"]) #ei tarkistettu
 def send_delete_heading():
@@ -121,3 +130,20 @@ def subforum_delete():
     if error: 
         return render_template("error.html", forum_name=forum_name, error=error)
     return redirect("/settings")
+
+@settings_bp.route("/new_admin", methods=["POST"])
+def new_admin():
+    forum_name = dbf.fetch_title()
+    error = rh.new_admin(request)
+    if error: 
+        return render_template("error.html", forum_name=forum_name, error=error)
+    return redirect("/settings")
+
+@settings_bp.route("/remove_admin", methods=["POST"])
+def remove_admin():
+    forum_name = dbf.fetch_title()
+    error = rh.remove_admin(request)
+    if error: 
+        return render_template("error.html", forum_name=forum_name, error=error)
+    return redirect("/settings")
+

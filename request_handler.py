@@ -48,17 +48,29 @@ def edit_message(request):
 
 # UPDATE
 
-def update_subforum_order(request): #KESKEN
+def update_subforum_order(request):
     subforum_order = request.form.getlist("subforum_order")
-    print(subforum_order)
     subforum_ids = request.form.getlist("subforum_id")
-    print(subforum_order)
     dbf.update_order_index(subforum_order, subforum_ids, "subforum")
     
 def subforum_move(request):
     subforum_id = request.form.get("relocated_subforum")
     heading_id = request.form.get("new_heading")
     error = dbf.subforum_move(subforum_id, heading_id)
+    return error
+
+def new_admin(request):
+    user_id = request.form.get("user_id")
+    if user_id == "":
+        return "Kohdetta ei valittu."
+    error = dbf.new_admin(user_id)
+    return error
+
+def remove_admin(request):
+    user_id = request.form.get("user_id")
+    if user_id == "":
+        return "Kohdetta ei valittu."
+    error = dbf.remove_admin(user_id)
     return error
 
 
