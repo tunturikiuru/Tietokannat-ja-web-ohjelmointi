@@ -1,68 +1,114 @@
 {% extends "layout.html" %}
 
 {% block path %} 
- / Asetukset / <a href="/settings"> Väliotsikot</a>
+ / Asetukset
 {% endblock %}
 
 {% block content %}
+<nav>
+    <a href="/settings/">Foorumin rakenne</a>  |  
+    Väliotsikot  |  
+    <a href="/settings/subforums">Subfoorumit</a>
+</nav>
+<br>
 
-<a href="/">Etusivu</a>
-<br>
-<a href="/settings">Perustiedot</a> 
-<a href="/settings/headings">Väliotsikot</a> 
-<a href="/settings/subforums">Subfoorumit</a>
-<br>
-<h2>Uusi väliotsikko</h2>
+<h3>Väliotsikot</h3>
+
+<h5>Uusi väliotsikko</h5>
 <form action="/settings/heading_name/send" method="POST">
     <input type="text" name="heading"> </p>
     <input type="submit" value="Lähetä">
 </form>
 
-<h2>Vaihda väliotsikon nimeä</h2>
+<h5>Vaihda väliotsikon nimeä</h5>
 {% if headings %}
-<form action="/settings/heading_rename/send" method="POST">
-    <select name="heading_id">
-        {% for heading in headings %}
-        <option value="{{ heading.heading_id }}"> {{ heading.heading_name }}</option> 
-        {% endfor %}
-    </select>
-    <p> Uusi nimi:
-    <input type="text" name="new_heading"> </p>
+<form action="/settings/heading_rename/send" method="POST"> 
+    <table> 
+        <tr>
+            <td>
+                Nykyinen nimi:
+            </td>
+            <td>
+                <select name="heading_id">
+                    {% for heading in headings %}
+                    <option value="{{ heading.heading_id }}"> {{ heading.heading_name }}</option> 
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Uusi nimi:
+            </td>
+            <td>
+                <input type="text" name="new_heading">
+            </td>
+        </tr>
+    </table>
     <input type="submit" value="Lähetä">
 </form>
 {% else %}
 <p>ei vielä väliotsikoita</p>
 {% endif %}
 
-<h2>Väliotsikoiden järjestys</h2>
-{% if headings %}
+<h5>Väliotsikoiden järjestys</h5>
+<span class="hint">Numerot järjestetään ennen kirjaimia. </span><br>
+<span class="hint">HUOM! Väliotsikot järjestetään, vaikka kaikkia kenttiä ei olisi täytetty.</span>
+{% if headings|length > 1 %}
 <form action="/settings/heading_order/send" method="POST">
-    <p>(Anna kaikille otsikoille arvo)</p>
-    {% for heading in headings %}
-    <p>
-    <input type="text" name="heading_order" value="{{ loop.index }}"> {{ heading[0] }}
-    <input type="hidden" name="heading_id" value="{{ heading[1] }}"></p>
-    {% endfor %}
+    <table>
+        {% for heading in headings %}
+        <tr>
+            <td>
+                <input type="text" name="heading_order" value="{{ loop.index }}" size="3">
+            </td>
+            <td>
+                {{ heading.heading_name }}
+                <input type="hidden" name="heading_id" value="{{ heading.heading_id }}">
+            </td>            
+        </tr>
+        {% endfor %}
+    </table>      
     <input type="submit" value="Lähetä">
 </form>
 {% else %}
-<p>ei vielä väliotsikoita</p>
+<p>Väliotsikoita liian vähän järjestettäväksi</p>
 {% endif %}
 
-<h2>Poista väliotsikoita </h2>
-{% if headings %}
-<p> Alueen poistamnen sulauttaa subforumit toiseen alueeseen</p>
+<h5>Poista väliotsikoita</h5>
+{% if headings|length > 1 %}
+<span class="hint">Mikäli haluat poistaa subfoorumeita, poista ne Subfoorumit-kohdassa.</span><br>
 <form action="/settings/delete_heading/send" method="POST">
-    
-KESKEN
-    <input type="submit" name="delete_heading" value="Lähetä">
+    <table>
+        <tr>
+            <td>
+                Poistettava väliotsikko:
+            </td>
+            <td>
+                <select name="heading_id_delete">
+                    {% for heading in headings %}
+                    <option value="{{ heading.heading_id }}"> {{ heading.heading_name }}</option> 
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Subfoorumit sulautetaan:
+            </td>
+            <td>
+                <select name="heading_id_transfer">
+                    {% for heading in headings %}
+                    <option value="{{ heading.heading_id }}"> {{ heading.heading_name }}</option> 
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" value="Lähetä">
 </form>
 {% else %}
-<p>ei vielä väliotsikoita</p>
+<p>Väliotsikoita 0-1 kpl. (Ainoaa väliotsikkoa ei voi poistaa)</p>
 {% endif %}
-
-<br>
-<a href="/">Etusivu</a>
-<br>
 
 {% endblock %}

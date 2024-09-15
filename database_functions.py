@@ -293,6 +293,22 @@ def delete_message(message_id):
         db.session.rollback()
         return None
 
+def delete_heading(delete_id, transfer_id):
+    sql = "SELECT COALESCE(MAX(s.order_index),0) FROM subforums s LEFT JOIN headings h ON s.heading_id=h.heading_id \
+        WHERE s.heading_id=:transfer_id"
+    result = db.session.execute(text(sql), {"transfer_id":transfer_id})
+    max_index = result.scalar()
+    sql1 = "UPDATE subforums SET heading_id=:transfer_id, order_index=order_index+:max_index WHERE heading_id=:delete_id"
+    sql2 = "DELETE FROM headings WHERE heading_id=:delete_id"
+    try:
+        db.session.execute(text(sql1), {"transfer_id":transfer_id, "delete_id":delete_id, "max_index":max_index})
+        db.session.execute(text(sql2), {"delete_id":delete_id})
+        db.session.commit()
+        return ""
+    except:
+        db.session.rollback()
+        return "Tapahtui virhe"
+    
 
 # SEARCH 
 

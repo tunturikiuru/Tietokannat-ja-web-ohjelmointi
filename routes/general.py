@@ -2,6 +2,7 @@ from flask import Blueprint, redirect, render_template, request, url_for
 import database_functions as dbf
 import users
 import help_functions as help
+import request_handler as rh
 
 general_bp = Blueprint("general", __name__)
 
@@ -16,7 +17,7 @@ def index():
             subforum_order = dbf.index_page()
             return render_template("index.html", forum_name=forum_name, subforum_order=subforum_order)
     if request.method == "POST":
-        error_message = help.forum_start(request)
+        error_message = hel.forum_start(request)
         if error_message:
             return render_template("start.html", error_message=error_message)
         else:
@@ -68,7 +69,7 @@ def send_new_message(topic_id):
     forum_name = dbf.fetch_title()
     error = ""
     if users.is_user():
-        error = help.new_message(request, topic_id)
+        error = rh.new_message(request, topic_id)
         if not error:
             return redirect(url_for("general.topic", topic_id=topic_id))
     else:
@@ -96,7 +97,7 @@ def edit_topic_send(topic_id):
     error = "Ei oikeutta pyyntöön."
     subforum = dbf.fetch_subforum_by_topic(topic_id)
     if users.is_admin():
-        error = help.update_topic(request, topic_id)
+        error = rh.update_topic(request, topic_id)
         if not error:
             return redirect(url_for("general.subforum", subforum_id=subforum.subforum_id))
     return render_template("error.html", forum_name=forum_name, error=error)
@@ -112,7 +113,7 @@ def edit_message(message_id):
 @general_bp.route("/edit/message/send", methods=["POST"])
 def edit_message_send():
     forum_name = dbf.fetch_title()
-    error, message_id, topic_id = help.edit_message(request)
+    error, message_id, topic_id = rh.edit_message(request)
     if not error:
         return redirect(url_for("general.jump_to_message", topic_id=topic_id, message_id=message_id))
     return render_template("error.html", forum_name=forum_name, error = error)
@@ -125,7 +126,7 @@ def delete_topics_messages():
     forum_name = dbf.fetch_title()
     error = "Ei oikeutta pyyntöön."
     if users.is_admin():
-        target, id = help.delete_topics_messages(request)
+        target, id = rh.delete_topics_messages(request)
         if id and target == "topic":
             return redirect(url_for("general.topic", topic_id=id))
         if id and target == "subforum":
@@ -175,7 +176,7 @@ def search():
 @general_bp.route("/search/result")
 def search_result():
     forum_name = dbf.fetch_title()
-    messages = help.search_handler(request)
+    messages = rh.search_handler(request)
     return render_template("result.html", messages=messages, forum_name=forum_name)
 
 @general_bp.route("/topic/<int:topic_id>/result")
@@ -189,5 +190,5 @@ def search_from_topic(topic_id):
 @general_bp.route("/subforum/<int:subforum_id>/result")
 def search_from_subforum(subforum_id):
     forum_name = dbf.fetch_title()
-    messages = help.search_handler(request)
+    messages = rh.search_handler(request)
     return render_template("result.html", messages=messages, forum_name=forum_name)

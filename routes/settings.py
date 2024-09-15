@@ -1,6 +1,7 @@
 from flask import Blueprint, redirect, render_template, request #, url_for
 import database_functions as dbf
 import users
+import request_handler as rh
 import help_functions as help
 
 settings_bp = Blueprint('settings', __name__)
@@ -71,7 +72,11 @@ def send_heading_order():
 
 @settings_bp.route("/delete_heading/send", methods=["POST"]) #ei tarkistettu
 def send_delete_heading():
-    pass
+    forum_name = dbf.fetch_title()
+    error = rh.delete_heading(request)
+    if error: 
+        return render_template("error.html", forum_name=forum_name, error=error)
+    return redirect("/settings")
 
 @settings_bp.route("/new_subforum/send", methods=["POST"]) #ei tarkistettu
 def send_subforum():
