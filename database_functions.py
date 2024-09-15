@@ -157,20 +157,6 @@ def get_forum_structure():
             forum_structure[(item.h_id, item.h_name)].append(item[2:4])
     return forum_structure
 
-def headings_and_subforums2(): #poista, kun ei enää tarvita, KORVATAAN 
-    sql = "SELECT h.order_index h_index, s.order_index s_index, h.heading_name h_name, s.subforum_name s_name, s.subforum_id s_id, COUNT(DISTINCT t.topic_id) topic_count, COUNT(m.message_id) message_count \
-        FROM headings h LEFT JOIN subforums s ON h.heading_id=s.heading_id LEFT JOIN topics t ON s.subforum_id=t.subforum_id LEFT JOIN messages m ON t.topic_id=m.topic_id \
-        WHERE h.order_index > 2 GROUP BY h_name, h.order_index, s_name, s.order_index, s_id ORDER BY h.order_index, s.order_index"
-    result = db.session.execute(text(sql))
-    query_result = result.fetchall()
-    forum_structure = {}
-    for item in query_result:
-        if item.h_name not in forum_structure:
-            forum_structure[item.h_name] = []
-        if item.s_id:
-            forum_structure[item.h_name].append(item[3:])
-    return forum_structure
-
 def fetch_message(message_id):
     sql = "SELECT message_id, message, sender, topic_id FROM messages WHERE message_id=:message_id"
     result = db.session.execute(text(sql), {"message_id":message_id})
@@ -248,6 +234,17 @@ def update_subforum_name(subforum_name, subforum_id):
     db.session.execute(text(sql), {"name":subforum_name, "subforum_id":subforum_id})
     db.session.commit()
 
+def subforum_move(subforum_id, heading_id):
+    try:
+        index = max_index(heading_id)
+        sql = "UPDATE subforums SET heading_id=:heading_id, order_index=order_index + :index WHERE subforum_id=:subforum_id"
+        db.session.execute(text(sql), {"subforum_id":subforum_id, "heading_id":heading_id, "index":index})
+        db.session.commit()
+        return ""
+    except: 
+        db.session.rollback()
+        return "Tapahtui virhe"
+
 def update_topic(topic_name, pinned, locked, visibility, topic_id, subforum_id):
     try:
         sql = "UPDATE topics SET topic_name=:topic_name, subforum_id=:subforum_id, pinned=:pinned, locked=:locked, visibility=:visibility WHERE topic_id=:topic_id"
@@ -267,6 +264,7 @@ def update_message(message, message_id):
     except: 
         db.session.rollback()
         return "Tapahtui virhe"
+    
 
 
 # DELETE 
@@ -294,15 +292,22 @@ def delete_message(message_id):
         return None
 
 def delete_heading(delete_id, transfer_id):
-    sql = "SELECT COALESCE(MAX(s.order_index),0) FROM subforums s LEFT JOIN headings h ON s.heading_id=h.heading_id \
-        WHERE s.heading_id=:transfer_id"
-    result = db.session.execute(text(sql), {"transfer_id":transfer_id})
-    max_index = result.scalar()
-    sql1 = "UPDATE subforums SET heading_id=:transfer_id, order_index=order_index+:max_index WHERE heading_id=:delete_id"
+    index = max_index(transfer_id)
+    sql1 = "UPDATE subforums SET heading_id=:transfer_id, order_index=order_index+:index WHERE heading_id=:delete_id"
     sql2 = "DELETE FROM headings WHERE heading_id=:delete_id"
     try:
-        db.session.execute(text(sql1), {"transfer_id":transfer_id, "delete_id":delete_id, "max_index":max_index})
+        db.session.execute(text(sql1), {"transfer_id":transfer_id, "delete_id":delete_id, "index":index})
         db.session.execute(text(sql2), {"delete_id":delete_id})
+        db.session.commit()
+        return ""
+    except:
+        db.session.rollback()
+        return "Tapahtui virhe"
+    
+def delete_subforum(subforum_id):
+    try:
+        sql = "DELETE FROM subforums WHERE subforum_id=:subforum_id"
+        db.session.execute(text(sql), {"subforum_id":subforum_id})
         db.session.commit()
         return ""
     except:
@@ -331,4 +336,14 @@ def search(word, sender, subforums, time, order):
     result = db.session.execute(text(sql), {"word":word, "sender":sender, "subforums":subforums, "time":time})
     messages = result.fetchall()
     return messages
+
+
+# HELP
+
+def max_index(heading_id):
+    sql = "SELECT COALESCE(MAX(s.order_index),0) FROM subforums s LEFT JOIN headings h ON s.heading_id=h.heading_id \
+        WHERE s.heading_id=:heading_id"
+    result = db.session.execute(text(sql), {"heading_id":heading_id})
+    return result.scalar()
+
 

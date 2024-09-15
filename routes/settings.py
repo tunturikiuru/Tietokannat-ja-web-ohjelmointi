@@ -28,10 +28,8 @@ def heading_settings():
 def subforums():
     forum_name = dbf.fetch_title()
     if users.is_admin():
-        headings = dbf.fetch_headings()
-        subforums_list = dbf.subforum_list()
-        headings_and_subforums = dbf.headings_and_subforums2()
-        return render_template("subforum_settings.html", headings=headings, subforums_list=subforums_list, headings_and_subforums=headings_and_subforums, forum_name=forum_name)
+        forum_structure = dbf.get_forum_structure()
+        return render_template("subforum_settings.html", forum_structure=forum_structure, forum_name=forum_name)
     return render_template("error.html", forum_name=forum_name, error="Ei oikeutta nähdä sivua.")
 
 
@@ -91,11 +89,28 @@ def rename_subforum():
     name = request.form["new_name"]
     if name != "":
         dbf.update_subforum_name(name, subforum_id)
-    return redirect("/settings/subforums")
+    return redirect("/settings/")
 
-@settings_bp.route("/subforum_order/send", methods=["POST"]) #ei tarkistettu
+@settings_bp.route("/subforum_move/send", methods=["POST"])
+def move_subforum():
+    forum_name = dbf.fetch_title()
+    error = rh.subforum_move(request)
+    if error: 
+        return render_template("error.html", forum_name=forum_name, error=error)
+    return redirect("/settings")
+
+@settings_bp.route("/subforum_order/send", methods=["POST"])
 def update_subforum_order():
-    subforum_order = request.form.getlist("subforum_order")
-    subforum_ids = request.form.getlist("subforum_id")
-    dbf.update_order_index(subforum_order, subforum_ids, "subforum")
-    return redirect("/settings/subforums")
+    forum_name = dbf.fetch_title()
+    error = rh.update_subforum_order(request)
+    if error: 
+        return render_template("error.html", forum_name=forum_name, error=error)
+    return redirect("/settings")
+
+@settings_bp.route("/subforum_delete", methods=["POST"])
+def subforum_delete():
+    forum_name = dbf.fetch_title()
+    error = rh.delete_subforum(request)
+    if error: 
+        return render_template("error.html", forum_name=forum_name, error=error)
+    return redirect("/settings")

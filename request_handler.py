@@ -45,6 +45,23 @@ def edit_message(request):
         return ("Viestin pituus ei sallituissa rajoissa.", message_id, topic_id)
     return (dbf.update_message(message, message_id), message_id, topic_id)
 
+
+# UPDATE
+
+def update_subforum_order(request): #KESKEN
+    subforum_order = request.form.getlist("subforum_order")
+    print(subforum_order)
+    subforum_ids = request.form.getlist("subforum_id")
+    print(subforum_order)
+    dbf.update_order_index(subforum_order, subforum_ids, "subforum")
+    
+def subforum_move(request):
+    subforum_id = request.form.get("relocated_subforum")
+    heading_id = request.form.get("new_heading")
+    error = dbf.subforum_move(subforum_id, heading_id)
+    return error
+
+
 # DELETE
 
 def delete_topics_messages(request):
@@ -62,5 +79,12 @@ def delete_heading(request):
     if delete_id == transfer_id:
         return "Poistettava otsikko sama kuin siirtokohde."
     return dbf.delete_heading(delete_id, transfer_id)
+
+def delete_subforum(request):
+    delete_id = request.form.get("subforum_id_delete")
+    if delete_id == "":
+        return "Kohdetta ei valittu."
+    return dbf.delete_subforum(delete_id)
+
 
     

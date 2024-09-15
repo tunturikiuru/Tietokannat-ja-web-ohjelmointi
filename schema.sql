@@ -8,12 +8,12 @@ CREATE TABLE subforums (
     subforum_name TEXT NOT NULL,
     heading_id INTEGER REFERENCES headings(heading_id), 
     order_index INTEGER,
-    private BOOLEAN DEFAULT FALSE,
+    visibilitty INTEGER DEFAULT 0,
     UNIQUE (heading_id, order_index));
 
 CREATE TABLE topics (
     topic_id SERIAL PRIMARY KEY, 
-    subforum_id INTEGER REFERENCES subforums(subforum_id), 
+    subforum_id INTEGER REFERENCES subforums(subforum_id) ON DELETE CASCADE, 
     topic_name TEXT NOT NULL,
     created TIMESTAMP,
     pinned BOOLEAN DEFAULT FALSE,
