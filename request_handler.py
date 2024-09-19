@@ -15,6 +15,79 @@ def forum_start(request):
     error_message = users.forum_setup(username, password1, password2, title, subtitle)
     return error_message
 
+
+# NEW
+
+def new_heading(request):
+    heading_name = request.form.get("heading")
+    if help.check_input(heading_name, 1, 60):
+        return dbf.new_heading(heading_name)
+    return "Otsikon pituus 1-60 merkkiä."
+
+def new_subforum(request):
+    subforum_name = request.form.get("new_subforum")
+    heading_id = request.form.get("heading")
+    if help.check_input(subforum_name, 1, 60):
+        return dbf.new_subforum(subforum_name, heading_id)
+    return "Subforumin nimen pituus 1-60 merkkiä."
+
+def new_message(request, topic_id):
+    message = request.form["message"]
+    username = users.get_username()
+    if help.check_input(message, 1, 5000) and not dbf.topic_locked(topic_id):
+        error = dbf.new_message(topic_id, message, username)
+        return error
+    error = "Viestin pituus ei sallituissa rajoissa."
+    return error
+
+
+# UPDATE
+
+def update_title(request):
+    title = request.form.get("title")
+    if not help.check_input(title, 1, 35):
+        return "Foorumumin nimen täytyy olla 1-35 merkkiä."
+    error = dbf.update_title(title, 1)
+    if error: 
+        return error
+    subtitle = request.form.get("subtitle")
+    if subtitle == "":
+        subtitle = " "
+    if not help.check_input(subtitle, 0, 50):
+        return "Foorumumin alaotsikon maksimipituus on 50 merkkiä."
+    error = dbf.update_title(subtitle, 2)
+    return error
+
+def change_heading(request):
+    heading_id = request.form.get("heading_id")
+    new_name = request.form.get("new_heading")
+    if help.check_input(new_name, 1, 60):
+        return dbf.update_heading(new_name, heading_id)
+    return "Otsikon pituus 1-60 merkkiä."
+
+def heading_order(request):
+    heading_order = request.form.getlist("heading_order")
+    heading_ids = request.form.getlist("heading_id")
+    return dbf.update_order_index(heading_order, heading_ids, "heading")
+
+def rename_subforum(request):
+    subforum_id = request.form.get("old_name")
+    name = request.form.get("new_name")
+    if help.check_input(name, 1, 60):
+        return dbf.update_subforum_name(name, subforum_id)
+    return "Subforumin nimen pituus 1-60 merkkiä."
+
+def update_subforum_order(request):
+    subforum_order = request.form.getlist("subforum_order")
+    subforum_ids = request.form.getlist("subforum_id")
+    dbf.update_order_index(subforum_order, subforum_ids, "subforum")
+    
+def subforum_move(request):
+    subforum_id = request.form.get("relocated_subforum")
+    heading_id = request.form.get("new_heading")
+    error = dbf.subforum_move(subforum_id, heading_id)
+    return error
+
 def update_topic(request, topic_id):
     topic_name = request.form["topic_name"]
     if not help.check_input(topic_name, 1, 100):
@@ -25,15 +98,6 @@ def update_topic(request, topic_id):
     subforum_id = request.form["subforum_id"]
     error_message = dbf.update_topic(topic_name, pinned, locked, visibility, topic_id, subforum_id)
     return error_message
-
-def new_message(request, topic_id):
-    message = request.form["message"]
-    username = users.get_username()
-    if help.check_input(message, 1, 5000) and not dbf.topic_locked(topic_id):
-        error = dbf.new_message(topic_id, message, username)
-        return error
-    error = "Viestin pituus ei sallituissa rajoissa."
-    return error
 
 def edit_message(request):
     message = request.form["message"]
@@ -46,18 +110,7 @@ def edit_message(request):
     return (dbf.update_message(message, message_id), message_id, topic_id)
 
 
-# UPDATE
-
-def update_subforum_order(request):
-    subforum_order = request.form.getlist("subforum_order")
-    subforum_ids = request.form.getlist("subforum_id")
-    dbf.update_order_index(subforum_order, subforum_ids, "subforum")
-    
-def subforum_move(request):
-    subforum_id = request.form.get("relocated_subforum")
-    heading_id = request.form.get("new_heading")
-    error = dbf.subforum_move(subforum_id, heading_id)
-    return error
+# USERS
 
 def new_admin(request):
     user_id = request.form.get("user_id")
@@ -88,6 +141,8 @@ def delete_topics_messages(request):
 def delete_heading(request):
     delete_id = request.form.get("heading_id_delete")
     transfer_id = request.form.get("heading_id_transfer")
+    if delete_id == "":
+        return "Kohdetta ei valittu."
     if delete_id == transfer_id:
         return "Poistettava otsikko sama kuin siirtokohde."
     return dbf.delete_heading(delete_id, transfer_id)

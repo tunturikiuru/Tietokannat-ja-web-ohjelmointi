@@ -8,7 +8,9 @@
 <nav>
     <a href="/settings/">Foorumin rakenne</a>  |  
     <a href="/settings/headings">Väliotsikot</a>   |  
-    Subfoorumit
+    Subfoorumit   |  
+    <a href="/settings/admins">Admin</a>  |  
+    <a href="/settings/users">Käyttäjät</a>
 </nav>
 <br>
 
@@ -18,7 +20,7 @@
     <table>
         <tr>
             <td>Subforumin nimi: </td>
-            <td><input type="text" name="new_subforum"></td>
+            <td><input type="text" name="new_subforum" required="required" minlength="1" maxlength="60"></td>
         </tr>
         <tr>
             <td>Alueelle: </td>
@@ -57,7 +59,7 @@
         <tr>
             <td>Uusi nimi:</td>
             <td>
-                <input type="text" name="new_name">
+                <input type="text" name="new_name" required="required" minlength="1" maxlength="60">
             </td>
         </tr>
     </table>
@@ -99,6 +101,7 @@
 </form>
 
 <h5>Subforumien järjestys</h5>
+<span class="hint">HUOM! Väliotsikot järjestetään, vaikka kaikkia kenttiä ei olisi täytetty.</span>
 {% if forum_structure %}
 {% for heading, subforum_list in forum_structure.items() %}
 {% if subforum_list%}

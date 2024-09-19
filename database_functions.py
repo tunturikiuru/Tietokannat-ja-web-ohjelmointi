@@ -2,7 +2,7 @@ from db import db
 from sqlalchemy.sql import text
 
 
-def forum_setup(username, hash_value, title, subtitle):
+def forum_setup(username, hash_value, title, subtitle):  # ei tarkistettu
     try:
         sql = "INSERT INTO users (username, password, admin) VALUES (:username, :password, TRUE)"
         sql2 = "INSERT INTO headings (heading_name, order_index) VALUES (:title, 1)"
@@ -19,7 +19,7 @@ def forum_setup(username, hash_value, title, subtitle):
 
 # USERS
 
-def register_user(username, password):
+def register_user(username, password):  # ei tarkistettu
     try:
         sql = "INSERT INTO users (username, password) VALUES (:username, :password)"
         db.session.execute(text(sql), {"username":username, "password":password})
@@ -28,82 +28,75 @@ def register_user(username, password):
     except:
         return False
 
-def check_username(username):
+def check_username(username):  # ei tarkistettu
     sql = "SELECT 1 FROM users WHERE username=:username"
     result = db.session.execute(text(sql), {"username":username})
     return result.fetchone()
 
-def fetch_password(username):
+def fetch_password(username):  # ei tarkistettu
     sql = "SELECT password FROM users WHERE username=:username"
     result = db.session.execute(text(sql), {"username":username})
     hash_value = result.fetchone()
     hash_value = hash_value[0] if hash_value else ""
     return hash_value
 
-def is_admin(username):
+def is_admin(username):  # ei tarkistettu
     sql = "SELECT 1 FROM users WHERE username=:username AND admin='True'"
     result = db.session.execute(text(sql), {"username":username})
     return result.fetchone()
 
-def message_sender_and_topic(message_id):
+def message_sender_and_topic(message_id):  # ei tarkistettu
     sql = "SELECT sender, topic_id FROM messages WHERE message_id=:message_id"
     result = db.session.execute(text(sql), {"message_id":message_id})
     return result.fetchone()
 
-def get_users():
+def get_users():  # ei tarkistettu
     sql= "SELECT user_id, username, admin FROM users ORDER BY user_id"
     result = db.session.execute(text(sql))
     return result.fetchall()
 
-def new_admin(user_id):
+def new_admin(user_id):  # ei tarkistettu
     try:
         sql = "UPDATE users SET admin=True WHERE user_id=:user_id"
         db.session.execute(text(sql), {"user_id":user_id})
         db.session.commit()
         return ""
-    except:
+    except Exception as e:
         db.session.rollback()
-        return "Tapahtui virhe."
+        return f"Virhe: {e}"
     
-def remove_admin(user_id):
+def remove_admin(user_id):  # ei tarkistettu
     try:
         sql = "UPDATE users SET admin=False WHERE user_id=:user_id"
         db.session.execute(text(sql), {"user_id":user_id})
         db.session.commit()
         return ""
-    except:
+    except Exception as e:
         db.session.rollback()
-        return "Tapahtui virhe."
+        return f"Virhe: {e}"
 
 
 
 # NEW
 
-def new_title(title):
-    sql = "INSERT INTO headings (heading_name, order_index) VALUES (:title, 1) ON CONFLICT (order_index) DO UPDATE SET heading_name = :title"
-    db.session.execute(text(sql), {"title":title})
-    db.session.commit()
-
-def new_subtitle(subtitle):
-    sql = "INSERT INTO headings (heading_name, order_index) VALUES (:subtitle, 2) ON CONFLICT (order_index) DO UPDATE SET heading_name = :subtitle"
-    db.session.execute(text(sql), {"subtitle":subtitle})
-    db.session.commit()
-
 def new_heading(heading_name):
-    order_index = len(fetch_headings()) + 3
-    sql = "INSERT INTO headings (heading_name, order_index) VALUES (:heading_name, :order_index)"
-    db.session.execute(text(sql), {"heading_name":heading_name, "order_index":order_index})
-    db.session.commit()
+    try:
+        order_index = len(fetch_headings()) + 3
+        sql = "INSERT INTO headings (heading_name, order_index) VALUES (:heading_name, :order_index)"
+        db.session.execute(text(sql), {"heading_name":heading_name, "order_index":order_index})
+        db.session.commit()
+        return ""
+    except Exception as e:
+        db.session.rollback()
+        return f"Virhe: {e}"
 
-def new_subforum(subforum, heading_id):
-    sql = "SELECT COUNT(subforum_id) FROM subforums WHERE heading_id=:heading_id"
-    result = db.session.execute(text(sql), {"heading_id":heading_id})
-    order_index = result.fetchone()[0]+1
+def new_subforum(subforum, heading_id):  # ei tarkistettu
+    order_index = max_order_index(heading_id) + 1
     sql = "INSERT INTO subforums (heading_id, subforum_name, order_index) VALUES (:heading_id, :subforum, :order_index)"
     db.session.execute(text(sql), {"heading_id":heading_id, "subforum":subforum, "order_index":order_index})
     db.session.commit()    
 
-def new_topic(topic_id, message, subforum_id, sender):
+def new_topic(topic_id, message, subforum_id, sender):  # ei tarkistettu
     sql = "INSERT INTO topics (subforum_id, topic_name) VALUES (:subforum_id, :topic) RETURNING topic_id"
     result = db.session.execute(text(sql), {"subforum_id":subforum_id, "topic":topic_id})
     topic_id = result.fetchone()
@@ -112,20 +105,20 @@ def new_topic(topic_id, message, subforum_id, sender):
     db.session.commit()
     return topic_id[0]
 
-def new_message(topic_id, message, sender):
+def new_message(topic_id, message, sender):  # ei tarkistettu
     try:
         sql = "INSERT INTO messages (topic_id, message, sender, time) VALUES (:topic_id, :message, :sender, NOW())"
         db.session.execute(text(sql), {"topic_id":topic_id, "message":message, "sender":sender})
         db.session.commit()
         return ""
-    except:
+    except Exception as e:
         db.session.rollback()
-        return "Tapahtui virhe."
+        return f"Virhe: {e}"
 
 
 # GET
 
-def fetch_title():
+def fetch_title():  # ei tarkistettu
     sql = "SELECT heading_name, heading_id FROM headings WHERE order_index < 3 ORDER BY order_index"
     result = db.session.execute(text(sql))
     titles = result.fetchall()
@@ -133,37 +126,37 @@ def fetch_title():
         titles.append("")
     return titles
 
-def fetch_headings():
+def fetch_headings(): #TARVITAANKO MUUHUN KUIN NEW_HEADING?
     sql = "SELECT heading_name, heading_id FROM headings WHERE order_index >= 3 ORDER BY order_index"
     result = db.session.execute(text(sql))
     headings = result.fetchall()
     return headings
 
-def fetch_subforum_by_topic(topic_id):
+def fetch_subforum_by_topic(topic_id):  # ei tarkistettu
     sql = "SELECT s.subforum_name subforum_name, s.subforum_id subforum_id FROM topics t LEFT JOIN subforums s ON t.subforum_id=s.subforum_id WHERE t.topic_id=:topic_id"
     result = db.session.execute(text(sql), {"topic_id":topic_id})
     topics = result.fetchone()
     return topics
 
-def fetch_subforum_by_id(subforum_id):
+def fetch_subforum_by_id(subforum_id):  # ei tarkistettu
     sql = "SELECT subforum_name, subforum_id FROM subforums WHERE subforum_id=:subforum_id"
     result = db.session.execute(text(sql), {"subforum_id":subforum_id})
     topics = result.fetchone()
     return topics
     
-def subforum_list():
+def subforum_list():  # ei tarkistettu
     sql = "SELECT subforum_name, subforum_id FROM subforums ORDER BY subforum_id, order_index"
     result = db.session.execute(text(sql))
     subforums = result.fetchall()
     return subforums
 
-def fetch_topic(topic_id):
+def fetch_topic(topic_id):  # ei tarkistettu
     sql = "SELECT topic_name, topic_id FROM topics WHERE topic_id=:topic_id"
     result = db.session.execute(text(sql), {"topic_id":topic_id})
     topic = result.fetchone()
     return topic
 
-def fetch_topic_data(topic_id):
+def fetch_topic_data(topic_id):  # ei tarkistettu
     sql = "SELECT topic_name, topic_id, pinned, locked, visibility FROM topics WHERE topic_id=:topic_id"
     result = db.session.execute(text(sql), {"topic_id":topic_id})
     data = result.fetchone()
@@ -183,13 +176,13 @@ def get_forum_structure():
             forum_structure[(item.h_id, item.h_name)].append(item[2:4])
     return forum_structure
 
-def fetch_message(message_id):
+def fetch_message(message_id):  # ei tarkistettu
     sql = "SELECT message_id, message, sender, topic_id FROM messages WHERE message_id=:message_id"
     result = db.session.execute(text(sql), {"message_id":message_id})
     message = result.fetchone()
     return message
     
-def topic_locked(topic_id):
+def topic_locked(topic_id):  # ei tarkistettu
     sql = "SELECT locked FROM topics WHERE topic_id=:topic_id"
     result = db.session.execute(text(sql), {"topic_id":topic_id})
     locked = result.scalar()
@@ -234,91 +227,117 @@ def topic_page(topic_id):
 
 # UPDATE
 
+def update_title(title, value):
+    try:
+        print(title, value)
+        sql = "UPDATE headings SET heading_name=:title WHERE order_index=:value"
+        db.session.execute(text(sql), {"title":title, "value":value})
+        db.session.commit()
+        return ""
+    except Exception as e:
+        db.session.rollback()
+        return f"Virhe: {e}"
+
 def update_order_index(order_index: list, ids: list, category: str):
-    order = sorted(zip(order_index, ids))
-    if category == "heading":
-        sql = "UPDATE headings SET order_index = :i WHERE heading_id =:id"
-        order = [(index+3, x[1]) for index, x in enumerate(order)]
-    if category == "subforum":
-        sql = "UPDATE subforums SET order_index = :i WHERE subforum_id =:id"
-        order = [(index+1, x[1]) for index, x in enumerate(order)]
-    # temporary index
-    for item in order:
-        db.session.execute(text(sql), {"i":item[0]+100000, "id":item[1]})
-    # permanent index
-    for item in order:
-        db.session.execute(text(sql), {"i":item[0], "id":item[1]})
-    db.session.commit() 
+    try:
+        order = sorted(zip(order_index, ids))
+        if category == "heading":
+            sql = "UPDATE headings SET order_index = :i WHERE heading_id =:id"
+            order = [(index+3, x[1]) for index, x in enumerate(order)]
+        if category == "subforum":
+            sql = "UPDATE subforums SET order_index = :i WHERE subforum_id =:id"
+            order = [(index+1, x[1]) for index, x in enumerate(order)]
+        # temporary index
+        for item in order:
+            db.session.execute(text(sql), {"i":item[0]+100000, "id":item[1]})
+        # permanent index
+        for item in order:
+            db.session.execute(text(sql), {"i":item[0], "id":item[1]})
+        db.session.commit() 
+        return ""
+    except Exception as e:
+        db.session.rollback()
+        return f"Virhe: {e}"
 
 def update_heading(heading_name, heading_id):
-    sql = "UPDATE headings SET heading_name=:heading_name WHERE heading_id=:heading_id"
-    db.session.execute(text(sql), {"heading_name":heading_name, "heading_id":heading_id})
-    db.session.commit()
+    try:
+        sql = "UPDATE headings SET heading_name=:heading_name WHERE heading_id=:heading_id"
+        db.session.execute(text(sql), {"heading_name":heading_name, "heading_id":heading_id})
+        db.session.commit()
+        return ""
+    except Exception as e:
+        db.session.rollback()
+        return f"Virhe: {e}"
 
 def update_subforum_name(subforum_name, subforum_id):
-    sql = "UPDATE subforums SET subforum_name =:subforum_name WHERE subforum_id =:subforum_id"
-    db.session.execute(text(sql), {"name":subforum_name, "subforum_id":subforum_id})
-    db.session.commit()
+    try: 
+        sql = "UPDATE subforums SET subforum_name=:subforum_name WHERE subforum_id=:subforum_id"
+        db.session.execute(text(sql), {"subforum_name":subforum_name, "subforum_id":subforum_id})
+        db.session.commit()
+        return ""
+    except Exception as e:
+        db.session.rollback()
+        return f"Virhe: {e}"
 
-def subforum_move(subforum_id, heading_id):
+def subforum_move(subforum_id, heading_id):  # ei tarkistettu
     try:
-        index = max_index(heading_id)
+        index = max_order_index(heading_id)
         sql = "UPDATE subforums SET heading_id=:heading_id, order_index=order_index + :index WHERE subforum_id=:subforum_id"
         db.session.execute(text(sql), {"subforum_id":subforum_id, "heading_id":heading_id, "index":index})
         db.session.commit()
         return ""
-    except: 
+    except Exception as e:
         db.session.rollback()
-        return "Tapahtui virhe"
+        return f"Virhe: {e}"
 
-def update_topic(topic_name, pinned, locked, visibility, topic_id, subforum_id):
+def update_topic(topic_name, pinned, locked, visibility, topic_id, subforum_id):  # ei tarkistettu
     try:
         sql = "UPDATE topics SET topic_name=:topic_name, subforum_id=:subforum_id, pinned=:pinned, locked=:locked, visibility=:visibility WHERE topic_id=:topic_id"
         db.session.execute(text(sql), {"topic_name":topic_name, "subforum_id":subforum_id, "pinned":pinned, "locked":locked, "visibility":visibility, "topic_id":topic_id}) 
         db.session.commit()
         return ""
-    except: 
+    except Exception as e:
         db.session.rollback()
-        return "Tapahtui virhe"
+        return f"Virhe: {e}"
     
-def update_message(message, message_id):
+def update_message(message, message_id):  # ei tarkistettu
     try:
         sql = "UPDATE messages SET message=:message WHERE message_id=:message_id"
         db.session.execute(text(sql), {"message":message, "message_id":message_id})
         db.session.commit()
         return ""
-    except: 
+    except Exception as e:
         db.session.rollback()
-        return "Tapahtui virhe"
+        return f"Virhe: {e}"
     
 
 
 # DELETE 
 
-def delete_topic(topic_id):
+def delete_topic(topic_id):  # ei tarkistettu
     sql = "DELETE FROM topics WHERE topic_id=:topic_id RETURNING subforum_id"
     try:
         result = db.session.execute(text(sql), {"topic_id":topic_id})
         subforum_id = result.scalar()
         db.session.commit()
         return subforum_id
-    except:
+    except Exception as e:
         db.session.rollback()
-        return None
+        return f"Virhe: {e}"
     
-def delete_message(message_id):
+def delete_message(message_id):  # ei tarkistettu
     sql = "DELETE FROM messages WHERE message_id=:message_id RETURNING topic_id"
     try:
         result = db.session.execute(text(sql), {"message_id":message_id})
         topic_id = result.scalar()
         db.session.commit()
         return topic_id
-    except:
+    except Exception as e:
         db.session.rollback()
-        return None
+        return f"Virhe: {e}"
 
 def delete_heading(delete_id, transfer_id):
-    index = max_index(transfer_id)
+    index = max_order_index(transfer_id)
     sql1 = "UPDATE subforums SET heading_id=:transfer_id, order_index=order_index+:index WHERE heading_id=:delete_id"
     sql2 = "DELETE FROM headings WHERE heading_id=:delete_id"
     try:
@@ -326,24 +345,24 @@ def delete_heading(delete_id, transfer_id):
         db.session.execute(text(sql2), {"delete_id":delete_id})
         db.session.commit()
         return ""
-    except:
+    except Exception as e:
         db.session.rollback()
-        return "Tapahtui virhe"
+        return f"Virhe: {e}"
     
-def delete_subforum(subforum_id):
+def delete_subforum(subforum_id):  # ei tarkistettu
     try:
         sql = "DELETE FROM subforums WHERE subforum_id=:subforum_id"
         db.session.execute(text(sql), {"subforum_id":subforum_id})
         db.session.commit()
         return ""
-    except:
+    except Exception as e:
         db.session.rollback()
-        return "Tapahtui virhe"
+        return f"Virhe: {e}"
     
 
 # SEARCH 
 
-def search_from_topic(word, topic_id):
+def search_from_topic(word, topic_id):  # ei tarkistettu
     sql = "SELECT m.topic_id topic_id, m.message_id message_id, m.sender sender, m.message message, m.time time, t.topic_name topic \
         FROM messages m LEFT JOIN topics t ON m.topic_id=t.topic_id WHERE m.topic_id=:topic_id AND m.message ~* :query \
         ORDER BY m.message_id DESC"
@@ -351,7 +370,7 @@ def search_from_topic(word, topic_id):
     messages = result.fetchall()
     return messages
 
-def search(word, sender, subforums, time, order):
+def search(word, sender, subforums, time, order):  # ei tarkistettu
     sql1 = " AND s.subforum_id = ANY(:subforums)" if subforums else ""
     sql2 = " AND m.time >= NOW() - interval :time DAY" if time else ""
     sql3 = order
@@ -366,10 +385,10 @@ def search(word, sender, subforums, time, order):
 
 # HELP
 
-def max_index(heading_id):
-    sql = "SELECT COALESCE(MAX(s.order_index),0) FROM subforums s LEFT JOIN headings h ON s.heading_id=h.heading_id \
-        WHERE s.heading_id=:heading_id"
+def max_order_index(heading_id):
+    sql = "SELECT COALESCE(MAX(order_index),0) FROM subforums WHERE heading_id=:heading_id"
     result = db.session.execute(text(sql), {"heading_id":heading_id})
     return result.scalar()
+
 
 

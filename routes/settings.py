@@ -40,51 +40,43 @@ def admins():
     users = dbf.get_users()
     return render_template("admin.html", users=users, forum_name=forum_name)
 
-@settings_bp.route("/users")
-def user_settings():
-    forum_name = dbf.fetch_title()
-    users = dbf.get_users()
-    print(users)
-    return render_template("admin.html", users=users, forum_name=forum_name)
 
 
 # SETTINGS SEND
 
-@settings_bp.route("/send", methods=["POST"]) #ei tarkistettu
+@settings_bp.route("/send", methods=["POST"])
 def send_settings():
-    title = request.form["title"]
-    if title == "":
-        title = " "
-    dbf.new_title(title)
-    subtitle = request.form["subtitle"]
-    if subtitle == "":
-        subtitle = " "
-    dbf.new_subtitle(subtitle)
+    forum_name = dbf.fetch_title()
+    error = rh.update_title(request)
+    if error:
+        return render_template("error.html", forum_name=forum_name, error=error)
     return redirect("/settings")
 
-@settings_bp.route("/heading_name/send", methods=["POST"]) #ei tarkistettu
+@settings_bp.route("/heading_name/send", methods=["POST"])
 def send_new_heading():
-    heading_name = request.form["heading"]
-    if heading_name != "":
-        dbf.new_heading(heading_name)
+    forum_name = dbf.fetch_title()
+    error = rh.new_heading(request)
+    if error:
+        return render_template("error.html", forum_name=forum_name, error=error)
     return redirect("/settings/")
 
-@settings_bp.route("/heading_rename/send", methods=["POST"]) #ei tarkistettu
-def send_change_heading_name():
-    heading_id = request.form["heading_id"]
-    new_name = request.form["new_heading"]
-    if new_name != "":
-        dbf.update_heading(new_name, heading_id)
+@settings_bp.route("/heading_rename/send", methods=["POST"])
+def send_change_heading():
+    forum_name = dbf.fetch_title()
+    error = rh.change_heading(request)
+    if error:
+        return render_template("error.html", forum_name=forum_name, error=error)
     return redirect("/settings/")
 
-@settings_bp.route("/heading_order/send", methods=["POST"]) #ei tarkistettu
+@settings_bp.route("/heading_order/send", methods=["POST"])
 def send_heading_order():
-    heading_order = request.form.getlist("heading_order")
-    heading_ids = request.form.getlist("heading_id")
-    dbf.update_order_index(heading_order, heading_ids, "heading")
+    forum_name = dbf.fetch_title()
+    error = rh.heading_order(request)
+    if error:
+        return render_template("error.html", forum_name=forum_name, error=error)
     return redirect("/settings/")
 
-@settings_bp.route("/delete_heading/send", methods=["POST"]) #ei tarkistettu
+@settings_bp.route("/delete_heading/send", methods=["POST"])
 def send_delete_heading():
     forum_name = dbf.fetch_title()
     error = rh.delete_heading(request)
@@ -92,20 +84,21 @@ def send_delete_heading():
         return render_template("error.html", forum_name=forum_name, error=error)
     return redirect("/settings")
 
-@settings_bp.route("/new_subforum/send", methods=["POST"]) #ei tarkistettu
+@settings_bp.route("/new_subforum/send", methods=["POST"])
 def send_subforum():
-    subforum = request.form["new_subforum"]
-    heading = request.form["heading"]
-    dbf.new_subforum(subforum, heading)
+    forum_name = dbf.fetch_title()
+    error = rh.new_subforum(request)
+    if error: 
+        return render_template("error.html", forum_name=forum_name, error=error)
     return redirect("/settings/")
 
-@settings_bp.route("/subforum_rename/send", methods=["POST"]) #ei tarkistettu
+@settings_bp.route("/subforum_rename/send", methods=["POST"])
 def rename_subforum():
-    subforum_id = request.form["old_name"]
-    name = request.form["new_name"]
-    if name != "":
-        dbf.update_subforum_name(name, subforum_id)
-    return redirect("/settings/")
+    forum_name = dbf.fetch_title()
+    error = rh.rename_subforum(request)
+    if error: 
+        return render_template("error.html", forum_name=forum_name, error=error)
+    return redirect("/settings/")    
 
 @settings_bp.route("/subforum_move/send", methods=["POST"])
 def move_subforum():

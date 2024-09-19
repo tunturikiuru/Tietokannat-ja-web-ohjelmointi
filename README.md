@@ -24,13 +24,12 @@ taulukoiden CSS - etusivu ja subfoorumit
 katkaise pitkät sanat/otsikot - taulukot ja viestit
 tarkista, ettei kirjautumis- ja rekisteräitumismahdollisuutta ennen foorumin luontia
 tietokantafuntioiden parantelu - kaikki polkuun tarvittavat yhdellä haulla
-ettei foormin nimäa tarvitse hakea aina tietokannasta - yhdistetäänkö polkufunktioon vai laitetaaanko sanakirjaan tms?
 alkuasetusten parantelu ja poistot
-settings sivu kuntoon - input tarkistus
 viestien ja aiheiden jako useille sivuille
 
 
 SELVITÄ:
+foorumin nimen tallennus - miten foorumin nimi kannattaa tallentaa, jotta sitä ei tarvitsisi aina hakea (sanakirja?, evästeet?)
 haku: hae näistä tuloksista
 haku: maalaa hakusana tuloksista - työläs, yksityiskohtia selvitettävä
 javascript - lainaa-nappi (tai muuta "vastaa"-napiksi ilman lainausta)

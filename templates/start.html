@@ -19,12 +19,12 @@
             <p> Tähdellä merkityt kentät ovat pakollisia.</p>
             <form action="/" method="POST">
                 <h4> Foorumin tiedot:</h4>
-                Forumin nimi: * <input type="text" name="title"> <br>
-                Forumin alaotsikko: <input type="text" name="subtitle"> <br>
+                Forumin nimi: * <input type="text" name="title" required="required" minlength="1" maxlength="35"> <br>
+                Forumin alaotsikko: <input type="text" name="subtitle" maxlength="50"> <br>
                 <h4> Pääkäyttäjän tiedot:</h4>
-                Käyttäjätunnus: * <input type="text" name="username"><br>
-                Salasana: * <input type="password" name="password1"><br>
-                Salasana uudelleen: * <input type="password" name="password2"><br>
+                Käyttäjätunnus: * <input type="text" name="username" required="required" minlength="1" maxlength="25"><br>
+                Salasana: * <input type="password" name="password1" required="required" minlength="8" maxlength="15"><br>
+                Salasana uudelleen: * <input type="password" name="password2" required="required" minlength="8" maxlength="15"><br>
                 <input type="submit" value="Luo foorumi">
             </form>
         </div>

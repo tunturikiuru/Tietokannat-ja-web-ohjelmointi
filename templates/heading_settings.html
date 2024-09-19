@@ -8,7 +8,9 @@
 <nav>
     <a href="/settings/">Foorumin rakenne</a>  |  
     Väliotsikot  |  
-    <a href="/settings/subforums">Subfoorumit</a>
+    <a href="/settings/subforums">Subfoorumit</a>  |  
+    <a href="/settings/admins">Admin</a>  |  
+    <a href="/settings/users">Käyttäjät</a>
 </nav>
 <br>
 
@@ -16,7 +18,7 @@
 
 <h5>Uusi väliotsikko</h5>
 <form action="/settings/heading_name/send" method="POST">
-    <input type="text" name="heading"> </p>
+    <input type="text" name="heading" required="required" minlength="1" maxlength="60"> </p>
     <input type="submit" value="Lähetä">
 </form>
 
@@ -41,7 +43,7 @@
                 Uusi nimi:
             </td>
             <td>
-                <input type="text" name="new_heading">
+                <input type="text" name="new_heading" required="required" minlength="1" maxlength="60">
             </td>
         </tr>
     </table>
@@ -52,7 +54,6 @@
 {% endif %}
 
 <h5>Väliotsikoiden järjestys</h5>
-<span class="hint">Numerot järjestetään ennen kirjaimia. </span><br>
 <span class="hint">HUOM! Väliotsikot järjestetään, vaikka kaikkia kenttiä ei olisi täytetty.</span>
 {% if headings|length > 1 %}
 <form action="/settings/heading_order/send" method="POST">
@@ -86,6 +87,7 @@
             </td>
             <td>
                 <select name="heading_id_delete">
+                    <option value=""> (ei valintaa)</option>
                     {% for heading in headings %}
                     <option value="{{ heading.heading_id }}"> {{ heading.heading_name }}</option> 
                     {% endfor %}

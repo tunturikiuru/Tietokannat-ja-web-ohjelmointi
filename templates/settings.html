@@ -34,16 +34,15 @@
     </div>
     <div class="forum_settings">
         <h5>Muuta foorumin nimeä:</h5>
-        <span class="hint">Jos haluat poistaa otsikon muuta se välilyönniksi</span>
         <form action="/settings/send" method="POST">
             <table>
                 <tr>
                     <td>Forumin nimi:</td>
-                    <td><input type="text" name="title" value="{{ forum_name[0][0] }}"></td>
+                    <td><input type="text" name="title" value="{{ forum_name[0][0] }}" required="required" minlength="1" maxlength="35"></td>
                 </tr>
                 <tr>
                     <td>Forumin alaotsikko:</td>
-                    <td><input type="text" name="subtitle" value="{{ forum_name[1][0] }}"> </td>
+                    <td><input type="text" name="subtitle" value="{{ forum_name[1][0] }}" maxlength="50"> </td>
                 </tr>
             </table>
             <input type="submit" value="Lähetä">
@@ -51,7 +50,7 @@
         <h5>Lisää väliotsikoita:</h5>
         <span class="hint">Voit muokata väliotsikoita Väliotsikot-kohdasta</span>
         <form action="/settings/heading_name/send" method="POST">
-            <input type="text" name="heading"> </p>
+            <input type="text" name="heading" required="required" minlength="1" maxlength="60"> </p>
             <input type="submit" value="Lähetä">
         </form>
         {% if forum_structure %}
@@ -60,7 +59,7 @@
             <table>
                 <tr>
                     <td>Subforumin nimi:</td>
-                    <td><input type="text" name="new_subforum"></td>
+                    <td><input type="text" name="new_subforum" required="required" minlength="1" maxlength="60"></td>
                 </tr>
                 <tr>
                     <td>Alueelle: </td>
