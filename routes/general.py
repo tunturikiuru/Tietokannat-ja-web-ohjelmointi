@@ -11,13 +11,13 @@ general_bp = Blueprint("general", __name__)
 def index():
     if request.method == "GET":
         forum_name = dbf.fetch_title()
-        if forum_name[0] == "":
+        if not forum_name:
             return render_template("start.html")
         else:
             subforum_order = dbf.index_page()
             return render_template("index.html", forum_name=forum_name, subforum_order=subforum_order)
     if request.method == "POST":
-        error_message = hel.forum_start(request)
+        error_message = rh.forum_start(request)
         if error_message:
             return render_template("start.html", error_message=error_message)
         else:
@@ -38,13 +38,11 @@ def create_new_topic(id):
 
 @general_bp.route("/subforum/<int:subforum_id>/new_topic/send", methods=["POST"])
 def send_new_topic(subforum_id):
-    username = users.get_username()
     forum_name = dbf.fetch_title()
+    username = users.get_username()
     if username:
-        title = request.form["title"]
-        message = request.form["content"]
-        if help.check_input(title, 1, 100) and help.check_input(message, 1, 5000):
-            topic_id = dbf.new_topic(title, message, subforum_id, username)
+        topic_id = rh.new_topic(request, subforum_id, username)
+        if topic_id:
             return redirect(url_for("general.topic", topic_id = topic_id))
         return render_template("error.html", forum_name = forum_name, error = "Otsikon tai viestin pituus ei sallituissa rajoissa")
     else:
@@ -55,10 +53,9 @@ def send_new_topic(subforum_id):
 @general_bp.route("/topic/<int:topic_id>")
 def topic(topic_id):
     forum_name = dbf.fetch_title()
-    subforum = dbf.fetch_subforum_by_topic(topic_id)
-    topic = dbf.fetch_topic(topic_id)
+    path = dbf.path_to_topic(topic_id)
     messages = dbf.topic_page(topic_id)
-    return render_template("topic.html", messages=messages, subforum=subforum, topic=topic, forum_name=forum_name)
+    return render_template("topic.html", messages=messages, path=path, forum_name=forum_name)
 
 @general_bp.route("/topic/<int:topic_id>/message/<int:message_id>")
 def jump_to_message(topic_id, message_id):
@@ -67,9 +64,10 @@ def jump_to_message(topic_id, message_id):
 @general_bp.route("/topic/<int:topic_id>/send", methods=["POST"])
 def send_new_message(topic_id):
     forum_name = dbf.fetch_title()
+    username = users.get_username()
     error = ""
-    if users.is_user():
-        error = rh.new_message(request, topic_id)
+    if username:
+        error = rh.new_message(request, topic_id, username)
         if not error:
             return redirect(url_for("general.topic", topic_id=topic_id))
     else:
@@ -85,21 +83,20 @@ def send_new_message(topic_id):
 def edit_topic(topic_id):
     forum_name = dbf.fetch_title()
     if users.is_admin():
-        subforum = dbf.fetch_subforum_by_topic(topic_id)
         subforum_list = dbf.subforum_list()
         topic = dbf.fetch_topic_data(topic_id)
-        return render_template("edit_topic.html", forum_name=forum_name, subforum=subforum, topic=topic, subforum_list=subforum_list)
+        return render_template("edit_topic.html", forum_name=forum_name, topic=topic, subforum_list=subforum_list)
     return render_template("error.html", forum_name=forum_name, error = "Ei oikeutta nähdä sivua.")
 
 @general_bp.route("/topic/<int:topic_id>/edit/send", methods=["POST"])
 def edit_topic_send(topic_id):
     forum_name = dbf.fetch_title()
     error = "Ei oikeutta pyyntöön."
-    subforum = dbf.fetch_subforum_by_topic(topic_id)
     if users.is_admin():
         error = rh.update_topic(request, topic_id)
         if not error:
-            return redirect(url_for("general.subforum", subforum_id=subforum.subforum_id))
+            subforum_id = dbf.subforum_id(topic_id)
+            return redirect(url_for("general.subforum", subforum_id=subforum_id))
     return render_template("error.html", forum_name=forum_name, error=error)
 
 @general_bp.route("/edit/message/<int:message_id>")
@@ -108,7 +105,7 @@ def edit_message(message_id):
     message = dbf.fetch_message(message_id)
     if users.get_username() == message.sender or users.is_admin():
         return render_template("edit_message.html", forum_name=forum_name, message=message)
-    return render_template("error.html", forum_name=forum_name, error = "Ei oikeutta nähdä sivua.")
+    return render_template("error.html", forum_name=forum_name, error = "Ei oikeutta tehdä muutoksia.")
 
 @general_bp.route("/edit/message/send", methods=["POST"])
 def edit_message_send():
@@ -143,9 +140,9 @@ def register():
     if request.method == "GET":
         return render_template("register.html", forum_name=forum_name)
     if request.method == "POST":
-        error_message = users.register_user(request)
-        if error_message:
-            return render_template("register.html", message=error_message, forum_name=forum_name)
+        error = rh.register_user(request)
+        if error:
+            return render_template("register.html", message=error, forum_name=forum_name)
         else:
             return redirect("/")
 
@@ -155,9 +152,9 @@ def login():
     if request.method == "GET":
         return render_template("login.html", forum_name=forum_name)
     if request.method == "POST":
-        if users.login(request):
+        if rh.login(request):
             return redirect("/")
-    return render_template("login.html", message="Väärä käyttäjätunnus tai salasana", forum_name=forum_name)
+        return render_template("login.html", message="Väärä käyttäjätunnus tai salasana", forum_name=forum_name)
     
 @general_bp.route("/logout")
 def logout():
@@ -182,9 +179,7 @@ def search_result():
 @general_bp.route("/topic/<int:topic_id>/result")
 def search_from_topic(topic_id):
     forum_name = dbf.fetch_title()
-    word = request.args["query"]
-    word = help.check_asterisk(word)
-    messages = dbf.search_from_topic(word, topic_id)
+    messages = rh.search_from_topic(request, topic_id)
     return render_template("result.html", messages=messages, forum_name=forum_name)
 
 @general_bp.route("/subforum/<int:subforum_id>/result")

@@ -4,42 +4,16 @@ import database_functions as dbf
 import help_functions as help
 
 
-# FIRST ADMIN
-def forum_setup(username, password1, password2, title, subtitle=None):
-    error_message = before_register(username, password1, password2)
-    if not error_message:
-        hash_value = hash_password(password1)
-        if dbf.forum_setup(username, hash_value, title, subtitle):
-            create_session(username)
-        else:
-            error_message = "Tapahtui virhe, yritä uudelleen"
-    return error_message
-
 
 # LOGIN, REGISTER
-def login(request):
-    username = request.form["username"]
-    password = request.form["password"]
-    hash_value = dbf.fetch_password(username)
-    if not hash_value:
-        return False
-    if check_password_hash(hash_value, password):
-        create_session(username)
-        return True
-    return False
 
-def register_user(request):
-    username = request.form["username"]
-    password1 = request.form["password1"]
-    password2 = request.form["password2"]
-    error_message = before_register(username, password1, password2)
-    if not error_message:
-        hash_value = hash_password(password1)
-        if dbf.register_user(username, hash_value):
-            create_session(username)
-        else:
-            error_message = "Tapahtui virhe, yritä uudelleen"
-    return error_message
+def register_user(username, password1):
+    hash_value = hash_password(password1)
+    if dbf.register_user(username, hash_value):
+        create_session(username)
+        return ""
+    else:
+        return "Virhe tiedon tallentamisessa."
 
 def before_register(username, password1, password2):
     if username == "" or password1 == "" or password2 == "":
@@ -63,8 +37,10 @@ def hash_password(password):
 def check_credentials(username):
     if is_admin():
         return True
-    current_username = get_username()
-    return username == current_username
+    return username == get_username()
+
+def check_password(hash_value, password):
+    return check_password_hash(hash_value, password)
 
 
 # SESSION
@@ -81,12 +57,6 @@ def logout():
 def is_admin():
     return session.get("role") == "admin"
 
-def is_user():
-    return True if session.get('username') else False
-
 def get_username():
     return session.get('username')
 
-
-
-    

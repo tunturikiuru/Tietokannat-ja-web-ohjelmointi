@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block path %}
- / <a href="/subforum/{{ subforum[1] }}">{{ subforum[0] }}</a> / <a href="/topic/{{ topic.topic_id }}"> {{ topic.topic_name }}</a>  / Muokkaa 
+ / <a href="/subforum/{{ topic.subforum_id }}">{{ topic.subforum_name }}</a> / <a href="/topic/{{ topic.topic_id }}"> {{ topic.topic_name }}</a>  / Muokkaa 
 {% endblock %}
 
 {% block content %}
@@ -41,11 +41,11 @@
     </ul>
     <br>
     Muokkaa otsikkoa:
-    <input type="text" name="topic_name" value="{{ topic[0] }}" required="required" minlength="1" maxlength="100">
+    <input type="text" name="topic_name" value="{{ topic.topic_name }}" required="required" minlength="1" maxlength="100">
     <br>
     Siirrä alueelle: 
     <select name="subforum_id">
-        <option value="subforum.{{ subforum[1]}}" selected>Nykyinen: {{ subforum[0] }}
+        <option value="{{ topic.subforum_id }}" selected>Nykyinen: {{ topic.subforum_name }}
         {% for forum in subforum_list %}
         <option value="{{ forum.subforum_id }}"> {{forum.subforum_name}}
         {% endfor %}

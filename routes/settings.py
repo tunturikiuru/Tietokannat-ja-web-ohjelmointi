@@ -1,8 +1,7 @@
-from flask import Blueprint, redirect, render_template, request #, url_for
+from flask import Blueprint, redirect, render_template, request
 import database_functions as dbf
 import users
 import request_handler as rh
-import help_functions as help
 
 settings_bp = Blueprint('settings', __name__)
 

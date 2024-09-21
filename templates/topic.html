@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block search %}
-<form action="/topic/{{ topic[1] }}/result" method="GET">
+<form action="/topic/{{ path.topic_id }}/result" method="GET">
     <input type="text" name="query" placeholder="etsi viestiketjusta">
     <input type="submit" value="Etsi">
 </form>
@@ -9,11 +9,11 @@
 {% endblock %}
 
 {% block path %}
- / <a href="/subforum/{{ subforum[1] }}">{{ subforum[0] }}</a> / <a href="/topic/{{ topic[1] }}"> {{ topic[0] }} </a><br>
+ / <a href="/subforum/{{ path.subforum_id }}">{{ path.subforum_name }}</a> / <a href="/topic/{{ path.topic_id }}"> {{ path.topic_name }} </a><br>
 {% endblock %}
 
 {% block content %}
-<h3>{{topic[0]}}</h3>
+<h3>{{ path.topic_name}}</h3>
 
 <div class="messages">
     {% for message in messages %}
@@ -34,7 +34,7 @@
         <div class="message-right">
             <div class="message-header">
                 {% if session.get('username')%}
-                <a href="/topic/{{ topic[1] }}#new_message"><button>Lainaa</button></a>
+                <a href="/topic/{{ path.topic_id }}#new_message"><button>Lainaa</button></a>
                 {% endif %}
                 <div class="message-time">
                     {{message.time.strftime("%d.%m.%Y, %H:%M")}}
@@ -58,9 +58,9 @@
 <div>
     Kommentoi:
     <br>
-    <form action="/topic/{{ topic[1] }}/send" method="POST" id="new_message">
+    <form action="/topic/{{ path.topic_id }}/send" method="POST" id="new_message">
         <textarea name="message", rows="15", cols="100" required="required" minlength="1" maxlength="5000"></textarea>
-        <input type="hidden" name="topic_id" value="{{ topic[1] }}">
+        <input type="hidden" name="topic_id" value="{{ path.topic_id }}">
         <br>
         <input type="submit" value="Lähetä">
     </form>

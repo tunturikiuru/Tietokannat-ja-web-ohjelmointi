@@ -4,15 +4,22 @@ import help_functions as help
 
 
 def forum_start(request):
-    title = request.form["title"]
-    subtitle = request.form["subtitle"]
-    username = request.form["username"]
-    password1 = request.form["password1"]
-    password2 = request.form["password2"]
+    title = request.form.get("title")
     if title == "":
-        error_message = "Foorumin nimi on pakollinen tieto"
-        return error_message
-    error_message = users.forum_setup(username, password1, password2, title, subtitle)
+        return "Foorumin nimi on pakollinen tieto"
+    subtitle = request.form.get("subtitle")
+    if subtitle == "":
+        subtitle = " "
+    username = request.form.get("username")
+    password1 = request.form.get("password1")
+    password2 = request.form.get("password2")
+    error_message = users.before_register(username, password1, password2)
+    if not error_message:
+        hash_value = users.hash_password(password1)
+        if dbf.forum_setup(username, hash_value, title, subtitle):
+            users.create_session(username)
+        else:
+            error_message = "Tapahtui virhe, yritä uudelleen"
     return error_message
 
 
@@ -31,14 +38,18 @@ def new_subforum(request):
         return dbf.new_subforum(subforum_name, heading_id)
     return "Subforumin nimen pituus 1-60 merkkiä."
 
-def new_message(request, topic_id):
-    message = request.form["message"]
-    username = users.get_username()
+def new_topic(request, subforum_id, username):
+    title = request.form.get("title")
+    message = request.form.get("content")
+    if help.check_input(title, 1, 100) and help.check_input(message, 1, 5000):
+        return dbf.new_topic(title, message, subforum_id, username) #returns topic_id
+    return None
+
+def new_message(request, topic_id, username):
+    message = request.form.get("message")
     if help.check_input(message, 1, 5000) and not dbf.topic_locked(topic_id):
-        error = dbf.new_message(topic_id, message, username)
-        return error
-    error = "Viestin pituus ei sallituissa rajoissa."
-    return error
+        return dbf.new_message(topic_id, message, username)
+    return "Viestin pituus ei sallituissa rajoissa."
 
 
 # UPDATE
@@ -47,16 +58,17 @@ def update_title(request):
     title = request.form.get("title")
     if not help.check_input(title, 1, 35):
         return "Foorumumin nimen täytyy olla 1-35 merkkiä."
-    error = dbf.update_title(title, 1)
-    if error: 
-        return error
+    if not dbf.update_title(title, 1):
+       return "Virhe nimen tallennuksessa."
     subtitle = request.form.get("subtitle")
     if subtitle == "":
         subtitle = " "
     if not help.check_input(subtitle, 0, 50):
         return "Foorumumin alaotsikon maksimipituus on 50 merkkiä."
-    error = dbf.update_title(subtitle, 2)
-    return error
+    if not dbf.update_title(subtitle, 2):
+        return "Virhe nimen tallennuksessa."
+    return ""
+
 
 def change_heading(request):
     heading_id = request.form.get("heading_id")
@@ -80,28 +92,26 @@ def rename_subforum(request):
 def update_subforum_order(request):
     subforum_order = request.form.getlist("subforum_order")
     subforum_ids = request.form.getlist("subforum_id")
-    dbf.update_order_index(subforum_order, subforum_ids, "subforum")
+    return dbf.update_order_index(subforum_order, subforum_ids, "subforum")
     
 def subforum_move(request):
     subforum_id = request.form.get("relocated_subforum")
     heading_id = request.form.get("new_heading")
-    error = dbf.subforum_move(subforum_id, heading_id)
-    return error
+    return dbf.subforum_move(subforum_id, heading_id)
 
 def update_topic(request, topic_id):
-    topic_name = request.form["topic_name"]
+    topic_name = request.form.get("topic_name")
     if not help.check_input(topic_name, 1, 100):
         return "Otsikon pituus 1-100 merkkiä"
-    pinned = request.form["pinned"]
-    locked = request.form["locked"]
-    visibility = request.form["visibility"]
-    subforum_id = request.form["subforum_id"]
-    error_message = dbf.update_topic(topic_name, pinned, locked, visibility, topic_id, subforum_id)
-    return error_message
+    pinned = request.form.get("pinned")
+    locked = request.form.get("locked")
+    visibility = request.form.get("visibility")
+    subforum_id = request.form.get("subforum_id")
+    return dbf.update_topic(topic_name, pinned, locked, visibility, topic_id, subforum_id)
 
 def edit_message(request):
-    message = request.form["message"]
-    message_id = request.form["message_id"]
+    message = request.form.get("message")
+    message_id = request.form.get("message_id")
     sender, topic_id = dbf.message_sender_and_topic(message_id)
     if not users.check_credentials(sender):
         return ("Ei oikeutta tehdä muutoksia.", message_id, topic_id)
@@ -112,19 +122,56 @@ def edit_message(request):
 
 # USERS
 
+def register_user(request):
+    username = request.form.get("username")
+    password1 = request.form.get("password1")
+    password2 = request.form.get("password2")
+    error = users.before_register(username, password1, password2)
+    if not error:
+        error = users.register_user(username, password1)
+    return error
+
+def login(request):
+    username = request.form.get("username")
+    password = request.form.get("password")
+    hash_value = dbf.fetch_password(username)
+    if not hash_value:
+        return False
+    if users.check_password(hash_value, password):
+        users.create_session(username)
+        return True
+    return False
+
 def new_admin(request):
     user_id = request.form.get("user_id")
     if user_id == "":
         return "Kohdetta ei valittu."
-    error = dbf.new_admin(user_id)
-    return error
+    return dbf.new_admin(user_id)
 
 def remove_admin(request):
     user_id = request.form.get("user_id")
     if user_id == "":
         return "Kohdetta ei valittu."
-    error = dbf.remove_admin(user_id)
-    return error
+    return dbf.remove_admin(user_id)
+
+
+# SEARCH
+
+def search_handler(request):
+    word = request.args.get("word", "")
+    word = help.check_asterisk(word)
+    sender = request.args.get("sender", "")
+    sender = help.check_asterisk(sender)
+    subforums = request.args.getlist("subforum")
+    subforums = [int(x) for x in subforums]
+    time = request.args.get("time", "")
+    order = request.args.get("order", "DESC")
+    return dbf.search(word, sender, subforums, time, order)
+
+def search_from_topic(request, topic_id):
+    word = request.args.get("query")
+    word = help.check_asterisk(word)
+    return dbf.search_from_topic(word, topic_id)
 
 
 # DELETE

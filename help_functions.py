@@ -1,22 +1,3 @@
-#import users
-import database_functions as dbf
-
-
-#SEARCH
-
-def search_handler(request):
-    word = request.args.get("word", "")
-    word = check_asterisk(word)
-    sender = request.args.get("sender", "")
-    sender = check_asterisk(sender)
-    subforums = request.args.getlist("subforum")
-    subforums = [int(x) for x in subforums]
-    time = request.args.get("time", "")
-    order = request.args.get("order", "DESC")
-    messages = dbf.search(word, sender, subforums, time, order)
-    return messages
-
-
 # CHECK
 
 def check_input(content: str, min: int, max:int):
