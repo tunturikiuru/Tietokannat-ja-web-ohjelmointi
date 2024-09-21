@@ -1,8 +1,7 @@
 from flask import Blueprint, redirect, render_template, request, url_for
-import database_functions as dbf
-import users
-import help_functions as help
-import request_handler as rh
+from services import database_functions as dbf
+from services import users as users
+from services import request_handler as rh
 
 general_bp = Blueprint("general", __name__)
 

@@ -1,6 +1,6 @@
-import users
-import database_functions as dbf
-import help_functions as help
+from services import users as users
+from services import database_functions as dbf
+from services import help_functions as help
 
 
 def forum_start(request):

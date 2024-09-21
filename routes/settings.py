@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, render_template, request
-import database_functions as dbf
-import users
-import request_handler as rh
+from services import database_functions as dbf
+from services import users as users
+from services import request_handler as rh
 
 settings_bp = Blueprint('settings', __name__)
 
