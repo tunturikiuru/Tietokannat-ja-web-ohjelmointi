@@ -3,17 +3,16 @@
 {% block path %} 
  / Asetukset
 {% endblock %}
-
-{% block content %}
+{% block nav %} 
 <nav>
     <a href="/settings/">Foorumin rakenne</a>  |  
     Väliotsikot  |  
     <a href="/settings/subforums">Subfoorumit</a>  |  
-    <a href="/settings/admins">Admin</a>  |  
-    <a href="/settings/users">Käyttäjät</a>
+    <a href="/settings/admins">Admin</a> 
 </nav>
-<br>
+{% endblock %}
 
+{% block content %}
 <h3>Väliotsikot</h3>
 
 <h5>Uusi väliotsikko</h5>
@@ -78,7 +77,7 @@
 
 <h5>Poista väliotsikoita</h5>
 {% if headings|length > 1 %}
-<span class="hint">Mikäli haluat poistaa subfoorumeita, poista ne Subfoorumit-kohdassa.</span><br>
+<span class="hint">Mikäli haluat poistaa myös subfoorumit, poista ne ensin Subfoorumit-kohdassa.</span><br>
 <form action="/settings/delete_heading/send" method="POST">
     <table>
         <tr>

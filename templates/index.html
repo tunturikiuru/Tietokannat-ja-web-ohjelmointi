@@ -12,32 +12,38 @@
 <div>
     {% for heading, subforums in subforum_order.items() %}
     <div>
-        <table>
-            <tr class="topic-heading">
+        <table class="table100">
+            <tr class="heading-row">
                 <th style="width:65%;">{{ heading }}</th>
                 <th style="width:13%">TILASTOT</th>
                 <th style="width:22%">UUSIN VIESTI</th>
             </tr>
             {% if subforums %}
             {% for subforum in subforums %}
-            <tr>
-                <td><a href="/subforum/{{subforum[0]}}">{{subforum[1]}}</a></td>
+            <tr class="topic-row">
                 <td>
-                    <ul>
+                    <a href="/subforum/{{subforum[0]}}"><span class="subforum_link">{{subforum[1]}}</span></a>
+                </td>
+                <td>
+                    <ul class="center">
                         <li>Aiheet: {{subforum[2]}}</li>
                         <li>Viestit: {{subforum[3]}}</li>
                     </ul>
                 </td>
                 <td>
                     {% if subforum[4] %}
-                    <ul>
-                        <li>{{subforum[4]}}</li>
-                        <li> {{subforum[6].strftime("%d.%m.%Y %H:%M")}} {{subforum[5]}}</li>
+                    <ul class="latest-post">
+                        <li><a href="/topic/{{ subforum[7] }}">{{ subforum[4] }}</a></li>
+                        <li><span class="time">{{subforum[6].strftime("%d.%m.%Y %H:%M")}}</span> </li>
+                        <li><span calss="sender">{{subforum[5]}}</span></li>
                     </ul>
                     {% else %}
-                    Ei viestejä
+                    <ul class="latest-post">
+                        <li>(Ei viestejä)</li>
+                    </ul>
                     {% endif %}
                 </td>
+            </tr>
             {% endfor %}
             {% endif %}
         </table>

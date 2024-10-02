@@ -12,20 +12,18 @@ Ensimmäisellä sivulla foorumi luodaan antamalla sille nimi ja ensimmäisen kä
 
 
 # Backlog
-ulkonäön viimeistely -kaikki sivut
 
-haku: palaa keskusteluun -linkki
+näkyvyys
+kirjautumisen jälkeen paluu samalle sivulle
 
 subforum delete -testaus!
-näkyvyys
-kirjautumisen jälkeeen paluu samalle sivulle
-taulukoiden CSS - etusivu ja subfoorumit
-katkaise pitkät sanat/otsikot - taulukot ja viestit
+CSS - aloitus sivu
 tarkista, ettei kirjautumis- ja rekisteräitumismahdollisuutta ennen foorumin luontia
+
+moderaattorit - oma taulu?, oikeudet
+haku: palaa keskusteluun -linkki
 viestien ja aiheiden jako useille sivuille
 
-moderaattorit - oma taulu, oikeudet
-käyttäjien hallinta (esim. bannaus)
 
 SELVITÄ:
 foorumin nimen tallennus - miten foorumin nimi kannattaa tallentaa, jotta sitä ei tarvitsisi aina hakea (sanakirja?, evästeet?)

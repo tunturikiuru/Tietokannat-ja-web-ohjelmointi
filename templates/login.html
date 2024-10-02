@@ -1,18 +1,23 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="error_message">
 {% if message %}
-<p>{{message}}</p>
+<span class="error_message"> {{message}}</span>
 {% endif %}
-</div>
-<h3>Kirjaudu sisään:<h3></h3>
+<h4>Kirjaudu sisään:</h4>
 <form action="/login" method="POST">
-    Tunnus: <input type="text" name="username" required="required" minlength="1"><br>
-    Salasana: <input type="password" name="password" required="required" minlength="1"> <br>
+    <table>
+        <tr>
+            <td style="width:110px">Tunnus:</td>
+            <td><input type="text" name="username" required="required" minlength="1"></td>
+        </tr>
+        <tr>
+            <td>Salasana: </td>
+            <td><input type="password" name="password" required="required" minlength="1"></td>
+        </tr>
+    </table>
+    <br>
     <input type="submit" value="Kirjaudu">
 </form>
-</p>
+<br>
 <p>Tai rekisteröidy <a href="/register">täällä</a>.</p>
-
-<a href="/">Etusivu</a>
 {% endblock %}

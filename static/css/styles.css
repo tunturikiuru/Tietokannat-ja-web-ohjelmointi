@@ -1,3 +1,4 @@
+/*  LAYOUT */
 body {
     margin: auto;
     max-width: 1170px;
@@ -6,10 +7,46 @@ body {
     margin-top: 25px;
     word-break: break-word;
 }
-button {
-    margin: 5px 0px
+.header {
+    margin: 10px 0px 5px;
+    height: 1em;
 }
-h1 {
+.settings {
+    float: left;
+}
+.login {
+    float: right;
+}
+.banner {
+    background-color: #ecd29c; 
+    padding: 50px 50px 75px;
+}
+.search {
+    display: flex;
+    float: right;
+    padding: 15px 30px 15px;
+}
+.path {
+    border-left: 3px solid #f9e1b1;
+    border-right: 3px solid #f9e1b1;
+    padding: 15px 30px 15px;
+}
+.content {
+    border-left: 3px solid #f9e1b1;
+    border-right: 3px solid #f9e1b1;
+    border-bottom: 3px solid #f9e1b1;
+    padding: 30px 30px 20px;
+    margin-bottom: 50px;
+}
+.nav {
+    border-left: 3px solid #f9e1b1;
+    border-right: 3px solid #f9e1b1;
+    padding-left: 30px;
+}
+
+
+/*  HEADINGS */
+h1 { 
     font-size: 2.5em;
     margin: 0;
 }
@@ -20,61 +57,86 @@ h2 {
 h3 {
     font-size: 1.5em;
 }
-.advanced_search {
-    
+h4 {
+    font-size: 1.3em;
+    margin-top: 0;
 }
-.banner {
-    background-color: #ecd29c; 
-    padding: 50px 50px 75px;
+h5 {
+    font-size: 1em;
+    margin-top: 40px;
+    margin-bottom: 20px;
 }
-.content {
-    border-left: 3px solid #f9e1b1;
-    border-right: 3px solid #f9e1b1;
-    border-bottom: 3px solid #f9e1b1;
-    padding: 15px 30px 20px;
-    margin-bottom: 50px;
-    /*margin: 15px 30px 50px;*/
+
+
+/*  TABLES AND LISTS */
+table {
+    border-collapse: collapse;
 }
-.error_message {
-    color: red;
-    size: 1.5em;
+ul {
+    list-style-type: none; 
+    padding-left: 0;
 }
-.forum_settings {
-    display: inline-block;
-    padding-left: 40px;
+.latest-post {
+    width: 180px;
+    overflow: hidden;
+    white-space: nowrap;
+    word-break: normal;
+    text-overflow: ellipsis;
+    text-align: center;
 }
-.forum_structure {
-    display: inline-block;
-    border: 1px solid black;
-    padding: 0px 60px 20px 60px;
+.latest-sender {
+    text-align: center;
 }
-.header {
-    margin: 10px 0px 5px;
-    height: 1em;
+.table100 {
+    table-layout: auto;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-.hint {
-    color:red;
-    font-size: 0.7em;
+tr.topic-row:nth-child(odd){
+    background-color: #f4f4f4;
 }
-.login {  
+tr.heading-row {
+    background-color: #67593f;
+    height: 36px;
+    size: 12px;
+}
+.sender {
+    color: #3c3c3c
+}
+.time {
+    font-size: 0.8em;
+    color: #3c3c3c
+}
+.center {
+    text-align: center;
+}
+.small-padding {
+    padding-left: 1em;
+}
+
+
+/*  LINKS */
+a {
+    text-decoration: none;
+    color: #3d78b4;
+}
+.subforum_link {
+    font-size: 1.25em;
+    font-weight: bold;
+    padding-left: 1em;
+}
+.settings-link {
     float: right;
 }
+
+
+/*  TOPIC PAGE */
 .message {
     display: flex;
     border:2px solid #cbcbcb;
     margin-top: 5px;
     border-radius: 5px;
-}
-.messages {
-
-}
-.message-header {
-    font-size: 0.8em;
-    color: #cbcbcb;
-    height: 24px;
-}
-.message-header button {
-    float: right;
 }
 .message-left {
     background-color: #ededed;
@@ -95,47 +157,73 @@ h3 {
 .message-right p {
     white-space: pre-line;
 }
+.edit_message {
+    float: right;
+}
+.write_message {
+    margin-top: 30px;
+}
+.new_message {
+    margin-top: 15px;
+}
+button {
+    margin: 5px 0px
+}
+.delete_button {
+    bottom: 0;
+}
+.message-header {
+    font-size: 0.8em;
+    color: #cbcbcb;
+    height: 24px;
+}
+.message-header button {
+    float: right;
+}
 .message-time {
     padding-top: 5px;
 }
-.path {
-    border-left: 3px solid #f9e1b1;
-    border-right: 3px solid #f9e1b1;
-    padding: 15px 30px 15px;
+
+
+/* EVERYTHING ELSE */
+.heading1 {
+    font-weight: bold;
+    font-size: 1.5em;
 }
-.search {
-    display: flex;
+.heading2 {
+    font-weight: bold;
+    font-size: 1em;
+}
+.setting_name {
+    background-color: #ecd29c; 
+    padding: 15px 15px 30px;
+}
+.error_message {
+    color: red;
+    size: 1.5em;
+}
+.forum_settings {
+    display: inline-block;
     float: right;
-    padding: 15px 30px 15px;
+    padding-left: 40px;
 }
-.search button {
+.forum_structure {
+    display: inline-block;
+    border: 1px solid black;
+    padding: 0px 30px 20px 30px;
+}
+.hint {
+    color:red;
+    font-size: 0.7em;
+}
+.search button { 
     margin-top: 0px;
     margin-left: 5px;
 }
 .search-header {
     font-weight: bold;
 }
-.settings {    
-    float: left;
-}
-table {
-    table-layout: auto;
-    width: 100%;
-    overflow: hidden;
-}
-tr.topic-heading {
-    background-color: #67593f;
-    height: 36px;
-    size: 12px;
-}
-.topics tr td li {
-    
-}
-.topics tr td {
-    border: 1px solid #cbcbcb;
-    margin: 2px;
-}
-#bottom_button {
-    margin-top: 17px;
+.bottom_button {
+    margin-top: 20px;
 }
 

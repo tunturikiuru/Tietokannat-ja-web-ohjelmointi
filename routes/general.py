@@ -45,7 +45,7 @@ def send_new_topic(subforum_id):
             return redirect(url_for("general.topic", topic_id = topic_id))
         return render_template("error.html", forum_name = forum_name, error = "Otsikon tai viestin pituus ei sallituissa rajoissa")
     else:
-        if users.login(request):
+        if rh.login(request):
             return redirect(url_for("general.create_new_topic", id=subforum_id))
         return render_template("error.html", forum_name=forum_name, error = "Väärä käyttäjätunnus tai salasana")
 
@@ -172,17 +172,17 @@ def search():
 @general_bp.route("/search/result")
 def search_result():
     forum_name = dbf.fetch_title()
-    messages = rh.search_handler(request)
-    return render_template("result.html", messages=messages, forum_name=forum_name)
+    messages, word = rh.search_handler(request)
+    return render_template("result.html", messages=messages, forum_name=forum_name, word=word)
 
 @general_bp.route("/topic/<int:topic_id>/result")
 def search_from_topic(topic_id):
     forum_name = dbf.fetch_title()
-    messages = rh.search_from_topic(request, topic_id)
-    return render_template("result.html", messages=messages, forum_name=forum_name)
+    messages, word = rh.search_from_topic(request, topic_id)
+    return render_template("result.html", messages=messages, forum_name=forum_name, word=word)
 
 @general_bp.route("/subforum/<int:subforum_id>/result")
 def search_from_subforum(subforum_id):
     forum_name = dbf.fetch_title()
-    messages = rh.search_handler(request)
-    return render_template("result.html", messages=messages, forum_name=forum_name)
+    messages, word = rh.search_handler(request)
+    return render_template("result.html", messages=messages, forum_name=forum_name, word=word)

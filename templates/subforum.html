@@ -20,8 +20,8 @@
 {% endif %}
 
 {% if topics %}
-<table class="topics">
-    <tr class="topic-heading">
+<table class="table100">
+    <tr class="heading-row">
         {% if session.get('role') == 'admin' %}
         <th style="width:61%;">KESKUSTELUT</th>
         <th style="width:12%;">VASTAUKSET</th>
@@ -34,22 +34,22 @@
         {% endif %}
     </tr>
     {% for topic in topics %}
-    <tr>
+    <tr class="topic-row">
         <td>
-            <ul>
+            <ul class="small-padding">
                 <li><a href="/topic/{{ topic[1] }}">{{ topic[0]}}</a></li>
-                <li> {{topic[5]}} {{topic[4].strftime("%d.%m.%Y - %H:%M")}} </li>
+                <li><span class="sender">{{topic[5]}}</span>  <span class="time">{{topic[4].strftime("%d.%m.%Y - %H:%M")}}</span></li>
             </ul>
         </td>
-        <td>{{topic[3]}}</td>
+        <td class="center">{{topic[3]}}</td>
         <td>
-            <ul>
-                <li>{{topic[7]}}</li>
-                <li>{{topic[6].strftime("%d.%m.%Y - %H:%M")}}</li>
+            <ul class="latest-sender">
+                <li><span class="sender">{{topic[7]}}</span></li>
+                <li><span class="time">{{topic[6].strftime("%d.%m.%Y - %H:%M")}}</span></li>
             </ul>
         </td>
         {% if session.get('role') == 'admin' %}
-        <td>
+        <td class="center">
             <a href="/topic/{{ topic[1] }}/edit">asetukset</a>
         </td>
         {% endif %}
@@ -60,6 +60,6 @@
 <p>Ei vielä keskusteluja </p>
 {% endif %}
 {% if session.get('username') %}
-<a href="/subforum/{{ subforum[1] }}/new_topic"><button>Uusi keskustelu</button></a>
+<a href="/subforum/{{ subforum[1] }}/new_topic"><button class="bottom_button">Uusi keskustelu</button></a>
 {% endif %}
 {% endblock %}

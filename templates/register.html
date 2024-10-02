@@ -1,22 +1,28 @@
 {% extends "layout.html" %}
-
-{% block path %} <a href="/">Etusivu</a> / <a href="/register">Rekisteröidy</a>{% endblock %}
 {% block content %}
 
 {% if message %}
-<p>{{message}}</p>
+<span class="error_message">{{message}}</span>
 {% endif %}
-
-<p>
-<h3>Rekisteröidy:</h3>
+<h4>Rekisteröidy:</h4>
 <form action="/register" method="POST">
-    Käyttäjätunnus: <input type="text" name="username" required="required" minlength="1" maxlength="25"><br>
-    Salasana: <input type="password" name="password1" required="required" minlength="8" maxlength="15"><br>
-    Salasana uudelleen: <input type="password" name="password2" required="required" minlength="8" maxlength="15"><br>
+    <table>
+        <tr>
+            <td style="width:180px">Käyttäjätunnus: </td>
+            <td><input type="text" name="username" required="required" minlength="1" maxlength="25"></td>
+        </tr>
+        <tr>
+            <td>Salasana: </td>
+            <td><input type="password" name="password1" required="required" minlength="8" maxlength="15"></td>
+        </tr>
+        <tr>
+            <td>Salasana uudelleen: </td>
+            <td><input type="password" name="password2" required="required" minlength="8" maxlength="15"></td>
+        </tr>
+    </table>
+    <br>
     <input type="submit" value="Rekisteröidy">
 </form>
-</p>
+<br>
 <p>Tai kirjaudu sisään <a href="/login">täältä</a>.</p>
-
-<a href="/">Etusivu</a>
 {% endblock %}

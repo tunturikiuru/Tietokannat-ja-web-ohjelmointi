@@ -1,34 +1,59 @@
 {% extends "layout.html" %}
 
 {% block path %}
- / <a href="/search">Haku</a><br>
+ / <a href="/search">Tarkennettu haku</a><br>
 {% endblock %}
 
 {% block content %}
+<h4>Tarkennettu haku</h4>
 <form action="/search/result" method="GET">
-    Hakusana: 
-    <input type="text" name="word">
+    <table>
+        <tr>
+            <td>Hakusana: </td>
+            <td style="padding-left:50px"><input type="text" name="word"></td>
+        </tr>
+        <tr>
+            <td>Kirjoittaja: </td>
+            <td style="padding-left:50px"><input type="text" name="sender"></td>
+        </tr>
+        <tr>
+            <td>Alueelta:</td>
+            <td style="padding-left:50px">
+                <ul>
+                    {% for subforum in subforums %}
+                    <li><input type="checkbox" name="subforum" value="{{ subforum[1] }}">{{subforum[0]}}</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>Milloin: </td>
+            <td style="padding-left:50px">
+                <ul>
+                    <li><input type="radio" name="time" value="" checked> Milloin tahansa</li>
+                    <li><input type="radio" name="time" value="1"> Viimeisin vuorokausi</li>
+                    <li><input type="radio" name="time" value="7"> Viimeisin viikko</li>
+                    <li><input type="radio" name="time" value="30"> Viimeisin kuukausi</li>
+                    <li><input type="radio" name="time" value="183"> Viimeisin puolivuotta</li>
+                    <li><input type="radio" name="time" value="365"> Viimeisin vuosi</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>Järjestys: </td>
+            <td style="padding-left:50px">
+                <ul>
+                    <li><input type="radio" name="order" value="DESC" checked> Uusin ensin</li>
+                    <li><input type="radio" name="order" value="ASC"> Vanhin ensin</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td style="padding-left:50px"><input type="submit" value="Etsi"></td>
+        </tr>
+    </table>
     <br>
-    Kirjoittaja: 
-    <input type="text" name="sender">
-    <br>
-    Alueelta: 
-    {% for subforum in subforums %}
-    <input type="checkbox" name="subforum" value="{{ subforum[1] }}">{{subforum[0]}}
-    {% endfor %}
-    <br>
-    Milloin: <input type="radio" name="time" value="" checked> Milloin tahansa
-    <input type="radio" name="time" value="1"> Viimeisin vuorokausi
-    <input type="radio" name="time" value="7"> Viimeisin viikko
-    <input type="radio" name="time" value="30"> Viimeisin kuukausi
-    <input type="radio" name="time" value="183"> Viimeisin puolivuotta
-    <input type="radio" name="time" value="365"> Viimeisin vuosi
-    <br>
-    Järjestys: <input type="radio" name="order" value="DESC" checked> Uusin ensin
-    <input type="radio" name="order" value="ASC"> Vanhin ensin
-    <br>
-    <input type="submit" value="Etsi">
-
-
+    
 </form>
 {% endblock %}

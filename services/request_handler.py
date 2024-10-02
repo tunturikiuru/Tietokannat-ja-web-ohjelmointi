@@ -159,19 +159,19 @@ def remove_admin(request):
 
 def search_handler(request):
     word = request.args.get("word", "")
-    word = help.check_asterisk(word)
+    keyword = help.check_asterisk(word)
     sender = request.args.get("sender", "")
     sender = help.check_asterisk(sender)
     subforums = request.args.getlist("subforum")
     subforums = [int(x) for x in subforums]
     time = request.args.get("time", "")
     order = request.args.get("order", "DESC")
-    return dbf.search(word, sender, subforums, time, order)
+    return dbf.search(keyword, sender, subforums, time, order), word
 
 def search_from_topic(request, topic_id):
     word = request.args.get("query")
-    word = help.check_asterisk(word)
-    return dbf.search_from_topic(word, topic_id)
+    keyword = help.check_asterisk(word)
+    return dbf.search_from_topic(keyword, topic_id), word
 
 
 # DELETE

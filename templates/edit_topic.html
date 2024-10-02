@@ -5,56 +5,77 @@
 {% endblock %}
 
 {% block content %}
-<h3>Keskustelun asetukset</h3>
+<h4>Keskustelun asetukset</h4>
 <form action="/topic/{{ topic.topic_id }}/edit/send" method="POST">
-    Kiinnitä:
-    <ul>
-        {% if topic.pinned %}
-        <li><input type="radio" name="pinned" value="true" checked>Kyllä</li>
-        <li><input type="radio" name="pinned" value="false" >Ei</li>
-        {% else %}
-        <li><input type="radio" name="pinned" value="true">Kyllä</li>
-        <li><input type="radio" name="pinned" value="false" checked>Ei</li>
-        {% endif %}
-    </ul>
-    <br>
-    Lukitse:
-    <ul>
-        {% if topic.locked %}
-        <li><input type="radio" name="locked" value="true" checked>Kyllä</li>
-        <li><input type="radio" name="locked" value="false">Ei</li>
-        {% else %}
-        <li><input type="radio" name="locked" value="true">Kyllä</li>
-        <li><input type="radio" name="locked" value="false" checked>Ei</li>
-        {% endif %}
-    </ul>
-    <br>
-    Näkyvyys:
-    <ul> 
-        {% if topic.visibility == 0 %}
-        <li><input type="radio" name="visibility" value="0" checked>kaikki</li>
-        <li><input type="radio" name="visibility" value="2">vain moderaattorit ja admin</li>
-        {% else %}
-        <li><input type="radio" name="visibility" value="0">kaikki</li>
-        <li><input type="radio" name="visibility" value="2" checked>vain moderaattorit ja admin</li>
-        {% endif %}
-    </ul>
-    <br>
-    Muokkaa otsikkoa:
-    <input type="text" name="topic_name" value="{{ topic.topic_name }}" required="required" minlength="1" maxlength="100">
-    <br>
-    Siirrä alueelle: 
-    <select name="subforum_id">
-        <option value="{{ topic.subforum_id }}" selected>Nykyinen: {{ topic.subforum_name }}
-        {% for forum in subforum_list %}
-        <option value="{{ forum.subforum_id }}"> {{forum.subforum_name}}
-        {% endfor %}
-    </select>
+    <table>
+        <tr>
+            <td>Kiinnitä:</td>
+            <td class="small-padding">
+                <ul>
+                    {% if topic.pinned %}
+                    <li><input type="radio" name="pinned" value="true" checked>Kyllä</li>
+                    <li><input type="radio" name="pinned" value="false" >Ei</li>
+                    {% else %}
+                    <li><input type="radio" name="pinned" value="true">Kyllä</li>
+                    <li><input type="radio" name="pinned" value="false" checked>Ei</li>
+                    {% endif %}
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>Lukitse:</td>
+            <td class="small-padding">
+                <ul>
+                    {% if topic.locked %}
+                    <li><input type="radio" name="locked" value="true" checked>Kyllä</li>
+                    <li><input type="radio" name="locked" value="false">Ei</li>
+                    {% else %}
+                    <li><input type="radio" name="locked" value="true">Kyllä</li>
+                    <li><input type="radio" name="locked" value="false" checked>Ei</li>
+                    {% endif %}
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>Näkyvyys:</td>
+            <td class="small-padding">
+                <ul> 
+                    {% if topic.visibility == 0 %}
+                    <li><input type="radio" name="visibility" value="0" checked>kaikki</li>
+                    <li><input type="radio" name="visibility" value="2">vain moderaattorit ja admin</li>
+                    {% else %}
+                    <li><input type="radio" name="visibility" value="0">kaikki</li>
+                    <li><input type="radio" name="visibility" value="2" checked>vain moderaattorit ja admin</li>
+                    {% endif %}
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>Muokkaa otsikkoa:</td>
+            <td class="small-padding">
+                <input type="text" name="topic_name" value="{{ topic.topic_name }}" required="required" minlength="1" maxlength="100" size="45">
+            </td>
+        </tr>
+        <tr>
+            <td>Siirrä alueelle: </td>
+            <td class="small-padding">
+                <select name="subforum_id">
+                    <option value="{{ topic.subforum_id }}" selected>Nykyinen: {{ topic.subforum_name }}
+                    {% for forum in subforum_list %}
+                    {% if forum.subforum_id != topic.subforum_id %}
+                    <option value="{{ forum.subforum_id }}"> {{forum.subforum_name}}
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+    </table>
     <br>
     <input type="submit" value="Lähetä">
 </form>
-
-<h3>Poista keskustelu</h3>
+<br>
+<br>
+<h4>Poista keskustelu</h4>
 <form action="/delete/topics_and_messages" method="POST">
     <input type="hidden" name="delete_topic" value="{{ topic.topic_id }}">
     <input type="submit" value="Poista keskustelu">

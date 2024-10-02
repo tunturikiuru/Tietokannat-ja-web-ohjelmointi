@@ -1,7 +1,10 @@
 {% extends "layout.html" %}
 
 {% block content %}
-
+<p>
+    Keskustelu: {{ message.topic_name }}<br>
+    Kirjoittanut: {{ message.sender }}
+</p>
 <h5>Muokkaa viestiä:</h5>
 <form action="/edit/message/send" method="POST">
     <textarea name="message", rows="15", cols="100" required="required" minlength="1" maxlength="5000">{{ message.message }}</textarea>

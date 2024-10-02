@@ -3,29 +3,43 @@
 {% block path %} 
  / Asetukset 
 {% endblock %}
-
-{% block content %}
+{% block nav %} 
 <nav>
     <a href="/settings/">Foorumin rakenne</a>   |  
     <a href="/settings/headings">Väliotsikot</a>  |  
     <a href="/settings/subforums">Subfoorumit</a>  |      
-    Admin</a>  |  
-    <a href="/settings/users">Käyttäjät</a>
+    Admin</a>
 </nav>
+{% endblock %}
+
+{% block content %}
 
 <h3> Admin-käyttäjät</h3>
-<h5>Pääkäyttäjä</h5>
-<p>{{ users[0].username }}</p>
-
-<h5>Muut admin-käyttäjät</h5>
-<ul>
-    
-    {% for user in users[1:] %}
-    {% if user.admin == True %}
-    <li>{{ user.username }}</li>
-    {% endif %}
-    {% endfor %}
-</ul>
+<br>
+<table>
+    <tr>
+        <td>
+            Pääadmin:
+        </td>
+        <td style="padding-left:40px">
+            {{ users[0].username }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Muut adminit:
+        </td>
+        <td style="padding-left:40px">
+            <ul>
+                {% for user in users[1:] %}
+                {% if user.admin == True %}
+                <li>{{ user.username }}</li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+        </td>
+    </tr>
+</table>
 
 <h5>Anna admin-oikeudet</h5>
 <form action="/settings/new_admin" method="POST">
@@ -38,8 +52,6 @@
         {% endfor %}
 </select>
 <input type="submit" value="Anna oikeudet">  
-    
-
 </form>
 
 

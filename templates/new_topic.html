@@ -1,13 +1,14 @@
 {% extends "layout.html" %}
 {% block path %}
-/ <a href="/subforum/{{ subforum[1] }}"> {{ subforum[0] }}</a> / <a href="/subforum/{{ subforum[1] }}/new_topic"> Uusi keskustelu </a> 
+/ <a href="/subforum/{{ subforum.subforum_id }}"> {{ subforum.subforum_name }}</a> / Uusi keskustelu 
 {% endblock %}
 {% block content %}
 {% if session.get('username')%}
-<form action="/subforum/{{ subforum[1] }}/new_topic/send" method="POST">
-    Otsikko:<br>
-    <input type="text" name="title" required="required" minlength="1" maxlength="100" ><br>
-    Viesti: <br>
+<h4>{{ subforum[0] }} - uusi keskustelu</h4>
+<form action="/subforum/{{ subforum.subforum_id }}/new_topic/send" method="POST">
+    <p>Otsikko:</p>
+    <input type="text" name="title" required="required" minlength="1" maxlength="100" size="70"><br>
+    <p>Viesti:</p>
     <textarea name="content" rows="20" cols="100" required="required" minlength="1" maxlength="5000" ></textarea>
     <br>
     <input type="submit" value="Lähetä">
@@ -17,13 +18,25 @@
 
 <p>
     Kirjaudu sisään luodaksesi uuden keskustelun:
-    <form action="/subforum/{{ subforum[1] }}/new_topic/send" method="POST">
-        Tunnus: <input type="text" name="username" required="required" minlength="1"><br>
-        Salasana: <input type="password" name="password" required="required" minlength="1"> <br>
+    <form action="/subforum/{{ subforum.subforum_id }}/new_topic/send" method="POST">
+        <table>
+            <tr>
+                <td>Tunnus:</td>
+                <td>
+                    <input type="text" name="username" required="required" minlength="1">
+                </td>
+            </tr>
+            <tr>
+                <td>Salasana: </td>
+                <td>
+                    <input type="password" name="password" required="required" minlength="1">
+                </td>
+            </tr>
+        </table>
         <input type="submit" value="Kirjaudu">
     </form>
 </p>
 {% endif %}
 
-<p><a href="/subforum/{{ subforum[1] }}"> Takaisin subforumiin </a></p>
+<p><a href="/subforum/{{ subforum.subforum_id }}"> Takaisin ({{ subforum.subforum_name }})</a></p>
 {% endblock %}

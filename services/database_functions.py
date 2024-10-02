@@ -175,7 +175,8 @@ def get_forum_structure():
     return forum_structure
 
 def fetch_message(message_id):
-    sql = "SELECT message_id, message, sender, topic_id FROM messages WHERE message_id=:message_id"
+    sql = "SELECT m.message_id message_id, m.message message, m.sender sender, m.topic_id topic_id, t.topic_name topic_name\
+        FROM messages m LEFT JOIN topics t ON m.topic_id=t.topic_id WHERE message_id=:message_id"
     result = db.session.execute(text(sql), {"message_id":message_id})
     return result.fetchone()
     
@@ -188,7 +189,7 @@ def topic_locked(topic_id):
 #PAGE
 
 def index_page():
-    sql = "SELECT a.h_ind, a.s_ind, a.h_name h_name, a.s_id s_id, a.s_name, a.topic_count, a.message_count, c.topic_name, b.sender, b.time \
+    sql = "SELECT a.h_ind, a.s_ind, a.h_name h_name, a.s_id s_id, a.s_name, a.topic_count, a.message_count, c.topic_name, b.sender, b.time, c.topic_id \
         FROM (SELECT h.order_index h_ind, s.order_index s_ind, h.heading_name h_name, s.subforum_name s_name, s.subforum_id s_id, COUNT(DISTINCT t.topic_id) topic_count, COUNT(m.message_id) message_count, MAX(a.message_id) message_id \
         FROM headings h LEFT JOIN subforums s ON h.heading_id=s.heading_id LEFT JOIN topics t ON s.subforum_id=t.subforum_id LEFT JOIN messages m ON t.topic_id=m.topic_id LEFT JOIN messages a ON m.message_id=a.message_id \
         WHERE h.order_index > 2 GROUP BY h_name, h.order_index, s_name, s.order_index, s_id ORDER BY h.order_index, s.order_index) a \

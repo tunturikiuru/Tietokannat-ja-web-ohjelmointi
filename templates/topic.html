@@ -13,20 +13,25 @@
 {% endblock %}
 
 {% block content %}
-<h3>{{ path.topic_name}}</h3>
+<div>
+    {% if session.get('role') == 'admin' %}
+    <a href="/topic/{{ path.topic_id }}/edit" class="settings-link">Keskustelun asetukset</a>
+    {% endif %}
+    <h3>{{ path.topic_name}}</h3> 
+</div>
 
 <div class="messages">
     {% for message in messages %}
-    <section class="message" id="{{message.topic_id}}-{{message.message_id}}">
+    <section class="message" id="{{ message.topic_id }}-{{ message.message_id }}">
         <div class="message-left">
-            <div class="'message_sender">
+            <div class="message_sender">
                 {{ message.sender }} 
             </div>
             {% if session.get('role') == 'admin' %}
-            <div class="delete_message">
+            <div class="delete_button">
                 <form action="/delete/topics_and_messages" method="POST">
                     <input type="hidden" name="delete_message" value="{{ message.message_id }}">
-                    <input type="submit" value="delete">
+                    <input type="submit" value="poista">
                 </form>
             </div>
             {% endif %}
@@ -43,10 +48,10 @@
             <hr>
             <p>
                 {{ message.message }}
-                {% if session.get('username') == message.sender or session.get('role') == 'admin' %}
-                <span class="edit_message"><a href="/edit/message/{{ message.message_id }}">Muokkaa</a></span>
-                {% endif %}
             </p>
+            {% if session.get('username') == message.sender or session.get('role') == 'admin' %}
+            <span class="edit_message"><a href="/edit/message/{{ message.message_id }}">Muokkaa</a></span>
+            {% endif %}
         </div>
     </section>
     {% endfor %}
@@ -55,15 +60,16 @@
 {% if messages[0].locked %}
 <p>Keskustelu on lukittu.</p>
 {% else %}
-<div>
-    Kommentoi:
-    <br>
-    <form action="/topic/{{ path.topic_id }}/send" method="POST" id="new_message">
-        <textarea name="message", rows="15", cols="100" required="required" minlength="1" maxlength="5000"></textarea>
-        <input type="hidden" name="topic_id" value="{{ path.topic_id }}">
-        <br>
-        <input type="submit" value="Lähetä">
-    </form>
+<div class="write_message">
+    Uusi viesti:
+    <div class="new_message">
+        <form action="/topic/{{ path.topic_id }}/send" method="POST">
+            <textarea name="message", rows="15", cols="100" required="required" minlength="1" maxlength="5000"></textarea>
+            <input type="hidden" name="topic_id" value="{{ path.topic_id }}">
+            <br>
+            <input type="submit" value="Lähetä">
+        </form>
+    </div>
 </div>
 {% endif %}
 {% endif %}
