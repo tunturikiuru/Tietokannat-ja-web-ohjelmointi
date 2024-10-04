@@ -60,3 +60,13 @@ def is_admin():
 def get_username():
     return session.get('username')
 
+def get_visibility():
+    if session.get('role') == 'admin':
+        return 3
+    #if session.get('role') == 'moderator':
+    #    return 2
+    #if session.get('role') == 'user':
+    #    return 1
+    return 0
+
+

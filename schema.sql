@@ -8,7 +8,6 @@ CREATE TABLE subforums (
     subforum_name TEXT NOT NULL,
     heading_id INTEGER REFERENCES headings(heading_id), 
     order_index INTEGER,
-    visibility INTEGER DEFAULT 0,
     UNIQUE (heading_id, order_index));
 
 CREATE TABLE topics (

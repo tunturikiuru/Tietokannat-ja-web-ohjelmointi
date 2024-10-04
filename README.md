@@ -13,9 +13,6 @@ Ensimmäisellä sivulla foorumi luodaan antamalla sille nimi ja ensimmäisen kä
 
 # Backlog
 
-näkyvyys
-kirjautumisen jälkeen paluu samalle sivulle
-
 subforum delete -testaus!
 CSS - aloitus sivu
 tarkista, ettei kirjautumis- ja rekisteräitumismahdollisuutta ennen foorumin luontia
@@ -27,6 +24,7 @@ viestien ja aiheiden jako useille sivuille
 
 SELVITÄ:
 foorumin nimen tallennus - miten foorumin nimi kannattaa tallentaa, jotta sitä ei tarvitsisi aina hakea (sanakirja?, evästeet?)
+kirjautuminen modal-ikkunana
 haku: hae näistä tuloksista
 haku: maalaa hakusana tuloksista - työläs, yksityiskohtia selvitettävä
 javascript - lainaa-nappi (tai muuta "vastaa"-napiksi ilman lainausta)

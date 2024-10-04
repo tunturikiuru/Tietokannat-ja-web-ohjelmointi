@@ -26,7 +26,8 @@ def index():
 def subforum(subforum_id):
     forum_name = dbf.fetch_title()
     subforum = dbf.fetch_subforum_by_id(subforum_id)
-    topics = dbf.subforum_page(subforum_id)
+    visibility = users.get_visibility()
+    topics = dbf.subforum_page(subforum_id, visibility)
     return render_template("subforum.html", subforum=subforum, topics=topics, forum_name=forum_name)
 
 @general_bp.route("/subforum/<int:id>/new_topic")
@@ -52,9 +53,12 @@ def send_new_topic(subforum_id):
 @general_bp.route("/topic/<int:topic_id>")
 def topic(topic_id):
     forum_name = dbf.fetch_title()
-    path = dbf.path_to_topic(topic_id)
-    messages = dbf.topic_page(topic_id)
-    return render_template("topic.html", messages=messages, path=path, forum_name=forum_name)
+    if dbf.is_visible(topic_id):
+        path = dbf.path_to_topic(topic_id)
+        messages = dbf.topic_page(topic_id)
+        return render_template("topic.html", messages=messages, path=path, forum_name=forum_name)
+    else:
+        return render_template("error.html", forum_name=forum_name, error = "Ei oikeutta nähdä sivua")
 
 @general_bp.route("/topic/<int:topic_id>/message/<int:message_id>")
 def jump_to_message(topic_id, message_id):
@@ -65,7 +69,7 @@ def send_new_message(topic_id):
     forum_name = dbf.fetch_title()
     username = users.get_username()
     error = ""
-    if username:
+    if username and dbf.is_visible(topic_id):
         error = rh.new_message(request, topic_id, username)
         if not error:
             return redirect(url_for("general.topic", topic_id=topic_id))
@@ -178,8 +182,10 @@ def search_result():
 @general_bp.route("/topic/<int:topic_id>/result")
 def search_from_topic(topic_id):
     forum_name = dbf.fetch_title()
-    messages, word = rh.search_from_topic(request, topic_id)
-    return render_template("result.html", messages=messages, forum_name=forum_name, word=word)
+    if dbf.is_visible(topic_id):
+        messages, word = rh.search_from_topic(request, topic_id)
+        return render_template("result.html", messages=messages, forum_name=forum_name, word=word)
+    return render_template("error.html", forum_name=forum_name, error="Keskustelu piilotettu.")
 
 @general_bp.route("/subforum/<int:subforum_id>/result")
 def search_from_subforum(subforum_id):

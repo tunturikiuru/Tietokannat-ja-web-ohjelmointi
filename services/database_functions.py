@@ -1,5 +1,6 @@
 from db import db
 from sqlalchemy.sql import text
+from services import users as users
 
 
 def forum_setup(username, hash_value, title, subtitle):
@@ -204,13 +205,13 @@ def index_page():
             forum_structure[item.h_name].append(item[3:])
     return forum_structure
 
-def subforum_page(id):
+def subforum_page(id, visibility):
     sql = "SELECT a.t_name t_name, a.t_id t_id, a.pinned pinned, a.m_count-1 m_count, b.time min_time, b.sender min_sender, c.time max_time, c.sender max_sender \
-        FROM (SELECT t.topic_name t_name, t.topic_id t_id, t.pinned pinned, COUNT(m.message_id) m_count, MIN(m.message_id) min_message, MAX(m.message_id) max_message\
+        FROM (SELECT t.topic_name t_name, t.topic_id t_id, t.pinned pinned, t.visibility visibility, COUNT(m.message_id) m_count, MIN(m.message_id) min_message, MAX(m.message_id) max_message\
         FROM topics t LEFT JOIN messages m ON t.topic_id=m.topic_id WHERE subforum_id=:id \
         GROUP BY t_name, t_id ORDER BY pinned, max_message DESC) a \
-        LEFT JOIN messages b ON a.min_message=b.message_id LEFT JOIN messages c ON a.max_message=c.message_id ORDER BY pinned DESC, max_time DESC"
-    result = db.session.execute(text(sql), {"id":id})
+        LEFT JOIN messages b ON a.min_message=b.message_id LEFT JOIN messages c ON a.max_message=c.message_id WHERE a.visibility<=:visibility ORDER BY pinned DESC, max_time DESC"
+    result = db.session.execute(text(sql), {"id":id, "visibility":visibility})
     return result.fetchall()
 
 def topic_page(topic_id):
@@ -364,15 +365,15 @@ def search_from_topic(word, topic_id):
     result = db.session.execute(text(sql), {"topic_id":topic_id, "query":word})
     return result.fetchall()
 
-def search(word, sender, subforums, time, order):
+def search(word, sender, subforums, time, order, visibility):
     sql1 = " AND s.subforum_id = ANY(:subforums)" if subforums else ""
     sql2 = " AND m.time >= NOW() - interval :time DAY" if time else ""
     sql3 = order
     sql =  "SELECT m.topic_id topic_id, m.message_id message_id, m.sender sender, m.time time, m.message message, t.topic_name topic \
         FROM messages m LEFT JOIN topics t ON m.topic_id=t.topic_id LEFT JOIN subforums s ON t.subforum_id=s.subforum_id \
         WHERE (m.message ~* :word OR t.topic_name ~* :word)\
-        AND m.sender ~* :sender" + sql1 + sql2 + " ORDER BY m.message_id " + sql3
-    result = db.session.execute(text(sql), {"word":word, "sender":sender, "subforums":subforums, "time":time})
+        AND m.sender ~* :sender" + sql1 + sql2 + " AND t.visibility<=:visibility ORDER BY m.message_id " + sql3
+    result = db.session.execute(text(sql), {"word":word, "sender":sender, "subforums":subforums, "time":time, "visibility":visibility})
     return result.fetchall()
 
 
@@ -392,3 +393,9 @@ def max_heading_index():
     sql = "SELECT MAX(order_index) FROM headings"
     result = db.session.execute(text(sql))
     return result.scalar()
+
+def is_visible(topic_id):
+    sql = "SELECT visibility FROM topics WHERE topic_id=:topic_id"
+    result = db.session.execute(text(sql), {"topic_id":topic_id})
+    visibility = result.scalar()
+    return visibility <= users.get_visibility()

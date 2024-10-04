@@ -166,7 +166,8 @@ def search_handler(request):
     subforums = [int(x) for x in subforums]
     time = request.args.get("time", "")
     order = request.args.get("order", "DESC")
-    return dbf.search(keyword, sender, subforums, time, order), word
+    visibility = users.get_visibility()
+    return dbf.search(keyword, sender, subforums, time, order, visibility), word
 
 def search_from_topic(request, topic_id):
     word = request.args.get("query")
