@@ -5,6 +5,7 @@
         <title>Uusi foorumi</title>
         <link rel="stylesheet" href="/static/css/styles.css">
     </head>
+
     <body>
         <div class="banner">
             <h1>Tähän tulee nimi</h1>
@@ -12,19 +13,48 @@
         </div>
         <div class="content">
             {% if error_message %}
-            <p class="error_message">{{error_message}}</p>
+                <p class="error_message">{{error_message}}</p>
             {% endif %}
         
             <h3>Foorumin luonti</h3>
             <p> Tähdellä merkityt kentät ovat pakollisia.</p>
             <form action="/" method="POST">
-                <h4> Foorumin tiedot:</h4>
-                Forumin nimi: * <input type="text" name="title" required="required" minlength="1" maxlength="35"> <br>
-                Forumin alaotsikko: <input type="text" name="subtitle" maxlength="50"> <br>
-                <h4> Pääkäyttäjän tiedot:</h4>
-                Käyttäjätunnus: * <input type="text" name="username" required="required" minlength="1" maxlength="25"><br>
-                Salasana: * <input type="password" name="password1" required="required" minlength="8" maxlength="15"><br>
-                Salasana uudelleen: * <input type="password" name="password2" required="required" minlength="8" maxlength="15"><br>
+                <h5> Foorumin tiedot:</h5>
+                <table>
+                    <tr>
+                        <td>Forumin nimi: *</td>
+                        <td style="padding-left: 40px;">
+                            <input type="text" name="title" required="required" minlength="1" maxlength="35">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Forumin alaotsikko: </td>
+                        <td style="padding-left: 40px;">
+                            <input type="text" name="subtitle" maxlength="50">
+                        </td>
+                    </tr>
+                </table>
+                <h5> Pääkäyttäjän tiedot:</h5>
+                <table>
+                    <tr>
+                        <td>Käyttäjätunnus: * </td>
+                        <td style="padding-left: 40px;">
+                            <input type="text" name="username" required="required" minlength="1" maxlength="25">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Salasana: * </td>
+                        <td style="padding-left: 40px;">
+                            <input type="password" name="password1" required="required" minlength="8" maxlength="15">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Salasana uudelleen: * </td>
+                        <td style="padding-left: 40px;">
+                            <input type="password" name="password2" required="required" minlength="8" maxlength="15">
+                        </td>
+                    </tr>
+                </table>
                 <input type="submit" value="Luo foorumi">
             </form>
         </div>

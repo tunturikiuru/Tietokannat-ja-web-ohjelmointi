@@ -10,14 +10,14 @@
         <div class="header">
             <span class="Settings">
                 {% if session.get("role") == "admin" %}
-                <a href="/settings">Foorumin asetukset</a>
+                    <a href="/settings">Foorumin asetukset</a>
                 {% endif %}
             </span>
             <span class="login">
                 {% if session.username %}
-                Olet kirjautunut nimellä: {{ session.username }}, <a href="/logout">Kirjaudu ulos</a>
+                    Olet kirjautunut nimellä: {{ session.username }}, <a href="/logout">Kirjaudu ulos</a>
                 {% else %}
-                <a href="/login">Kirjaudu sisään</a> / <a href="/register">Rekisteröidy</a>
+                    <a href="/login">Kirjaudu sisään</a> / <a href="/register">Rekisteröidy</a>
                 {% endif %}
             </span>
         </div>

@@ -1,28 +1,29 @@
 {% extends "layout.html" %}
-{% block content %}
 
-{% if message %}
-<span class="error_message">{{message}}</span>
-{% endif %}
-<h4>Rekisteröidy:</h4>
-<form action="/register" method="POST">
-    <table>
-        <tr>
-            <td style="width:180px">Käyttäjätunnus: </td>
-            <td><input type="text" name="username" required="required" minlength="1" maxlength="25"></td>
-        </tr>
-        <tr>
-            <td>Salasana: </td>
-            <td><input type="password" name="password1" required="required" minlength="8" maxlength="15"></td>
-        </tr>
-        <tr>
-            <td>Salasana uudelleen: </td>
-            <td><input type="password" name="password2" required="required" minlength="8" maxlength="15"></td>
-        </tr>
-    </table>
+{% block content %}
+    {% if message %}
+        <span class="error_message">{{message}}</span>
+    {% endif %}
+    
+    <h4>Rekisteröidy:</h4>
+    <form action="/register" method="POST">
+        <table>
+            <tr>
+                <td style="width:180px">Käyttäjätunnus: </td>
+                <td><input type="text" name="username" required="required" minlength="1" maxlength="25"></td>
+            </tr>
+            <tr>
+                <td>Salasana: </td>
+                <td><input type="password" name="password1" required="required" minlength="8" maxlength="15"></td>
+            </tr>
+            <tr>
+                <td>Salasana uudelleen: </td>
+                <td><input type="password" name="password2" required="required" minlength="8" maxlength="15"></td>
+            </tr>
+        </table>
+        <br>
+        <input type="submit" value="Rekisteröidy">
+    </form>
     <br>
-    <input type="submit" value="Rekisteröidy">
-</form>
-<br>
-<p>Tai kirjaudu sisään <a href="/login">täältä</a>.</p>
+    <p>Tai kirjaudu sisään <a href="/login">täältä</a>.</p>
 {% endblock %}

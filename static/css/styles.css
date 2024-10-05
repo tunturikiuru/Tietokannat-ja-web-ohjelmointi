@@ -202,14 +202,15 @@ button {
     color: red;
     size: 1.5em;
 }
+.settings_page {
+    display: flex;
+}
 .forum_settings {
-    display: inline-block;
-    float: right;
+    flex: auto;
     padding-left: 40px;
 }
 .forum_structure {
-    display: inline-block;
-    border: 1px solid black;
+    flex: auto;
     padding: 0px 30px 20px 30px;
 }
 .hint {

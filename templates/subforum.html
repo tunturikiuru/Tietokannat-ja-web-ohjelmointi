@@ -1,65 +1,66 @@
 {% extends "layout.html" %}
 
 {% block search %}
-<form action="/subforum/{{ subforum[1] }}/result" method="GET">
-    <input type="text" name="word" placeholder="etsi alueelta">
-    <input type="hidden" name="subforum" value="{{ subforum[1] }}">
-    <input type="submit" value="Etsi">
-</form>
-<a href="/search"><button class="advanced_search">Haku</button></a>
+    <form action="/subforum/{{ subforum[1] }}/result" method="GET">
+        <input type="text" name="word" placeholder="etsi alueelta">
+        <input type="hidden" name="subforum" value="{{ subforum[1] }}">
+        <input type="submit" value="Etsi">
+    </form>
+    <a href="/search"><button class="advanced_search">Haku</button></a>
 {% endblock %}
 
 {% block path %}
- / <a href="/subforum/{{ subforum[1] }}"> {{ subforum[0] }} </a> 
+     / <a href="/subforum/{{ subforum[1] }}"> {{ subforum[0] }} </a> 
 {% endblock %}
 
 {% block content %}
-{% if session.get('username') %}
-<h3>{{ subforum[0] }}</h3> <br>
-<a href="/subforum/{{ subforum[1] }}/new_topic"><button>Uusi keskustelu</button></a>
-{% endif %}
+    {% if session.get('username') %}
+        <h3>{{ subforum[0] }}</h3> <br>
+        <a href="/subforum/{{ subforum[1] }}/new_topic"><button>Uusi keskustelu</button></a>
+    {% endif %}
 
-{% if topics %}
-<table class="table100">
-    <tr class="heading-row">
-        {% if session.get('role') == 'admin' %}
-        <th style="width:61%;">KESKUSTELUT</th>
-        <th style="width:12%;">VASTAUKSET</th>
-        <th style="width:17%;">UUSIN VIESTI</th>   
-        <th style="width:10%;">asetukset</th>
-        {% else %}
-        <th style="width:65%;">KESKUSTELUT</th>
-        <th style="width:13%;">VASTAUKSET</th>
-        <th style="width:22%;">UUSIN VIESTI</th>  
-        {% endif %}
-    </tr>
-    {% for topic in topics %}
-    <tr class="topic-row">
-        <td>
-            <ul class="small-padding">
-                <li><a href="/topic/{{ topic[1] }}">{{ topic[0]}}</a></li>
-                <li><span class="sender">{{topic[5]}}</span>  <span class="time">{{topic[4].strftime("%d.%m.%Y - %H:%M")}}</span></li>
-            </ul>
-        </td>
-        <td class="center">{{topic[3]}}</td>
-        <td>
-            <ul class="latest-sender">
-                <li><span class="sender">{{topic[7]}}</span></li>
-                <li><span class="time">{{topic[6].strftime("%d.%m.%Y - %H:%M")}}</span></li>
-            </ul>
-        </td>
-        {% if session.get('role') == 'admin' %}
-        <td class="center">
-            <a href="/topic/{{ topic[1] }}/edit">asetukset</a>
-        </td>
-        {% endif %}
-    </tr>
-    {% endfor %}      
-</table>
-{% else %}
-<p>Ei vielä keskusteluja </p>
-{% endif %}
-{% if session.get('username') %}
-<a href="/subforum/{{ subforum[1] }}/new_topic"><button class="bottom_button">Uusi keskustelu</button></a>
-{% endif %}
+    {% if topics %}
+        <table class="table100">
+            <tr class="heading-row">
+                {% if session.get('role') == 'admin' %}
+                    <th style="width:61%;">KESKUSTELUT</th>
+                    <th style="width:12%;">VASTAUKSET</th>
+                    <th style="width:17%;">UUSIN VIESTI</th>   
+                    <th style="width:10%;">asetukset</th>
+                {% else %}
+                    <th style="width:65%;">KESKUSTELUT</th>
+                    <th style="width:13%;">VASTAUKSET</th>
+                    <th style="width:22%;">UUSIN VIESTI</th>  
+                {% endif %}
+            </tr>
+            {% for topic in topics %}
+                <tr class="topic-row">
+                    <td>
+                        <ul class="small-padding">
+                            <li><a href="/topic/{{ topic[1] }}">{{ topic[0]}}</a></li>
+                            <li><span class="sender">{{ topic[5] }}</span>  <span class="time">{{ topic[4].strftime("%d.%m.%Y - %H:%M") }}</span></li>
+                        </ul>
+                    </td>
+                    <td class="center">{{ topic[3] }}</td>
+                    <td>
+                        <ul class="latest-sender">
+                            <li><span class="sender">{{ topic[7] }}</span></li>
+                            <li><span class="time">{{ topic[6].strftime("%d.%m.%Y - %H:%M") }}</span></li>
+                        </ul>
+                    </td>
+                    {% if session.get('role') == 'admin' %}
+                        <td class="center">
+                            <a href="/topic/{{ topic[1] }}/edit">asetukset</a>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}      
+        </table>
+    {% else %}
+        <p>Ei vielä keskusteluja </p>
+    {% endif %}
+
+    {% if session.get('username') %}
+        <a href="/subforum/{{ subforum[1] }}/new_topic"><button class="bottom_button">Uusi keskustelu</button></a>
+    {% endif %}
 {% endblock %}

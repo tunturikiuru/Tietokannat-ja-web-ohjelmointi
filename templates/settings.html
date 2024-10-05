@@ -1,88 +1,94 @@
 {% extends "layout.html" %}
 
 {% block path %} 
- / Asetukset 
+     / Asetukset 
 {% endblock %}
+
 {% block nav %} 
-<nav>
-    Foorumin rakenne  |  
-    <a href="/settings/headings">Väliotsikot</a>  |  
-    <a href="/settings/subforums">Subfoorumit</a>  |  
-    <a href="/settings/admins">Admin</a>  
-</nav>
+    <nav>
+        Foorumin rakenne  |  
+        <a href="/settings/headings">Väliotsikot</a>  |  
+        <a href="/settings/subforums">Subfoorumit</a>  |  
+        <a href="/settings/admins">Admin</a>  
+    </nav>
 {% endblock %}
 
 {% block content %}
-<h3>Foorumin rakenne</h3>
-<div>   
-    <div class="forum_settings">
-        <h5>Muuta foorumin nimeä:</h5>
-        <form action="/settings/send" method="POST">
-            <table>
-                <tr>
-                    <td>Forumin nimi:</td>
-                    <td style="padding-left:40px"><input type="text" name="title" value="{{ forum_name[0][0] }}" required="required" minlength="1" maxlength="35"></td>
-                </tr>
-                <tr>
-                    <td>Forumin alaotsikko:</td>
-                    <td style="padding-left:40px">
-                        <input type="text" name="subtitle" value="{{ forum_name[1][0] }}" maxlength="50">
-                    </td>
-                </tr>
-            </table>
-            <input type="submit" value="Lähetä">
-        </form>
-        <h5>Lisää väliotsikoita:</h5>
-        <form action="/settings/heading_name/send" method="POST">
-            <input type="text" name="heading" required="required" minlength="1" maxlength="60"> </p>
-            <input type="submit" value="Lähetä">
-        </form>
-        {% if forum_structure %}
-        <h5>Lisää subforumeita:</h5>
-        <form action="/settings/new_subforum/send" method="POST">  
-            <table>
-                <tr>
-                    <td>Subforumin nimi:</td>
-                    <td style="padding-left:20px">
-                        <input type="text" name="new_subforum" required="required" minlength="1" maxlength="60">
-                    </td>
-                </tr>
-                <tr>
-                    <td>Alueelle: </td>
-                    <td style="padding-left:20px">
-                        <select name="heading">
-                            {% for heading in forum_structure.keys() %}
-                            <option value="{{ heading[0] }}"> {{ heading[1] }}
-                            {% endfor %}
-                        </select></p>
-                    </td>
-                </tr>                
-            </table>  
-            <input type="submit" value="Lähetä">
-        </form>
-        {% endif %}
-    </div>
+    {% if not forum_structure %}
+        <div class="error_message">Aloita luomalla vähintään yksi väliotsikko ja subfoorumi.</div>
+    {% endif %}
 
-    <div class="forum_structure">
-        <div class="setting_name">
-            <span class="heading1">{{ forum_name[0].heading_name }}</span><br>
-            <span class="heading2">{{ forum_name[1].heading_name }}</span>
+    <h3>Foorumin rakenne</h3>
+    <div class="settings_page">  
+
+        <div class="forum_settings">
+            <h5>Muuta foorumin nimeä:</h5>
+            <form action="/settings/send" method="POST">
+                <table>
+                    <tr>
+                        <td>Forumin nimi:</td>
+                        <td style="padding-left:40px"><input type="text" name="title" value="{{ forum_name[0][0] }}" required="required" minlength="1" maxlength="35"></td>
+                    </tr>
+                    <tr>
+                        <td>Forumin alaotsikko:</td>
+                        <td style="padding-left:40px">
+                            <input type="text" name="subtitle" value="{{ forum_name[1][0] }}" maxlength="50">
+                        </td>
+                    </tr>
+                </table>
+                <input type="submit" value="Lähetä">
+            </form>
+
+            <h5>Lisää väliotsikoita:</h5>
+            <form action="/settings/heading_name/send" method="POST">
+                <input type="text" name="heading" required="required" minlength="1" maxlength="60" size="40em"> </p>
+                <input type="submit" value="Lähetä">
+            </form>
+
+            {% if forum_structure %}
+                <h5>Lisää subforumeita:</h5>
+                <form action="/settings/new_subforum/send" method="POST">  
+                    <table>
+                        <tr>
+                            <td>Subforumin nimi:</td>
+                            <td style="padding-left:20px">
+                                <input type="text" name="new_subforum" required="required" minlength="1" maxlength="60">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Alueelle: </td>
+                            <td style="padding-left:20px">
+                                <select name="heading">
+                                    {% for heading in forum_structure.keys() %}
+                                        <option value="{{ heading[0] }}"> {{ heading[1] }}
+                                    {% endfor %}
+                                </select></p>
+                            </td>
+                        </tr>                
+                    </table>  
+                    <input type="submit" value="Lähetä">
+                </form>
+            {% endif %}
         </div>
-        {% for heading, subforums in forum_structure.items() %}
-        <h5> {{ heading[1] }}</h5>
-        {% if subforums %}
-        <ul>
-            {% for subforum in subforums %}
-            <li>{{ subforum[1] }}</li>
+
+        <div class="forum_structure">
+            <div class="setting_name">
+                <span class="heading1">{{ forum_name[0].heading_name }}</span><br>
+                <span class="heading2">{{ forum_name[1].heading_name }}</span>
+            </div>
+            {% for heading, subforums in forum_structure.items() %}
+                <h5> {{ heading[1] }}</h5>
+                {% if subforums %}
+                    <ul>
+                        {% for subforum in subforums %}
+                            <li>{{ subforum[1] }}</li>
+                        {% endfor %}
+                    </ul>  
+                {% else %}
+                    <span style="color:red">(ei subfoorumeita)</span>
+                {% endif %}
             {% endfor %}
-        </ul>  
-        {% else %}
-        <span style="color:red">(ei subfoorumeita)</span>
-        {% endif %}
-        {% endfor %}
+        </div>
+
     </div>
-</div>
 {% endblock %}
-
-
-    

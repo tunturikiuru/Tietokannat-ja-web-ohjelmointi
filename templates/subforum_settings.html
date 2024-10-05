@@ -1,143 +1,144 @@
 {% extends "layout.html" %}
 
 {% block path %} 
- / Asetukset
+    / Asetukset
 {% endblock %}
+
 {% block nav %} 
-<nav>
-    <a href="/settings/">Foorumin rakenne</a>  |  
-    <a href="/settings/headings">Väliotsikot</a>   |  
-    Subfoorumit   |  
-    <a href="/settings/admins">Admin</a> 
-</nav>
+    <nav>
+        <a href="/settings/">Foorumin rakenne</a>  |  
+        <a href="/settings/headings">Väliotsikot</a>   |  
+        Subfoorumit   |  
+        <a href="/settings/admins">Admin</a> 
+    </nav>
 {% endblock %}
 
 {% block content %}
-<h3>Subfoorumit</h3>
-<h5>Uusi subfoorumi:</h5>
-<form action="/settings/new_subforum/send" method="POST">    
-    <table>
-        <tr>
-            <td>Subforumin nimi: </td>
-            <td style="padding-left:40px"><input type="text" name="new_subforum" required="required" minlength="1" maxlength="60"></td>
-        </tr>
-        <tr>
-            <td>Alueelle: </td>
-            <td style="padding-left:40px">
-                <select name="heading">
-                    {% for heading in forum_structure.keys() %}
-                    <option value="{{ heading[0] }}"> {{ heading[1] }}
-                    {% endfor %}
-                </select>
-            </td>
-        </tr>
-    </table>
-    <input type="submit" value="Lähetä">
-</form>
+    <h3>Subfoorumit</h3>
+    {% if forum_structure %}
+        <h5>Uusi subfoorumi:</h5>
+        <form action="/settings/new_subforum/send" method="POST">    
+            <table>
+                <tr>
+                    <td>Subforumin nimi: </td>
+                    <td style="padding-left:40px"><input type="text" name="new_subforum" required="required" minlength="1" maxlength="60"></td>
+                </tr>
+                <tr>
+                    <td>Alueelle: </td>
+                    <td style="padding-left:40px">
+                        <select name="heading">
+                            {% for heading in forum_structure.keys() %}
+                                <option value="{{ heading[0] }}"> {{ heading[1] }}
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <input type="submit" value="Lähetä">
+        </form>
 
-<h5>Vaihda subforumin nimeä</h5>
-{% if forum_structure %}
-<form action="/settings/subforum_rename/send" method="POST">
-    <table>
-        <tr>
-            <td>Uudelleennimettävä subfoorumi: </td>
-            <td style="padding-left:40px">
-                <select name="old_name">
+        {% if has_subforums %}
+            <h5>Vaihda subforumin nimeä</h5>
+            <form action="/settings/subforum_rename/send" method="POST">
+                <table>
+                    <tr>
+                        <td>Uudelleennimettävä subfoorumi: </td>
+                        <td style="padding-left:40px">
+                            <select name="old_name">
+                                {% for subforum_list in forum_structure.values() %}
+                                    {% if subforum_list %}
+                                        {% for subforum in subforum_list %}
+                                            <option value="{{ subforum[0]}}"> {{ subforum[1] }}</option> 
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Uusi nimi:</td>
+                        <td style="padding-left:40px">
+                            <input type="text" name="new_name" required="required" minlength="1" maxlength="60">
+                        </td>
+                    </tr>
+                </table>
+                <input type="submit" value="Lähetä">
+            </form>
+
+            {% if forum_structure|length > 1 %}
+                <h5>Vaihda subforumin aluetta</h5>
+                <form action="/settings/subforum_move/send" method="POST">
+                    <table>
+                        <tr>
+                            <td>Siirrettävä subfoorumi: </td>
+                            <td style="padding-left:40px">
+                                <select name="relocated_subforum">
+                                    {% for heading, subforum_list in forum_structure.items() %}
+                                        {% if subforum_list%}
+                                            {% for subforum in subforum_list %}
+                                                <option value="{{ subforum[0]}}"> {{ subforum[1] }} (ALUEELTA: {{ heading[1] }})</option> 
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Siirretään alueelle: </td>
+                            <td style="padding-left:40px">
+                                <select name="new_heading">
+                                    {% for heading in forum_structure.keys() %}
+                                        <option value="{{ heading[0] }}"> {{ heading[1] }}
+                                    {% endfor %}
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                    <input type="submit" value="Lähetä">
+                </form>
+            {% endif %}
+
+            <h5>Subforumien järjestys</h5>
+            {% for heading, subforum_list in forum_structure.items() %}
+                {% if subforum_list | length > 1 %}
+                    <h6>{{ heading[1] }} </h6>
+                    <form action="/settings/subforum_order/send" method="POST">  
+                        <ul>   
+                            {% for subforum in subforum_list %}
+                                <li>
+                                    <input type="text" name="subforum_order" value="{{ loop.index }}" size="3"> 
+                                    <span class="small-padding">{{ subforum[1] }} </span>
+                                    <input type="hidden" name="subforum_id" value="{{ subforum[0] }}">
+                                    <input type="hidden" name="heading_id" value="{{ heading[0] }}">
+                                </li>
+                            {% endfor %}    
+                        </ul>  
+                        <input type="submit" value="Lähetä"> 
+                    </form>
+                    <br>
+                {% endif %} 
+            {% endfor %}
+
+            <h5>Poista subfoorumi</h5>
+            <p class="hint">Subfoorumin poisto poistaa myös keskustelut. Olethan siirtänyt säästettävät keskustelut muille alueille.</p>
+            <form action="/settings/subforum_delete" method="POST">
+                <select name="subforum_id_delete">
+                    <option value="">(ei valintaa)</option>
                     {% for subforum_list in forum_structure.values() %}
-                    {% if subforum_list %}
-                    {% for subforum in subforum_list %}
-                    <option value="{{ subforum[0]}}"> {{ subforum[1] }}</option> 
-                    {% endfor %}
-                    {% endif %}
-                    {% endfor %}
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Uusi nimi:</td>
-            <td style="padding-left:40px">
-                <input type="text" name="new_name" required="required" minlength="1" maxlength="60">
-            </td>
-        </tr>
-    </table>
-    <input type="submit" value="Lähetä">
-</form>
-{% else %}
-<p>ei vielä subfoorumeita</p>
-{% endif %}
-
-<h5>Vaihda subforumin aluetta</h5>
-<form action="/settings/subforum_move/send" method="POST">
-    <table>
-        <tr>
-            <td>Siirrettävä subfoorumi: </td>
-            <td style="padding-left:40px">
-                <select name="relocated_subforum">
-                    {% for heading, subforum_list in forum_structure.items() %}
-                    {% if subforum_list%}
-                    {% for subforum in subforum_list %}
-                    <option value="{{ subforum[0]}}"> {{ subforum[1] }} (ALUEELTA: {{ heading[1] }})</option> 
-                    {% endfor %}
-                    {% endif %}
+                        {% if subforum_list%}
+                            {% for subforum in subforum_list %}
+                                <option value="{{ subforum[0] }}">{{ subforum[1] }}</option>
+                            {% endfor %}
+                        {% endif %}
                     {% endfor %}
                 </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Siirretään alueelle: </td>
-            <td style="padding-left:40px">
-                <select name="new_heading">
-                    {% for heading in forum_structure.keys() %}
-                    <option value="{{ heading[0] }}"> {{ heading[1] }}
-                    {% endfor %}
-                </select>
-            </td>
-        </tr>
-    </table>
-    <input type="submit" value="Lähetä">
-</form>
-
-<h5>Subforumien järjestys</h5>
-{% if forum_structure %}
-{% for heading, subforum_list in forum_structure.items() %}
-{% if subforum_list%}
-<h6>{{ heading[1] }} </h6>
-<form action="/settings/subforum_order/send" method="POST">  
-    <ul>   
-        {% for subforum in subforum_list %}
-        <li><input type="text" name="subforum_order" value="{{ loop.index }}" size="3"> 
-            <span class="small-padding">{{ subforum[1] }} </span>
-            <input type="hidden" name="subforum_id" value="{{ subforum[0] }}">
-            <input type="hidden" name="heading_id" value="{{ heading[0] }}"></p>
-        {% endfor %}    
-    </ul>  
-    <input type="submit" value="Lähetä"> 
-    </form>
-    <br>
-    {% endif %} 
-    {% endfor %}
-{% else %}
-<p>ei vielä subfoorumeita</p>
-{% endif %}
-
-<h5>Poista subfoorumi</h5>
-<p class="hint">Subfoorumin poisto poistaa myös keskustelut. Olethan siirtänyt säästettävät keskustelut muille alueille.</p>
-{% if forum_structure %}
-<form action="/settings/subforum_delete" method="POST">
-    <select name="subforum_id_delete">
-        <option value="">(ei valintaa)</option>
-        {% for subforum_list in forum_structure.values() %}
-        {% if subforum_list%}
-        {% for subforum in subforum_list %}
-        <option value="{{ subforum[0] }}">{{ subforum[1] }}</option>
-        {% endfor %}
+                <input type="submit" value="Poista">
+            </form>
         {% endif %}
-        {% endfor %}
-    </select>
-    <input type="submit" value="Poista">
-</form>
-{% endif %}
 
+    {% else %} 
+        <div class="error_message">Luo ensin vähintään yksi väliotsikko</div>
+    {% endif %} 
 {% endblock %}
 
 

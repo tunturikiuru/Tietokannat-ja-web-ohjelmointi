@@ -31,7 +31,8 @@ def heading_settings():
 def subforums():
     forum_name = dbf.fetch_title()
     forum_structure = dbf.get_forum_structure()
-    return render_template("subforum_settings.html", forum_structure=forum_structure, forum_name=forum_name)
+    has_subforums = any(forum_structure.values())
+    return render_template("subforum_settings.html", forum_structure=forum_structure, forum_name=forum_name, has_subforums=has_subforums)
 
 @settings_bp.route("/admins")
 def admins():

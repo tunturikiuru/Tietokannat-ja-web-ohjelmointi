@@ -8,14 +8,10 @@ HUOM! Tämä on harjoitustyö eikä tarkoitettu oikeaan käyttöön. Esim. käyt
 
 # Käytön aloittaminen
 
-Ensimmäisellä sivulla foorumi luodaan antamalla sille nimi ja ensimmäisen käyttäjän käyttäjätiedot. Käyttäjästä tulee admin-käyttäjä. Tämän jälkeen käyttäjä ohjataan foorumin asetuksiin. Foorumiin on luotava ainakin yksi väliotsikko ja subforum ennen kuin keskusteluja voi luoda ja viestejä voi kirjoittaa.
+Ensimmäisellä sivulla foorumi luodaan antamalla sille nimi ja ensimmäisen käyttäjän käyttäjätiedot. Käyttäjästä tulee admin-käyttäjä. Tämän jälkeen käyttäjä ohjataan foorumin asetuksiin. Foorumiin on luotava ainakin yksi väliotsikko ja subforum ennen kuin keskusteluja voi luoda ja viestejä kirjoittaa.
 
 
 # Backlog
-
-subforum delete -testaus!
-CSS - aloitus sivu
-tarkista, ettei kirjautumis- ja rekisteräitumismahdollisuutta ennen foorumin luontia
 
 moderaattorit - oma taulu?, oikeudet
 haku: palaa keskusteluun -linkki

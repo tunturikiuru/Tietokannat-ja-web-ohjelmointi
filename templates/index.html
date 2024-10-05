@@ -1,53 +1,57 @@
 {% extends "layout.html" %}
 
 {% block search %}
-<form action="/search/result" method="GET">
-    <input type="text" name="word" placeholder="etsi viesteistä">
-    <input type="submit" value="Etsi">
-</form>
-<a href="/search"><button class="advanced_search">Haku</button></a>
+    <form action="/search/result" method="GET">
+        <input type="text" name="word" placeholder="etsi viesteistä">
+        <input type="submit" value="Etsi">
+    </form>
+    <a href="/search"><button class="advanced_search">Haku</button></a>
 {% endblock %}
 
 {% block content %}
-<div>
-    {% for heading, subforums in subforum_order.items() %}
-    <div>
-        <table class="table100">
-            <tr class="heading-row">
-                <th style="width:65%;">{{ heading }}</th>
-                <th style="width:13%">TILASTOT</th>
-                <th style="width:22%">UUSIN VIESTI</th>
-            </tr>
-            {% if subforums %}
-            {% for subforum in subforums %}
-            <tr class="topic-row">
-                <td>
-                    <a href="/subforum/{{subforum[0]}}"><span class="subforum_link">{{subforum[1]}}</span></a>
-                </td>
-                <td>
-                    <ul class="center">
-                        <li>Aiheet: {{subforum[2]}}</li>
-                        <li>Viestit: {{subforum[3]}}</li>
-                    </ul>
-                </td>
-                <td>
-                    {% if subforum[4] %}
-                    <ul class="latest-post">
-                        <li><a href="/topic/{{ subforum[7] }}">{{ subforum[4] }}</a></li>
-                        <li><span class="time">{{subforum[6].strftime("%d.%m.%Y %H:%M")}}</span> </li>
-                        <li><span calss="sender">{{subforum[5]}}</span></li>
-                    </ul>
-                    {% else %}
-                    <ul class="latest-post">
-                        <li>(Ei viestejä)</li>
-                    </ul>
-                    {% endif %}
-                </td>
-            </tr>
+    {% if subforum_order %}
+        <div>
+            {% for heading, subforums in subforum_order.items() %}
+                <div>
+                    <table class="table100">
+                        <tr class="heading-row">
+                            <th style="width:65%;">{{ heading }}</th>
+                            <th style="width:13%">TILASTOT</th>
+                            <th style="width:22%">UUSIN VIESTI</th>
+                        </tr>
+                        {% if subforums %}
+                            {% for subforum in subforums %}
+                                <tr class="topic-row">
+                                    <td>
+                                        <a href="/subforum/{{subforum[0]}}"><span class="subforum_link">{{subforum[1]}}</span></a>
+                                    </td>
+                                    <td>
+                                        <ul class="center">
+                                            <li>Aiheet: {{subforum[2]}}</li>
+                                            <li>Viestit: {{subforum[3]}}</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        {% if subforum[4] %}
+                                            <ul class="latest-post">
+                                                <li><a href="/topic/{{ subforum[7] }}">{{ subforum[4] }}</a></li>
+                                                <li><span class="time">{{subforum[6].strftime("%d.%m.%Y %H:%M")}}</span> </li>
+                                                <li><span calss="sender">{{subforum[5]}}</span></li>
+                                            </ul>
+                                        {% else %}
+                                            <ul class="latest-post">
+                                                <li>(Ei viestejä)</li>
+                                            </ul>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </table>
+                </div>
             {% endfor %}
-            {% endif %}
-        </table>
-    </div>
-    {% endfor %}
-</div>
+        </div>
+    {% else %}
+        <div class="error_message">Foorumi tarvitsee toimiakseen yhden väliotsikon ja yhden subfoorumin. Luo ne asetuksista, joihin pääsee vasemmasta yläkulmasta admin-oikeuksilla.</div>
+    {% endif %}
 {% endblock %}

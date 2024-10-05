@@ -1,72 +1,75 @@
 {% extends "layout.html" %}
 
 {% block path %} 
- / Asetukset 
+     / Asetukset 
 {% endblock %}
+
 {% block nav %} 
-<nav>
-    <a href="/settings/">Foorumin rakenne</a>   |  
-    <a href="/settings/headings">Väliotsikot</a>  |  
-    <a href="/settings/subforums">Subfoorumit</a>  |      
-    Admin</a>
-</nav>
+    <nav>
+        <a href="/settings/">Foorumin rakenne</a>   |  
+        <a href="/settings/headings">Väliotsikot</a>  |  
+        <a href="/settings/subforums">Subfoorumit</a>  |      
+        Admin</a>
+    </nav>
 {% endblock %}
 
 {% block content %}
+    <h3> Admin-käyttäjät</h3>
+    <br>
+    <table>
+        <tr>
+            <td>
+                Pääadmin:
+            </td>
+            <td style="padding-left:40px">
+                {{ users[0].username }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Muut adminit:
+            </td>
+            <td style="padding-left:40px">
+                <ul>
+                    {% for user in users[1:] %}
+                        {% if user.admin == True %}
+                            <li>{{ user.username }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+    </table>
 
-<h3> Admin-käyttäjät</h3>
-<br>
-<table>
-    <tr>
-        <td>
-            Pääadmin:
-        </td>
-        <td style="padding-left:40px">
-            {{ users[0].username }}
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Muut adminit:
-        </td>
-        <td style="padding-left:40px">
-            <ul>
+    {% if users|length > 1 %}
+        <h5>Anna admin-oikeudet</h5>
+        <form action="/settings/new_admin" method="POST">
+            <select name="user_id">
+                <option value="">(ei valintaa)</option>
                 {% for user in users[1:] %}
-                {% if user.admin == True %}
-                <li>{{ user.username }}</li>
-                {% endif %}
+                    {% if user.admin == False %}
+                        <option value="{{ user.user_id }}">{{ user.username }}</option>
+                    {% endif %}
                 {% endfor %}
-            </ul>
-        </td>
-    </tr>
-</table>
+            </select>
+            <input type="submit" value="Anna oikeudet">  
+        </form>
 
-<h5>Anna admin-oikeudet</h5>
-<form action="/settings/new_admin" method="POST">
-    <select name="user_id">
-        <option value="">(ei valintaa)</option>
-        {% for user in users[1:] %}
-        {% if user.admin == False %}
-        <option value="{{ user.user_id }}">{{ user.username }}</option>
-        {% endif %}
-        {% endfor %}
-</select>
-<input type="submit" value="Anna oikeudet">  
-</form>
+        <h5>Poista admin-oikeudet</h5>
+        <form action="/settings/remove_admin" method="POST">
+            <select name="user_id">
+                <option value="">(ei valintaa)</option>
+                {% for user in users[1:] %}
+                    {% if user.admin == True %}
+                        <option value="{{ user.user_id }}">{{ user.username }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            <input type="submit" value="Poista oikeudet">
+        </form>
 
-
-<h5>Poista admin-oikeudet</h5>
-<form action="/settings/remove_admin" method="POST">
-    <select name="user_id">
-        <option value="">(ei valintaa)</option>
-        {% for user in users[1:] %}
-        {% if user.admin == True %}
-        <option value="{{ user.user_id }}">{{ user.username }}</option>
-        {% endif %}
-        {% endfor %}
-    </select>
-    <input type="submit" value="Poista oikeudet">
-</form>
-
-
+    {% else %}
+        <br>
+        <div class="error_message">Ei muita käyttäjiä</div>
+    {% endif %}
 {% endblock %}
